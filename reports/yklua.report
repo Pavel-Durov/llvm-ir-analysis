@@ -1,0 +1,140 @@
+{
+  "summary": {
+    "total_functions": 897,
+    "total_basic_blocks": 16382,
+    "total_instructions": 96471,
+    "average_instructions_per_block": 5.888841411305091,
+    "average_blocks_per_function": 18.26309921962096,
+    "average_instructions_per_function": 107.54849498327759
+  },
+  "largest_block": {
+    "function": "stack_init",
+    "block": "15",
+    "instructions": 170,
+    "text": "15:                                               ; preds = %8, %11\n  %16 = phi ptr [ %12, %11 ], [ %9, %8 ]\n  %17 = getelementptr inbounds %struct.global_State, ptr %4, i64 0, i32 3\n  %18 = load i64, ptr %17, align 8, !tbaa !98\n  %19 = add i64 %18, 720\n  store i64 %19, ptr %17, align 8, !tbaa !98\n  %20 = getelementptr inbounds %struct.lua_State, ptr %0, i64 0, i32 10\n  store ptr %16, ptr %20, align 8, !tbaa !22\n  %21 = getelementptr inbounds %struct.lua_State, ptr %0, i64 0, i32 12\n  store ptr %16, ptr %21, align 8, !tbaa !22\n  %22 = getelementptr inbounds %union.StackValue, ptr %16, i64 0, i32 0, i32 1\n  store i8 0, ptr %22, align 8, !tbaa !22\n  %23 = load ptr, ptr %20, align 8, !tbaa !22\n  %24 = getelementptr inbounds %union.StackValue, ptr %23, i64 1, i32 0, i32 1\n  store i8 0, ptr %24, align 8, !tbaa !22\n  %25 = load ptr, ptr %20, align 8, !tbaa !22\n  %26 = getelementptr inbounds %union.StackValue, ptr %25, i64 2, i32 0, i32 1\n  store i8 0, ptr %26, align 8, !tbaa !22\n  %27 = load ptr, ptr %20, align 8, !tbaa !22\n  %28 = getelementptr inbounds %union.StackValue, ptr %27, i64 3, i32 0, i32 1\n  store i8 0, ptr %28, align 8, !tbaa !22\n  %29 = load ptr, ptr %20, align 8, !tbaa !22\n  %30 = getelementptr inbounds %union.StackValue, ptr %29, i64 4, i32 0, i32 1\n  store i8 0, ptr %30, align 8, !tbaa !22\n  %31 = load ptr, ptr %20, align 8, !tbaa !22\n  %32 = getelementptr inbounds %union.StackValue, ptr %31, i64 5, i32 0, i32 1\n  store i8 0, ptr %32, align 8, !tbaa !22\n  %33 = load ptr, ptr %20, align 8, !tbaa !22\n  %34 = getelementptr inbounds %union.StackValue, ptr %33, i64 6, i32 0, i32 1\n  store i8 0, ptr %34, align 8, !tbaa !22\n  %35 = load ptr, ptr %20, align 8, !tbaa !22\n  %36 = getelementptr inbounds %union.StackValue, ptr %35, i64 7, i32 0, i32 1\n  store i8 0, ptr %36, align 8, !tbaa !22\n  %37 = load ptr, ptr %20, align 8, !tbaa !22\n  %38 = getelementptr inbounds %union.StackValue, ptr %37, i64 8, i32 0, i32 1\n  store i8 0, ptr %38, align 8, !tbaa !22\n  %39 = load ptr, ptr %20, align 8, !tbaa !22\n  %40 = getelementptr inbounds %union.StackValue, ptr %39, i64 9, i32 0, i32 1\n  store i8 0, ptr %40, align 8, !tbaa !22\n  %41 = load ptr, ptr %20, align 8, !tbaa !22\n  %42 = getelementptr inbounds %union.StackValue, ptr %41, i64 10, i32 0, i32 1\n  store i8 0, ptr %42, align 8, !tbaa !22\n  %43 = load ptr, ptr %20, align 8, !tbaa !22\n  %44 = getelementptr inbounds %union.StackValue, ptr %43, i64 11, i32 0, i32 1\n  store i8 0, ptr %44, align 8, !tbaa !22\n  %45 = load ptr, ptr %20, align 8, !tbaa !22\n  %46 = getelementptr inbounds %union.StackValue, ptr %45, i64 12, i32 0, i32 1\n  store i8 0, ptr %46, align 8, !tbaa !22\n  %47 = load ptr, ptr %20, align 8, !tbaa !22\n  %48 = getelementptr inbounds %union.StackValue, ptr %47, i64 13, i32 0, i32 1\n  store i8 0, ptr %48, align 8, !tbaa !22\n  %49 = load ptr, ptr %20, align 8, !tbaa !22\n  %50 = getelementptr inbounds %union.StackValue, ptr %49, i64 14, i32 0, i32 1\n  store i8 0, ptr %50, align 8, !tbaa !22\n  %51 = load ptr, ptr %20, align 8, !tbaa !22\n  %52 = getelementptr inbounds %union.StackValue, ptr %51, i64 15, i32 0, i32 1\n  store i8 0, ptr %52, align 8, !tbaa !22\n  %53 = load ptr, ptr %20, align 8, !tbaa !22\n  %54 = getelementptr inbounds %union.StackValue, ptr %53, i64 16, i32 0, i32 1\n  store i8 0, ptr %54, align 8, !tbaa !22\n  %55 = load ptr, ptr %20, align 8, !tbaa !22\n  %56 = getelementptr inbounds %union.StackValue, ptr %55, i64 17, i32 0, i32 1\n  store i8 0, ptr %56, align 8, !tbaa !22\n  %57 = load ptr, ptr %20, align 8, !tbaa !22\n  %58 = getelementptr inbounds %union.StackValue, ptr %57, i64 18, i32 0, i32 1\n  store i8 0, ptr %58, align 8, !tbaa !22\n  %59 = load ptr, ptr %20, align 8, !tbaa !22\n  %60 = getelementptr inbounds %union.StackValue, ptr %59, i64 19, i32 0, i32 1\n  store i8 0, ptr %60, align 8, !tbaa !22\n  %61 = load ptr, ptr %20, align 8, !tbaa !22\n  %62 = getelementptr inbounds %union.StackValue, ptr %61, i64 20, i32 0, i32 1\n  store i8 0, ptr %62, align 8, !tbaa !22\n  %63 = load ptr, ptr %20, align 8, !tbaa !22\n  %64 = getelementptr inbounds %union.StackValue, ptr %63, i64 21, i32 0, i32 1\n  store i8 0, ptr %64, align 8, !tbaa !22\n  %65 = load ptr, ptr %20, align 8, !tbaa !22\n  %66 = getelementptr inbounds %union.StackValue, ptr %65, i64 22, i32 0, i32 1\n  store i8 0, ptr %66, align 8, !tbaa !22\n  %67 = load ptr, ptr %20, align 8, !tbaa !22\n  %68 = getelementptr inbounds %union.StackValue, ptr %67, i64 23, i32 0, i32 1\n  store i8 0, ptr %68, align 8, !tbaa !22\n  %69 = load ptr, ptr %20, align 8, !tbaa !22\n  %70 = getelementptr inbounds %union.StackValue, ptr %69, i64 24, i32 0, i32 1\n  store i8 0, ptr %70, align 8, !tbaa !22\n  %71 = load ptr, ptr %20, align 8, !tbaa !22\n  %72 = getelementptr inbounds %union.StackValue, ptr %71, i64 25, i32 0, i32 1\n  store i8 0, ptr %72, align 8, !tbaa !22\n  %73 = load ptr, ptr %20, align 8, !tbaa !22\n  %74 = getelementptr inbounds %union.StackValue, ptr %73, i64 26, i32 0, i32 1\n  store i8 0, ptr %74, align 8, !tbaa !22\n  %75 = load ptr, ptr %20, align 8, !tbaa !22\n  %76 = getelementptr inbounds %union.StackValue, ptr %75, i64 27, i32 0, i32 1\n  store i8 0, ptr %76, align 8, !tbaa !22\n  %77 = load ptr, ptr %20, align 8, !tbaa !22\n  %78 = getelementptr inbounds %union.StackValue, ptr %77, i64 28, i32 0, i32 1\n  store i8 0, ptr %78, align 8, !tbaa !22\n  %79 = load ptr, ptr %20, align 8, !tbaa !22\n  %80 = getelementptr inbounds %union.StackValue, ptr %79, i64 29, i32 0, i32 1\n  store i8 0, ptr %80, align 8, !tbaa !22\n  %81 = load ptr, ptr %20, align 8, !tbaa !22\n  %82 = getelementptr inbounds %union.StackValue, ptr %81, i64 30, i32 0, i32 1\n  store i8 0, ptr %82, align 8, !tbaa !22\n  %83 = load ptr, ptr %20, align 8, !tbaa !22\n  %84 = getelementptr inbounds %union.StackValue, ptr %83, i64 31, i32 0, i32 1\n  store i8 0, ptr %84, align 8, !tbaa !22\n  %85 = load ptr, ptr %20, align 8, !tbaa !22\n  %86 = getelementptr inbounds %union.StackValue, ptr %85, i64 32, i32 0, i32 1\n  store i8 0, ptr %86, align 8, !tbaa !22\n  %87 = load ptr, ptr %20, align 8, !tbaa !22\n  %88 = getelementptr inbounds %union.StackValue, ptr %87, i64 33, i32 0, i32 1\n  store i8 0, ptr %88, align 8, !tbaa !22\n  %89 = load ptr, ptr %20, align 8, !tbaa !22\n  %90 = getelementptr inbounds %union.StackValue, ptr %89, i64 34, i32 0, i32 1\n  store i8 0, ptr %90, align 8, !tbaa !22\n  %91 = load ptr, ptr %20, align 8, !tbaa !22\n  %92 = getelementptr inbounds %union.StackValue, ptr %91, i64 35, i32 0, i32 1\n  store i8 0, ptr %92, align 8, !tbaa !22\n  %93 = load ptr, ptr %20, align 8, !tbaa !22\n  %94 = getelementptr inbounds %union.StackValue, ptr %93, i64 36, i32 0, i32 1\n  store i8 0, ptr %94, align 8, !tbaa !22\n  %95 = load ptr, ptr %20, align 8, !tbaa !22\n  %96 = getelementptr inbounds %union.StackValue, ptr %95, i64 37, i32 0, i32 1\n  store i8 0, ptr %96, align 8, !tbaa !22\n  %97 = load ptr, ptr %20, align 8, !tbaa !22\n  %98 = getelementptr inbounds %union.StackValue, ptr %97, i64 38, i32 0, i32 1\n  store i8 0, ptr %98, align 8, !tbaa !22\n  %99 = load ptr, ptr %20, align 8, !tbaa !22\n  %100 = getelementptr inbounds %union.StackValue, ptr %99, i64 39, i32 0, i32 1\n  store i8 0, ptr %100, align 8, !tbaa !22\n  %101 = load ptr, ptr %20, align 8, !tbaa !22\n  %102 = getelementptr inbounds %union.StackValue, ptr %101, i64 40, i32 0, i32 1\n  store i8 0, ptr %102, align 8, !tbaa !22\n  %103 = load ptr, ptr %20, align 8, !tbaa !22\n  %104 = getelementptr inbounds %union.StackValue, ptr %103, i64 41, i32 0, i32 1\n  store i8 0, ptr %104, align 8, !tbaa !22\n  %105 = load ptr, ptr %20, align 8, !tbaa !22\n  %106 = getelementptr inbounds %union.StackValue, ptr %105, i64 42, i32 0, i32 1\n  store i8 0, ptr %106, align 8, !tbaa !22\n  %107 = load ptr, ptr %20, align 8, !tbaa !22\n  %108 = getelementptr inbounds %union.StackValue, ptr %107, i64 43, i32 0, i32 1\n  store i8 0, ptr %108, align 8, !tbaa !22\n  %109 = load ptr, ptr %20, align 8, !tbaa !22\n  %110 = getelementptr inbounds %union.StackValue, ptr %109, i64 44, i32 0, i32 1\n  store i8 0, ptr %110, align 8, !tbaa !22\n  %111 = load ptr, ptr %20, align 8, !tbaa !22\n  %112 = getelementptr inbounds %struct.lua_State, ptr %0, i64 0, i32 6\n  store ptr %111, ptr %112, align 8, !tbaa !22\n  %113 = getelementptr inbounds %union.StackValue, ptr %111, i64 40\n  %114 = getelementptr inbounds %struct.lua_State, ptr %0, i64 0, i32 9\n  store ptr %113, ptr %114, align 8, !tbaa !22\n  %115 = getelementptr inbounds %struct.lua_State, ptr %0, i64 0, i32 16\n  %116 = getelementptr inbounds %struct.lua_State, ptr %0, i64 0, i32 16, i32 2\n  %117 = getelementptr inbounds %struct.lua_State, ptr %0, i64 0, i32 16, i32 7\n  tail call void @llvm.memset.p0.i64(ptr noundef nonnull align 8 dereferenceable(16) %116, i8 0, i64 16, i1 false)\n  store i16 2, ptr %117, align 2, !tbaa !121\n  store ptr %111, ptr %115, align 8, !tbaa !22\n  %118 = getelementptr inbounds %struct.lua_State, ptr %0, i64 0, i32 16, i32 4\n  store ptr null, ptr %118, align 8, !tbaa !22\n  %119 = getelementptr inbounds %struct.lua_State, ptr %0, i64 0, i32 16, i32 6\n  store i16 0, ptr %119, align 4, !tbaa !133\n  %120 = getelementptr inbounds %struct.TValue, ptr %111, i64 0, i32 1\n  store i8 0, ptr %120, align 8, !tbaa !22\n  %121 = load ptr, ptr %112, align 8, !tbaa !22\n  %122 = getelementptr inbounds %union.StackValue, ptr %121, i64 1\n  store ptr %122, ptr %112, align 8, !tbaa !22\n  %123 = getelementptr inbounds %union.StackValue, ptr %121, i64 21\n  %124 = getelementptr inbounds %struct.lua_State, ptr %0, i64 0, i32 16, i32 1\n  store ptr %123, ptr %124, align 8, !tbaa !22\n  %125 = getelementptr inbounds %struct.lua_State, ptr %0, i64 0, i32 8\n  store ptr %115, ptr %125, align 8, !tbaa !30\n  ret void"
+  },
+  "top_by_instructions": [
+    {
+      "function": "luaV_execute",
+      "blocks": 843,
+      "instructions": 5262,
+      "conditional_branches": 0
+    },
+    {
+      "function": "__yk_opt_statement",
+      "blocks": 353,
+      "instructions": 2570,
+      "conditional_branches": 0
+    },
+    {
+      "function": "__yk_opt_llex",
+      "blocks": 385,
+      "instructions": 2273,
+      "conditional_branches": 0
+    },
+    {
+      "function": "__yk_opt_loadFunction",
+      "blocks": 287,
+      "instructions": 1801,
+      "conditional_branches": 0
+    },
+    {
+      "function": "statement",
+      "blocks": 154,
+      "instructions": 1390,
+      "conditional_branches": 0
+    },
+    {
+      "function": "__yk_opt_dumpFunction",
+      "blocks": 170,
+      "instructions": 1287,
+      "conditional_branches": 0
+    },
+    {
+      "function": "__yk_opt_luaK_posfix",
+      "blocks": 195,
+      "instructions": 1109,
+      "conditional_branches": 0
+    },
+    {
+      "function": "__yk_opt_luaC_step",
+      "blocks": 152,
+      "instructions": 945,
+      "conditional_branches": 0
+    },
+    {
+      "function": "luaK_posfix",
+      "blocks": 148,
+      "instructions": 848,
+      "conditional_branches": 0
+    },
+    {
+      "function": "llex",
+      "blocks": 147,
+      "instructions": 823,
+      "conditional_branches": 0
+    }
+  ],
+  "top_by_blocks": [
+    {
+      "function": "luaV_execute",
+      "blocks": 843,
+      "instructions": 5262,
+      "conditional_branches": 0
+    },
+    {
+      "function": "__yk_opt_llex",
+      "blocks": 385,
+      "instructions": 2273,
+      "conditional_branches": 0
+    },
+    {
+      "function": "__yk_opt_statement",
+      "blocks": 353,
+      "instructions": 2570,
+      "conditional_branches": 0
+    },
+    {
+      "function": "__yk_opt_loadFunction",
+      "blocks": 287,
+      "instructions": 1801,
+      "conditional_branches": 0
+    },
+    {
+      "function": "__yk_opt_luaK_posfix",
+      "blocks": 195,
+      "instructions": 1109,
+      "conditional_branches": 0
+    },
+    {
+      "function": "__yk_opt_dumpFunction",
+      "blocks": 170,
+      "instructions": 1287,
+      "conditional_branches": 0
+    },
+    {
+      "function": "statement",
+      "blocks": 154,
+      "instructions": 1390,
+      "conditional_branches": 0
+    },
+    {
+      "function": "__yk_opt_luaC_step",
+      "blocks": 152,
+      "instructions": 945,
+      "conditional_branches": 0
+    },
+    {
+      "function": "luaK_posfix",
+      "blocks": 148,
+      "instructions": 848,
+      "conditional_branches": 0
+    },
+    {
+      "function": "llex",
+      "blocks": 147,
+      "instructions": 823,
+      "conditional_branches": 0
+    }
+  ]
+}
