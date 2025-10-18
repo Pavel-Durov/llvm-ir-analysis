@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
@@ -12,4 +12,5 @@ pythonpath = ["src"]
 [project.optional-dependencies]
 dev = [
     "pytest>=8.4.2",
+    "ruff>=0.14.1",
 ]

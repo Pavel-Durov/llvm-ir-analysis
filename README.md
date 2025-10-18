@@ -11,6 +11,7 @@ Parses LLVM textual IR and MIR dumps and produces JSON summaries of functions an
 - MIR inputs:
   - [`ir/ykcbf.mir`](ir/ykcbf.mir)
   - [`ir/yklua.mir`](ir/yklua.mir)
+  - [`ir/yklua.ir`](ir/yklua.ir)
 
 
 ### Install
@@ -24,7 +25,7 @@ uv pip install -e .[dev]
 - Analyze a single file (default command is `analyze`):
 
 ```shell
-uv run python ./src/main.py ./ir/yklua.mir --skip-funcitons __yk_trace_basicblock -
+uv run python ./src/main.py ./ir/yklua.mir --skip-funcitons __yk_trace_basicblock
 ```
 
 
@@ -56,3 +57,25 @@ uv run python ./src/main.py ./ir/yklua.mir --skip-funcitons __yk_trace_basicbloc
 ```shell
 uv run pytest -q
 ```
+
+### Pre-commit (lint + tests)
+
+This repo uses pre-commit to run Ruff (lint + format) and the unit test suite before each commit.
+
+Setup (one-time):
+
+```shell
+uv run pre-commit install
+# optional: update hook versions
+uv run pre-commit autoupdate
+```
+
+Run hooks against all files:
+
+```shell
+uv run pre-commit run --all-files
+```
+
+What runs:
+- Ruff (with autofix) and Ruff format
+- Unit tests via `pytest`

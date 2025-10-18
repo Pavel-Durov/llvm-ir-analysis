@@ -1,0 +1,32 @@
+{
+  "summary": {
+    "total_functions": 1,
+    "total_basic_blocks": 420,
+    "total_instructions": 1028,
+    "average_instructions_per_block": 2.447619047619048,
+    "average_blocks_per_function": 420.0,
+    "average_instructions_per_function": 1028.0
+  },
+  "largest_block": {
+    "function": "yklua.mir",
+    "block": "liveins",
+    "instructions": 21,
+    "text": "  liveins: $r15\n  $edi = MOV32ri 135\n  $esi = MOV32ri 1\n  CALL64pcrel32 target-flags(x86-plt) @__yk_trace_basicblock, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit killed $edi, implicit killed $esi\n  renamable $ebx = MOV32rm $rbp, 1, $noreg, -84, $noreg :: (load (s32) from %stack.6)\n  $r13d = MOV32rr $ebx\n  renamable $r13d = ADD32ri killed renamable $r13d(tied-def 0), 1, implicit-def dead $eflags\n  renamable $r14 = MOV64rm $rbp, 1, $noreg, -64, $noreg :: (load (s64) from %stack.1)\n  $rdi = MOV64rr $r14\n  $esi = MOV32rr $r13d\n  $r12 = MOV64rr killed $r15\n  renamable $r15d = MOV32rm $rbp, 1, $noreg, -68, $noreg :: (load (s32) from %stack.7)\n  $edx = MOV32rr $r15d\n  CALL64pcrel32 @luaF_getlocalname, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit killed $rdi, implicit killed $esi, implicit killed $edx, implicit-def $rax\n  STACKMAP 1, 0, killed renamable $r14, 3, $r12, 3, 1, 8, $rbp, -56, 3, 1, 8, $rbp, -56, 3, 1, 8, $rbp, -80, 3, 1, 8, $rbp, -104, 3, killed renamable $r15d, 3, killed renamable $ebx, 3, killed renamable $r13d, 3, implicit-def dead early-clobber $r11\n  $rcx = MOV64rr killed $r12\n  renamable $rdx = MOV64rm $rbp, 1, $noreg, -56, $noreg :: (load (s64) from %stack.3)\n  $r12 = MOV64rr killed $rax\n  renamable $rsi = MOV64rm $rbp, 1, $noreg, -104, $noreg :: (load (s64) from %stack.9)\n  $rbx = MOV64rr killed $rdx\n  $r15 = MOV64rr killed $rcx\n  $r13 = MOV64rr killed $rsi\n"
+  },
+  "top_by_instructions": [
+    {
+      "function": "yklua.mir",
+      "blocks": 420,
+      "instructions": 1028,
+      "conditional_branches": 0
+    }
+  ],
+  "top_by_blocks": [
+    {
+      "function": "yklua.mir",
+      "blocks": 420,
+      "instructions": 1028,
+      "conditional_branches": 0
+    }
+  ]
+}
