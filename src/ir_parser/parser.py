@@ -136,6 +136,26 @@ def analyze_ir(filename: str, skip_patterns=None) -> Dict[str, Function]:
                     current_block = None
                     current_block_lines = None
                     continue
+                # Heuristic: some dumps have blocks without explicit function headers
+                # If we see a block label or MIR bb.N outside a function, synthesize one
+                if bb_mir_re.match(line):
+                    current_function = Path(filename).name
+                    in_function = True
+                    in_mir_function = True
+                    current_block = line.split(':', 1)[0].strip()
+                    current_block_lines = [line]
+                    skip_current_function = bool(skip_patterns and any(pat in current_function for pat in skip_patterns))
+                    continue
+                # Generic IR label like "entry:" or numeric "42:" without '=' before ':'
+                label_guess = is_block_label(stripped)
+                if label_guess is not None:
+                    current_function = Path(filename).name
+                    in_function = True
+                    in_mir_function = False
+                    current_block = label_guess
+                    current_block_lines = [line]
+                    skip_current_function = bool(skip_patterns and any(pat in current_function for pat in skip_patterns))
+                    continue
                 continue
 
             if not in_mir_function:
