@@ -95,3 +95,10 @@ class SummaryReport:
         return json.dumps(self.to_dict(), indent=indent)
 
 
+@dataclass
+class RawBlock:
+    function_name: str
+    in_mir: bool
+    lines: List[str]
+
+

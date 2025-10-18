@@ -39,7 +39,20 @@ import pytest
         %0:gr64 = MOV64rm %10:gr64, 1, $noreg, 0, $noreg :: (load (s64) from %ir.0)
 
   """, 3),
-    ])
+(
+    """
+
+bb.13 (%ir-block.103):
+; predecessors: %bb.11
+  successors: %bb.15(0x40000000), %bb.14(0x40000000); %bb.15(50.00%), %bb.14(50.00%)
+
+  %21:gr64 = MOV64rm %1:gr64, 1, $noreg, 256, $noreg :: (load (s64) from %ir.104)
+  TEST64rr %21:gr64, %21:gr64, implicit-def $eflags
+  JCC_1 %bb.15, 4, implicit $eflags
+  JMP_1 %bb.14
+""", 4),
+])
 def test_mir_block_counts_instructions(ir:str, count:int):
     blk = parse_basic_block(ir.splitlines(), in_mir=True)
     assert blk.instructions == count
+    assert len(blk.instruction_lines) == count
