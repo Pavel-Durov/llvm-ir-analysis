@@ -9,6 +9,7 @@ from typing import Dict, List
 class Block:
     block: str
     instructions: int
+    instruction_lines: List[str] = field(default_factory=list)
     conditional_branches: int = 0
     text: str = ""
 

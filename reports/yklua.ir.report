@@ -1,11 +1,11 @@
 {
   "summary": {
-    "total_functions": 1139,
-    "total_basic_blocks": 36980,
-    "total_instructions": 216541,
-    "average_instructions_per_block": 5.855624661979449,
-    "average_blocks_per_function": 32.46707638279192,
-    "average_instructions_per_function": 190.11501316944688
+    "total_functions": 1131,
+    "total_basic_blocks": 20598,
+    "total_instructions": 120070,
+    "average_instructions_per_block": 5.829206719098941,
+    "average_blocks_per_function": 18.212201591511935,
+    "average_instructions_per_function": 106.16268788682582
   },
   "largest_block": {
     "function": "stack_init",
@@ -16,124 +16,124 @@
   "top_by_instructions": [
     {
       "function": "luaV_execute",
-      "blocks": 1686,
-      "instructions": 10524,
+      "blocks": 843,
+      "instructions": 5262,
       "conditional_branches": 0
     },
     {
       "function": "__yk_opt_statement",
-      "blocks": 706,
-      "instructions": 5140,
+      "blocks": 353,
+      "instructions": 2570,
       "conditional_branches": 0
     },
     {
       "function": "__yk_opt_llex",
-      "blocks": 770,
-      "instructions": 4546,
+      "blocks": 385,
+      "instructions": 2273,
       "conditional_branches": 0
     },
     {
       "function": "__yk_opt_loadFunction",
-      "blocks": 574,
-      "instructions": 3602,
+      "blocks": 287,
+      "instructions": 1801,
       "conditional_branches": 0
     },
     {
       "function": "statement",
-      "blocks": 308,
-      "instructions": 2780,
+      "blocks": 154,
+      "instructions": 1390,
       "conditional_branches": 0
     },
     {
       "function": "__yk_opt_dumpFunction",
-      "blocks": 340,
-      "instructions": 2574,
+      "blocks": 170,
+      "instructions": 1287,
       "conditional_branches": 0
     },
     {
       "function": "__yk_opt_luaK_posfix",
-      "blocks": 390,
-      "instructions": 2218,
+      "blocks": 195,
+      "instructions": 1109,
       "conditional_branches": 0
     },
     {
       "function": "__yk_opt_luaC_step",
-      "blocks": 304,
-      "instructions": 1890,
+      "blocks": 152,
+      "instructions": 945,
       "conditional_branches": 0
     },
     {
       "function": "luaK_posfix",
-      "blocks": 296,
-      "instructions": 1696,
+      "blocks": 148,
+      "instructions": 848,
       "conditional_branches": 0
     },
     {
       "function": "llex",
-      "blocks": 294,
-      "instructions": 1646,
+      "blocks": 147,
+      "instructions": 823,
       "conditional_branches": 0
     }
   ],
   "top_by_blocks": [
     {
       "function": "luaV_execute",
-      "blocks": 1686,
-      "instructions": 10524,
+      "blocks": 843,
+      "instructions": 5262,
       "conditional_branches": 0
     },
     {
       "function": "__yk_opt_llex",
-      "blocks": 770,
-      "instructions": 4546,
+      "blocks": 385,
+      "instructions": 2273,
       "conditional_branches": 0
     },
     {
       "function": "__yk_opt_statement",
-      "blocks": 706,
-      "instructions": 5140,
+      "blocks": 353,
+      "instructions": 2570,
       "conditional_branches": 0
     },
     {
       "function": "__yk_opt_loadFunction",
-      "blocks": 574,
-      "instructions": 3602,
+      "blocks": 287,
+      "instructions": 1801,
       "conditional_branches": 0
     },
     {
       "function": "__yk_opt_luaK_posfix",
-      "blocks": 390,
-      "instructions": 2218,
+      "blocks": 195,
+      "instructions": 1109,
       "conditional_branches": 0
     },
     {
       "function": "__yk_opt_dumpFunction",
-      "blocks": 340,
-      "instructions": 2574,
+      "blocks": 170,
+      "instructions": 1287,
       "conditional_branches": 0
     },
     {
       "function": "statement",
-      "blocks": 308,
-      "instructions": 2780,
+      "blocks": 154,
+      "instructions": 1390,
       "conditional_branches": 0
     },
     {
       "function": "__yk_opt_luaC_step",
-      "blocks": 304,
-      "instructions": 1890,
+      "blocks": 152,
+      "instructions": 945,
       "conditional_branches": 0
     },
     {
       "function": "luaK_posfix",
-      "blocks": 296,
-      "instructions": 1696,
+      "blocks": 148,
+      "instructions": 848,
       "conditional_branches": 0
     },
     {
       "function": "llex",
-      "blocks": 294,
-      "instructions": 1646,
+      "blocks": 147,
+      "instructions": 823,
       "conditional_branches": 0
     }
   ]

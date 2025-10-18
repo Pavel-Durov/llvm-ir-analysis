@@ -9,16 +9,34 @@ from .model import Block, Function
 
 def parse_basic_block(block_lines: List[str], in_mir: bool) -> Block:
     label = ""
-    instructions = 0
     text = "\n".join(block_lines) if block_lines else ""
+    collected: List[str] = []
 
-    # Determine label from first non-empty line
-    first = next((ln for ln in block_lines if ln.strip()), "")
-    if first:
-        if in_mir:
-            label = first.split(":", 1)[0].strip()
+    # Determine label line, adaptively
+    label_line: str | None = None
+    effective_in_mir = in_mir
+    if effective_in_mir:
+        bb_label_re = re.compile(r"^\s*bb\.\d+\b")
+        for ln in block_lines:
+            if bb_label_re.match(ln):
+                label_line = ln
+                break
+    # Fallback: treat as IR-style label if no MIR label detected
+    if label_line is None:
+        first = next((ln for ln in block_lines if ln.strip()), "")
+        if first:
+            label_line = first
+            s = first.strip()
+            idx = s.find(":")
+            if idx > 0 and "=" not in s[:idx]:
+                effective_in_mir = False
+
+    # Extract label string
+    if label_line:
+        if effective_in_mir:
+            label = label_line.split(":", 1)[0].strip()
         else:
-            stripped = first.strip()
+            stripped = label_line.strip()
             colon_idx = stripped.find(":")
             if colon_idx > 0 and "=" not in stripped[:colon_idx]:
                 label = stripped[:colon_idx].strip()
@@ -31,7 +49,7 @@ def parse_basic_block(block_lines: List[str], in_mir: bool) -> Block:
         if not s:
             continue
         # Skip the label line itself
-        if first and ln == first:
+        if label_line and ln == label_line:
             continue
         # Skip debug/module info that may be embedded in block text by dumps
         if (
@@ -55,14 +73,21 @@ def parse_basic_block(block_lines: List[str], in_mir: bool) -> Block:
                 in_switch = False
             continue
         if s.startswith('switch '):
-            instructions += 1
+            collected.append(ln)
             in_switch = True
             continue
-        if in_mir and (s.startswith("successors:") or s.startswith("predecessors:") or s.startswith("liveins:")):
+        if effective_in_mir and (
+            s.startswith("successors:") or
+            s.startswith("predecessors:") or
+            s.startswith("liveins:") or
+            s.startswith("Frame Objects") or
+            s.startswith("Function Live Ins") or
+            s.startswith("fi#")
+        ):
             continue
-        instructions += 1
+        collected.append(ln)
 
-    return Block(block=label, instructions=instructions, text=text)
+    return Block(block=label, instructions=len(collected), instruction_lines=collected, text=text)
 
 
 def analyze_ir(filename: str, skip_patterns=None) -> Dict[str, Function]:
@@ -93,9 +118,11 @@ def analyze_ir(filename: str, skip_patterns=None) -> Dict[str, Function]:
                 functions[current_function] = fn
             blk = parse_basic_block(current_block_lines or [], in_mir_function)
             blk.block = blk.block or current_block
-            fn.blocks += 1
-            fn.total_instructions += blk.instructions
-            fn.blocks_detail.append(blk)
+            # Only record blocks that contain at least one instruction
+            if blk.instructions > 0:
+                fn.blocks += 1
+                fn.total_instructions += blk.instructions
+                fn.blocks_detail.append(blk)
         current_block = None
         current_block_lines = None
 
@@ -179,6 +206,9 @@ def analyze_ir(filename: str, skip_patterns=None) -> Dict[str, Function]:
                     continue
 
             if in_mir_function:
+                # Skip MIR comment/directive lines outright
+                if stripped.startswith(';') or stripped.startswith('#'):
+                    continue
                 if bb_mir_re.match(line):
                     finish_block()
                     current_block = line.split(':', 1)[0].strip()
