@@ -17,7 +17,7 @@ Parses LLVM textual IR and MIR dumps and produces JSON summaries of functions an
 ### Install
 
 ```shell
-uv pip install -e .[dev]
+uv sync --dev
 ```
 
 ### CLI
@@ -25,7 +25,7 @@ uv pip install -e .[dev]
 - Analyze a single file (default command is `analyze`):
 
 ```shell
-uv run python ./src/main.py ./ir/yklua.mir --skip-funcitons __yk_trace_basicblock
+uv run python -m src.main ./ir/yklua.mir --skip-funcitons __yk_trace_basicblock
 ```
 
 
