@@ -3,21 +3,25 @@
 Parses LLVM textual IR and MIR dumps and produces JSON summaries of functions and basic blocks.
 
 
+- [Spreadsheet with yklua MIT statistics](https://docs.google.com/spreadsheets/d/10KksY3v4vp2umZwwiKvySjJpVQIi5cJ2GR7yn8quATg/edit?gid=37686139#gid=37686139)
+
 ### Samples
 
 - Reports:
   - [`reports/ykcbf.report`](reports/ykcbf.report)
   - [`reports/yklua.report`](reports/yklua.report)
+  - [`reports/yklua.mir.llvm.report`](yklua.mir.llvm.report)
 - MIR inputs:
   - [`ir/ykcbf.mir`](ir/ykcbf.mir)
   - [`ir/yklua.mir`](ir/yklua.mir)
   - [`ir/yklua.ir`](ir/yklua.ir)
 
 
+
 ### Install
 
 ```shell
-uv pip install -e .[dev]
+uv sync --dev
 ```
 
 ### CLI
@@ -25,7 +29,7 @@ uv pip install -e .[dev]
 - Analyze a single file (default command is `analyze`):
 
 ```shell
-uv run python ./src/main.py ./ir/yklua.mir --skip-funcitons __yk_trace_basicblock
+uv run python -m src.main ./ir/yklua.mir --skip-funcitons __yk_trace_basicblock
 ```
 
 

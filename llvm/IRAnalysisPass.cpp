@@ -1,3 +1,29 @@
+//===----------------------------------------------------------------------===//
+//
+// IR Analysis Pass
+//
+// This pass collects statistics about AOT IR (LLVM IR) and MIR (Machine IR)
+// during compilation and outputs detailed basic block information to a CSV file.
+//
+// CSV Output Format:
+//   The pass generates a CSV file containing per-basic-block data with columns:
+//   - function_name: Name of the function containing the basic block
+//   - basicblock_id: Basic block identifier (e.g., BB#0, BB#1)
+//   - number_of_instructions: Count of executable instructions in the block
+//   - instructions: Newline-separated list of instruction strings
+//
+// Instruction Counting:
+//   Only actual executable machine instructions that will become assembly code
+//   are counted. The following are explicitly excluded:
+//   - Debug instructions (DBG_VALUE, DBG_LABEL, DBG_PHI, etc.)
+//   - Pseudo-instructions that do not correspond to real machine instructions
+//   - Meta instructions that produce no executable output
+//   - Position markers (EH/GC labels and CFI instructions for unwinding)
+//   - Profiling pseudo-probes for instrumentation
+//   - Stack frame management pseudo-operations (FrameSetup/FrameDestroy)
+//
+//===----------------------------------------------------------------------===//
+
 #include "llvm/CodeGen/IRAnalysisPass.h"
 #include "llvm/CodeGen/MachineFunction.h"
 #include "llvm/CodeGen/MachineFunctionPass.h"
@@ -144,8 +170,18 @@ bool IRAnalysisPass::runOnMachineFunction(MachineFunction &MF) {
     bbInfo.basicBlockId = "BB#" + std::to_string(MBB.getNumber());
     
     for (const MachineInstr &MI : MBB) {
-      // Exclude debug instructions from the count
-      if (!MI.isDebugInstr()) {
+      // Only count actual executable machine instructions that will become assembly code.
+      // Exclude:
+      //  - isDebugInstr(): debug information (DBG_VALUE, DBG_LABEL, etc.)
+      //  - isPseudo(): pseudo-instructions that do not correspond to real machine instructions
+      //  - isMetaInstruction(): instructions that do not produce any executable output
+      //  - isPosition(): position markers (EH/GC labels and CFI instructions for unwinding)
+      //  - isPseudoProbe(): profiling pseudo-probes for instrumentation
+      //  - FrameSetup/FrameDestroy: stack frame management pseudo-operations
+      if (!MI.isDebugInstr() && !MI.isPseudo() && !MI.isMetaInstruction() &&
+          !MI.isPosition() && !MI.isPseudoProbe() &&
+          !MI.getFlag(MachineInstr::FrameSetup) &&
+          !MI.getFlag(MachineInstr::FrameDestroy)) {
         numMIRInsts++;
         
         // Convert instruction to string
@@ -221,11 +257,11 @@ bool IRAnalysisPass::runOnMachineFunction(MachineFunction &MF) {
         std::string escapedFunctionName = escapeCSVField(bbInfo.functionName);
         std::string escapedBasicBlockId = escapeCSVField(bbInfo.basicBlockId);
 
-        // Join instructions with semicolon separator
+        // Join instructions with newline separator
         std::string instructionsStr;
         for (size_t i = 0; i < bbInfo.instructions.size(); ++i) {
           if (i > 0) {
-            instructionsStr += "; ";
+            instructionsStr += "\n";
           }
           instructionsStr += bbInfo.instructions[i];
         }
@@ -277,7 +313,7 @@ IRAnalysisPass::~IRAnalysisPass() {
     errs() << "\n=== Address-Taken Functions ===\n";
     errs() << "Total: " << addressTakenFunctions.size() << "\n";
     for (const auto &funcName : addressTakenFunctions) {
-      errs() << "  " << funcName << "\n";
+      errs() << "  " << funcName << ";";
     }
     errs() << "==============================\n";
   }
