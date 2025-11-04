@@ -82,7 +82,10 @@ def parse_basic_block(block_lines: List[str], in_mir: bool) -> Block:
             s.startswith("liveins:") or
             s.startswith("Frame Objects") or
             s.startswith("Function Live Ins") or
-            s.startswith("fi#")
+            s.startswith("fi#") or
+            s.startswith("frame-setup ") or
+            s.startswith("frame-destroy ") or
+            s.startswith("CFI_INSTRUCTION")
         ):
             continue
         collected.append(ln)
