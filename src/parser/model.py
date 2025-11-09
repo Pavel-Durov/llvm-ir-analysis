@@ -6,6 +6,18 @@ from typing import Dict, List
 
 
 @dataclass
+class YkTraceStats:
+    """Statistics for __yk_trace_basicblock calls."""
+    num_blocks: int = 0  # Number of blocks with __yk_trace_basicblock calls
+    num_instructions: int = 0  # Total instructions in those blocks
+    total_calls: int = 0  # Total __yk_trace_basicblock calls
+    avg_instr_per_call: float = 0.0  # Average instructions per call
+    def has_data(self) -> bool:
+        """Check if there are any tracing statistics."""
+        return self.total_calls > 0
+
+
+@dataclass
 class Block:
     block: str
     instructions: int

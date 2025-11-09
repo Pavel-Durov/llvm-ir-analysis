@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Dict, List, TYPE_CHECKING
 
-from .model import Function
+from .model import Function, YkTraceStats
 
 if TYPE_CHECKING:
     from report.report import SummaryReport
@@ -55,6 +55,30 @@ class BaseParser(ABC):
         if self.allowed_functions is not None:
             self.functions = {n: fn for n, fn in self.functions.items() 
                             if n in self.allowed_functions}
+
+    def _compute_yk_trace_stats(self) -> YkTraceStats:
+        """Compute __yk_trace_basicblock statistics from parsed functions.
+        
+        Returns:
+            YkTraceStats object with computed statistics
+        """
+        blocks_with_yk_trace = []
+        for fn in self.functions.values():
+            for blk in fn.blocks_detail:
+                if blk.yk_trace_bb_calls > 0:
+                    blocks_with_yk_trace.append(blk)
+        
+        num_blocks = len(blocks_with_yk_trace)
+        num_instructions = sum(blk.instructions for blk in blocks_with_yk_trace)
+        total_calls = sum(blk.yk_trace_bb_calls for blk in blocks_with_yk_trace)
+        avg_instr_per_call = (num_instructions / total_calls) if total_calls > 0 else 0.0
+        
+        return YkTraceStats(
+            num_blocks=num_blocks,
+            num_instructions=num_instructions,
+            total_calls=total_calls,
+            avg_instr_per_call=avg_instr_per_call,
+        )
 
     def create_summary_report(self) -> 'SummaryReport':
         """Create a summary report for the parsed functions.

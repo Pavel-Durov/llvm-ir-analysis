@@ -277,25 +277,26 @@ test_func2:
 	retq
 	# -- End function
 """
-    
+
     with tempfile.NamedTemporaryFile(mode='w', suffix='.s', delete=False) as f:
         f.write(asm_content)
         temp_path = f.name
-    
+
     try:
         parser = ASMParser()
         parser.parse(temp_path)
         report = parser.create_summary_report()
-        
+
         # Check basic stats
         assert report.num_functions == 2
         assert report.num_basic_blocks == 3
-        
+
         # Check __yk_trace_basicblock stats
-        assert report.num_blocks_with_yk_trace == 2
-        assert report.total_yk_trace_calls == 2
-        assert report.num_instructions_in_yk_trace_blocks > 0
-        assert report.avg_instr_per_yk_trace_call > 0
+        assert report.yk_trace_stats is not None
+        assert report.yk_trace_stats.num_blocks == 2
+        assert report.yk_trace_stats.total_calls == 2
+        assert report.yk_trace_stats.num_instructions > 0
+        assert report.yk_trace_stats.avg_instr_per_call > 0
     finally:
         Path(temp_path).unlink()
 

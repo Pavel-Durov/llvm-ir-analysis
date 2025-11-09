@@ -2,6 +2,10 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from parser.model import YkTraceStats
 
 
 @dataclass
@@ -13,10 +17,7 @@ class SummaryReport:
     avg_instr_per_block: float
     function_names: list[str]
     # __yk_trace_basicblock metrics
-    num_blocks_with_yk_trace: int = 0
-    num_instructions_in_yk_trace_blocks: int = 0
-    total_yk_trace_calls: int = 0
-    avg_instr_per_yk_trace_call: float = 0.0
+    yk_trace_stats: 'YkTraceStats | None' = None
 
     def print_to_console(self, print_function_list: bool = False) -> None:
         """Print the report to console."""
@@ -32,11 +33,11 @@ class SummaryReport:
         print(f"Average instructions per basic block: {self.avg_instr_per_block:.2f}")
         
         # Print __yk_trace_basicblock statistics if they exist
-        if self.total_yk_trace_calls > 0:
-            print(f"\nBlocks with __yk_trace_basicblock: {self.num_blocks_with_yk_trace}")
-            print(f"Instructions in those blocks: {self.num_instructions_in_yk_trace_blocks}")
-            print(f"Total __yk_trace_basicblock calls: {self.total_yk_trace_calls}")
-            print(f"Average instructions per __yk_trace_basicblock call: {self.avg_instr_per_yk_trace_call:.2f}")
+        if self.yk_trace_stats and self.yk_trace_stats.has_data():
+            print(f"\nBlocks with __yk_trace_basicblock: {self.yk_trace_stats.num_blocks}")
+            print(f"Instructions in those blocks: {self.yk_trace_stats.num_instructions}")
+            print(f"Total __yk_trace_basicblock calls: {self.yk_trace_stats.total_calls}")
+            print(f"Average instructions per __yk_trace_basicblock call: {self.yk_trace_stats.avg_instr_per_call:.2f}")
 
     def to_dict(self) -> dict:
         """Convert report to dictionary."""
@@ -49,12 +50,12 @@ class SummaryReport:
             }
         }
         
-        if self.total_yk_trace_calls > 0:
+        if self.yk_trace_stats and self.yk_trace_stats.has_data():
             report['yk_trace_basicblock'] = {
-                'blocks_with_calls': self.num_blocks_with_yk_trace,
-                'instructions_in_blocks': self.num_instructions_in_yk_trace_blocks,
-                'total_calls': self.total_yk_trace_calls,
-                'average_instructions_per_call': self.avg_instr_per_yk_trace_call,
+                'blocks_with_calls': self.yk_trace_stats.num_blocks,
+                'instructions_in_blocks': self.yk_trace_stats.num_instructions,
+                'total_calls': self.yk_trace_stats.total_calls,
+                'average_instructions_per_call': self.yk_trace_stats.avg_instr_per_call,
             }
         
         return report

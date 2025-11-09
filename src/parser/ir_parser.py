@@ -224,23 +224,8 @@ class IRParser(BaseParser):
         # Get base report from parent
         report = super().create_summary_report()
         
-        # Compute __yk_trace_basicblock statistics
-        blocks_with_yk_trace = []
-        for fn in self.functions.values():
-            for blk in fn.blocks_detail:
-                if blk.yk_trace_bb_calls > 0:
-                    blocks_with_yk_trace.append(blk)
-        
-        num_blocks_with_yk_trace = len(blocks_with_yk_trace)
-        num_instructions_in_yk_trace_blocks = sum(blk.instructions for blk in blocks_with_yk_trace)
-        total_yk_trace_calls = sum(blk.yk_trace_bb_calls for blk in blocks_with_yk_trace)
-        avg_instr_per_yk_trace_call = (num_instructions_in_yk_trace_blocks / total_yk_trace_calls) if total_yk_trace_calls > 0 else 0.0
-        
-        # Add __yk_trace_basicblock metrics to report
-        report.num_blocks_with_yk_trace = num_blocks_with_yk_trace
-        report.num_instructions_in_yk_trace_blocks = num_instructions_in_yk_trace_blocks
-        report.total_yk_trace_calls = total_yk_trace_calls
-        report.avg_instr_per_yk_trace_call = avg_instr_per_yk_trace_call
+        # Compute and add __yk_trace_basicblock statistics
+        report.yk_trace_stats = self._compute_yk_trace_stats()
         
         return report
 
