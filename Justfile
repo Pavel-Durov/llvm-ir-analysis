@@ -56,7 +56,7 @@ parse_mir_to_fs: extract_ir_defined_functions
 		--output-format fs \
 		--output-dir ./temp/analysis \
 		--print-analysis \
-		ir/yklua.mir
+		data/yklua.mir
 
 # Analyse MIR without filesystem output (filters debug/pseudo/meta instructions)
 mir_analysis:
@@ -64,7 +64,7 @@ mir_analysis:
 	uv run python ./src/main.py \
 		--input-format mir \
 		--print-analysis \
-		ir/yklua.mir
+		data/yklua.mir
 
 # Print statistics for both MIR and assembly
 print_analysis: mir_analysis llc_asm_analysis
