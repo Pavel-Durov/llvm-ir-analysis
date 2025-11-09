@@ -1,85 +1,126 @@
-## LLVM IR/MIR analyzer
+## LLVM IR/MIR/ASM Analyser
 
-Parses LLVM textual IR and MIR dumps and produces JSON summaries of functions and basic blocks.
+Parses LLVM textual IR, Machine IR (MIR), and assembly dumps to analyse functions, basic blocks, and instructions.
 
+### Features
 
-- [Spreadsheet with yklua MIT statistics](https://docs.google.com/spreadsheets/d/10KksY3v4vp2umZwwiKvySjJpVQIi5cJ2GR7yn8quATg/edit?gid=37686139#gid=37686139)
+- **Multi-format support**: IR (.ll/.ir), MIR (.mir), and assembly (.s/.asm)
+- **Modular parser architecture**: Separate parsers for each format (IRParser, MIRParser, ASMParser)
+- **Function filtering**: Skip by substring or prefix patterns
+- **Function type selection**: Analyse defined, declared, or all functions (IR only)
+- **Filesystem output**: Export parsed blocks to a directory tree structure
+- **Statistical analysis**: Count functions, basic blocks, instructions, and averages
+- **MIR pseudo-instruction filtering**: Emulates LLVM's MachineInstr predicates to exclude debug/pseudo/meta instructions
 
-### Samples
-
-- Reports:
-  - [`reports/ykcbf.report`](reports/ykcbf.report)
-  - [`reports/yklua.report`](reports/yklua.report)
-  - [`reports/yklua.mir.llvm.report`](yklua.mir.llvm.report)
-- MIR inputs:
-  - [`ir/ykcbf.mir`](ir/ykcbf.mir)
-  - [`ir/yklua.mir`](ir/yklua.mir)
-  - [`ir/yklua.ir`](ir/yklua.ir)
-
-
-
-### Install
+## Installation
 
 ```shell
-uv sync --dev
+just init
 ```
 
-### CLI
+## Quick Start
 
-- Analyze a single file (default command is `analyze`):
+### Analyse IR file
+
+```bash
+uv run python ./src/main.py --input-format ir --print-analysis ir/yklua.ir
+```
+
+### Analyse MIR file (with pseudo-instruction filtering)
+
+```bash
+uv run python ./src/main.py --input-format mir --print-analysis ir/yklua.mir
+```
+
+### Analyse assembly file
+
+```bash
+uv run python ./src/main.py --input-format llc_asm --print-analysis data/yklua.llc.asm
+```
+
+### Parse to filesystem
+
+```bash
+uv run python ./src/main.py \
+  --input-format llc_asm \
+  --output-format fs \
+  --output-dir ./temp/analysis \
+  data/yklua.llc.asm
+```
+
+## CLI Options
+
+### Input
+
+- `input` - Path to input file (.ir, .mir, .s, .asm)
+- `--input-format {auto,ir,mir,llc_asm}` - Input format (default: auto)
+
+### Filtering
+
+- `--skip-func SUBSTR` - Skip functions containing substring (repeatable)
+- `--skip-func-prefix PREFIX` - Skip functions starting with prefix (repeatable)
+- `--func-type {defined,declared,all}` - Function type to analyse (default: defined)
+- `--functions-file FILE` - File with function names to include (one per line)
+
+### Output
+
+- `--output-format fs` - Write blocks to filesystem tree
+- `--output-dir DIR` - Output directory for filesystem mode
+- `--output-functions FILE` - Write function names to file
+- `--print-analysis` - Print statistics to stdout
+- `--print-function-list` - Print function names (requires --print-analysis)
+
+## Justfile Recipes
+
+Common tasks are defined in the `Justfile`:
+
+```bash
+# Set up environment
+just init
+
+# Format code
+just fmt
+
+# Lint code
+just lint
+
+# Run tests
+just test
+
+# Extract IR function names
+just extract_ir_defined_functions
+
+# Parse assembly to filesystem
+just parse_llc_asm_to_fs
+
+# Parse MIR to filesystem
+just parse_mir_to_fs
+
+# Parse both ASM and MIR
+just parse_to_fs
+
+# Run CLI with custom args
+just run -- --input-format mir --print-analysis ir/yklua.mir
+
+# Clean generated files
+just clean
+```
+
+## Testing
+
+Run the test suite:
 
 ```shell
-uv run python -m src.main ./ir/yklua.mir --skip-funcitons __yk_trace_basicblock
+just test
 ```
 
+### Pre-commit Setup
 
-### JSON output shape
-
-```json
-{
-  "summary": {
-    "total_functions": 1,
-    "total_basic_blocks": 13,
-    "total_instructions": 123,
-    "average_instructions_per_block": 9.46,
-    "average_blocks_per_function": 13.0,
-    "average_instructions_per_function": 123.0
-  },
-  "largest_block": {
-    "function": "GCTM",
-    "block": "38",
-    "instructions": 40,
-    "text": "... full basic block text ..."
-  },
-  "top_by_instructions": [ { "function": "GCTM", "blocks": 13, "instructions": 123, "conditional_branches": 0 } ],
-  "top_by_blocks": [ { "function": "GCTM", "blocks": 13, "instructions": 123, "conditional_branches": 0 } ]
-}
-```
-
-### Tests
-
-```shell
-uv run pytest -q
-```
-
-### Pre-commit (lint + tests)
-
-This repo uses pre-commit to run Ruff (lint + format) and the unit test suite before each commit.
-
-Setup (one-time):
-
-```shell
+```bash
 uv run pre-commit install
-# optional: update hook versions
-uv run pre-commit autoupdate
-```
-
-Run hooks against all files:
-
-```shell
 uv run pre-commit run --all-files
 ```
 
 What runs:
-- Ruff (with autofix) and Ruff format
-- Unit tests via `pytest`
+- Ruff (autofix + format)
+- Unit tests via pytest

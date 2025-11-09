@@ -1,15 +1,19 @@
-from ir_parser import parse_basic_block
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+
+from parser.mir_parser import MIRParser
 import pytest
 
 
 
-class TestCase():
+class MIRTestCase():
     def __init__(self, mir: str, count: int):
         self.mir = mir
         self.count = count
 
 
-SingleBlock = TestCase(
+SingleBlock = MIRTestCase(
     mir="""
     bb.20 (%ir-block.84):
         ; predecessors: %bb.19
@@ -26,7 +30,7 @@ SingleBlock = TestCase(
     count=7,
 )
 
-MultipleBlocks = TestCase(
+MultipleBlocks = MIRTestCase(
     mir="""
     bb.0 (%ir-block.149):
 ; predecessors: %bb.17
@@ -77,7 +81,8 @@ bb.28 (%ir-block.1):
     count=23,
 )
 @pytest.mark.parametrize("test_case", [SingleBlock, MultipleBlocks])
-def test_mir_block_counts_instructions(test_case: TestCase):
-    blk = parse_basic_block(test_case.mir.splitlines(), in_mir=True)
+def test_mir_block_counts_instructions(test_case: MIRTestCase):
+    parser = MIRParser()
+    blk = parser._parse_basic_block(test_case.mir.splitlines())
     assert blk.instructions == test_case.count
     assert len(blk.instruction_lines) == test_case.count
