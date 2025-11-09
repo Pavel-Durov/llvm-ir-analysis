@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import tempfile
 from pathlib import Path
 from typing import Dict, List
 
@@ -40,6 +41,21 @@ class IRParser(BaseParser):
 
         return functions
 
+    def parse_from_string(self, ir_text: str, skip_patterns: List[str] | None = None,
+                          skip_prefixes: List[str] | None = None) -> Dict[str, Function]:
+        """Parse LLVM IR from a string and return functions with basic block details.
+        
+        This is a convenience method for testing that writes the string to a temporary file.
+        """
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.ll', delete=False, encoding='utf-8') as f:
+            f.write(ir_text)
+            temp_path = f.name
+        
+        try:
+            return self.parse(temp_path, skip_patterns, skip_prefixes)
+        finally:
+            Path(temp_path).unlink(missing_ok=True)
+
     def _parse_basic_block(self, block_lines: List[str], in_mir: bool) -> Block:
         """Parse a basic block from IR."""
         label = ""
@@ -50,10 +66,11 @@ class IRParser(BaseParser):
         label_line: str | None = None
         first = next((ln for ln in block_lines if ln.strip()), "")
         if first:
-            label_line = first
             s = first.strip()
             idx = s.find(":")
             if idx > 0 and "=" not in s[:idx]:
+                # This is actually a label
+                label_line = first
                 label = s[:idx].strip()
 
         in_switch = False
@@ -115,7 +132,16 @@ class IRParser(BaseParser):
                     current_function = (m_define.group(1) or m_define.group(2))
                     if current_block_lines is not None:
                         blocks.append(RawBlock(function_name=current_function, in_mir=False, lines=current_block_lines))
-                        current_block_lines = None
+                    # Start collecting lines for the entry block (which may be unlabeled)
+                    current_block_lines = []
+                    continue
+
+                # End of function definition (closing brace)
+                if stripped == '}' and current_function is not None:
+                    if current_block_lines is not None:
+                        blocks.append(RawBlock(function_name=current_function, in_mir=False, lines=current_block_lines))
+                    current_function = None
+                    current_block_lines = None
                     continue
 
                 # IR label as block start

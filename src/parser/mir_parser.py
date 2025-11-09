@@ -100,6 +100,7 @@ class MIRParser(BaseParser):
                 s.startswith("PSEUDO_PROBE") or
                 # Stack frame pseudo-operations (!MI.getFlag(FrameSetup/FrameDestroy))
                 s.startswith("ADJCALLSTACKDOWN") or s.startswith("ADJCALLSTACKUP")):
+                
                 continue
 
             collected.append(ln)

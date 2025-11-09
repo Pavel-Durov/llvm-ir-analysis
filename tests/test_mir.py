@@ -80,7 +80,70 @@ bb.28 (%ir-block.1):
     """,
     count=23,
 )
-@pytest.mark.parametrize("test_case", [SingleBlock, MultipleBlocks])
+
+BlockWithNoInstructions = MIRTestCase(
+    mir="""
+bb.4 (%ir-block.28):
+; predecessors: %bb.3
+  successors: %bb.5(0x80000000); %bb.5(100.00%)
+    """,
+    count=0,
+)
+
+
+BlockWithSingleInstructions= MIRTestCase(
+    mir="""
+bb.6 (%ir-block.43):
+; predecessors: %bb.5
+  successors: %bb.7(0x80000000); %bb.7(100.00%)
+  MOV32mi %4:gr64, 1, $noreg, 40, $noreg, 1 :: (volatile store (s32) into %ir.44, align 8, !tbaa !22)
+    """,
+    count=1,
+)
+
+BlockWithStackInstructions = MIRTestCase(
+    mir="""
+bb.7 (%ir-block.32):
+; predecessors: %bb.6
+  successors: %bb.8
+
+  %52:gr32 = MOV32ri 161
+  %53:gr32 = MOV32ri 7
+  ADJCALLSTACKDOWN64 0, 0, 0, implicit-def $rsp, implicit-def $eflags, implicit-def $ssp, implicit $rsp, implicit $ssp
+  $edi = COPY %52:gr32
+  $esi = COPY %53:gr32
+  CALL64pcrel32 target-flags(x86-plt) @__yk_trace_basicblock, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit $esi
+  ADJCALLSTACKUP64 0, 0, implicit-def $rsp, implicit-def $eflags, implicit-def $ssp, implicit $rsp, implicit $ssp
+  %51:gr32 = SUB32rr %3:gr32(tied-def 0), %34:gr32, implicit-def $eflags
+  %4:gr32 = CMOV32rr %34:gr32(tied-def 0), %3:gr32, 15, implicit $eflags
+    """,
+    count=7,
+)
+
+
+SmallFunction = MIRTestCase(
+    mir="""
+# Machine code for function __yk_opt_lua_setcstacklimit: IsSSA, TracksLiveness
+
+bb.0 (%ir-block.2):
+  %2:gr32 = MOV32ri 200
+  $eax = COPY %2:gr32
+  RET 0, $eax
+
+# End machine code for function __yk_opt_lua_setcstacklimit.
+    """,
+    count=3,
+)
+
+
+@pytest.mark.parametrize("test_case", [
+    SingleBlock,
+    MultipleBlocks,
+    BlockWithNoInstructions,
+    BlockWithSingleInstructions,
+    BlockWithStackInstructions,
+    SmallFunction,
+])
 def test_mir_block_counts_instructions(test_case: MIRTestCase):
     parser = MIRParser()
     blk = parser._parse_basic_block(test_case.mir.splitlines())
