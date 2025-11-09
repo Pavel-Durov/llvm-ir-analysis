@@ -5,11 +5,19 @@ from pathlib import Path
 from typing import Dict, List
 
 from .base_parser import BaseParser
-from .model import Block, Function, RawBlock
+from .model import Block, Function, RawBlock, SummaryReport
 
 
 class MIRParser(BaseParser):
     """Parser for LLVM MIR (Machine IR) files."""
+
+    def __init__(self, allowed_functions: set[str] | None = None):
+        """Initialize MIR parser.
+        
+        Args:
+            allowed_functions: Optional set of function names to include.
+        """
+        super().__init__(allowed_functions)
 
     def parse(self, filename: str, skip_patterns: List[str] | None = None,
               skip_prefixes: List[str] | None = None) -> Dict[str, Function]:
@@ -38,7 +46,9 @@ class MIRParser(BaseParser):
                 if any(fn_name.startswith(p) for p in skip_prefixes):
                     del functions[fn_name]
 
-        return functions
+        self.functions = functions
+        self._apply_allowed_functions_filter()
+        return self.functions
 
     def _parse_basic_block(self, block_lines: List[str]) -> Block:
         """Parse a MIR basic block."""
@@ -100,16 +110,19 @@ class MIRParser(BaseParser):
                 s.startswith("PSEUDO_PROBE") or
                 # Stack frame pseudo-operations (!MI.getFlag(FrameSetup/FrameDestroy))
                 s.startswith("ADJCALLSTACKDOWN") or s.startswith("ADJCALLSTACKUP")):
-                
+
                 continue
 
             collected.append(ln)
 
-        return Block(block=label, instructions=len(collected), instruction_lines=collected, text=text)
+        # Count __yk_trace_basicblock calls
+        yk_trace_bb_calls = sum(1 for ln in collected if '__yk_trace_basicblock' in ln)
+        
+        return Block(block=label, instructions=len(collected), instruction_lines=collected, 
+                    text=text, yk_trace_bb_calls=yk_trace_bb_calls)
 
     def _extract_blocks(self, filename: str, skip_patterns: List[str] | None) -> List[RawBlock]:
         """Extract raw basic blocks from MIR file."""
-        func_mir_re = re.compile(r'^\s*Function:\s*(\S+)')
         func_mir_machine_code_re = re.compile(r'#\s*Machine code for function\s+(\S+):')
         bb_mir_re = re.compile(r'^\s*bb\.(\d+)\b')
 
@@ -122,15 +135,7 @@ class MIRParser(BaseParser):
             for raw_line in f:
                 line = raw_line.rstrip('\n')
 
-                m_mir = func_mir_re.match(line)
-                if m_mir:
-                    current_function = m_mir.group(1)
-                    if current_block_lines is not None:
-                        blocks.append(RawBlock(function_name=current_function, in_mir=True, lines=current_block_lines))
-                        current_block_lines = None
-                    continue
-
-                # Alternative MIR format: "# Machine code for function <name>:"
+                # Match "# Machine code for function <name>:"
                 m_mir_mc = func_mir_machine_code_re.search(line)
                 if m_mir_mc:
                     current_function = m_mir_mc.group(1)
@@ -166,4 +171,46 @@ class MIRParser(BaseParser):
             return filtered
 
         return blocks
+
+    def apply_func_type_filter(self, filename: str, func_type: str,
+                               skip_patterns: List[str] | None = None,
+                               skip_prefixes: List[str] | None = None) -> None:
+        """Apply function type filtering for MIR.
+
+        MIR has only defined functions; declared-only results in empty map.
+
+        Args:
+            filename: Path to the MIR file (unused, for API consistency)
+            func_type: Type of functions to include ('defined', 'declared', 'all')
+            skip_patterns: Skip functions (unused, for API consistency)
+            skip_prefixes: Skip prefixes (unused, for API consistency)
+        """
+        if func_type == 'declared':
+            # MIR has only defined functions; declared-only => empty map
+            self.functions = {}
+
+    def create_summary_report(self) -> SummaryReport:
+        """Create a summary report including MIR-specific metrics."""
+        # Get base report from parent
+        report = super().create_summary_report()
+
+        # Compute __yk_trace_basicblock statistics
+        blocks_with_yk_trace = []
+        for fn in self.functions.values():
+            for blk in fn.blocks_detail:
+                if blk.yk_trace_bb_calls > 0:
+                    blocks_with_yk_trace.append(blk)
+
+        num_blocks_with_yk_trace = len(blocks_with_yk_trace)
+        num_instructions_in_yk_trace_blocks = sum(blk.instructions for blk in blocks_with_yk_trace)
+        total_yk_trace_calls = sum(blk.yk_trace_bb_calls for blk in blocks_with_yk_trace)
+        avg_instr_per_yk_trace_call = (num_instructions_in_yk_trace_blocks / total_yk_trace_calls) if total_yk_trace_calls > 0 else 0.0
+
+        # Add __yk_trace_basicblock metrics to report
+        report.num_blocks_with_yk_trace = num_blocks_with_yk_trace
+        report.num_instructions_in_yk_trace_blocks = num_instructions_in_yk_trace_blocks
+        report.total_yk_trace_calls = total_yk_trace_calls
+        report.avg_instr_per_yk_trace_call = avg_instr_per_yk_trace_call
+
+        return report
 

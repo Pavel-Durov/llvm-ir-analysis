@@ -137,3 +137,81 @@ def test_ir_function_parsing(test_case: IRFunctionTestCase):
             f"{func_name}: expected {expected['blocks']} blocks, got {fn.blocks}"
         assert fn.total_instructions == expected['instructions'], \
             f"{func_name}: expected {expected['instructions']} instructions, got {fn.total_instructions}"
+
+
+def test_ir_yk_trace_basicblock_no_calls():
+    """Test IR block with no __yk_trace_basicblock calls."""
+    ir_lines = """entry:
+  %2 = load double, ptr %0, align 8
+  %3 = add double %2, 1.0
+  ret double %3"""
+
+    parser = IRParser()
+    blk = parser._parse_basic_block(ir_lines.splitlines(), in_mir=False)
+    assert blk.instructions == 3
+    assert blk.yk_trace_bb_calls == 0
+
+
+def test_ir_yk_trace_basicblock_single_call():
+    """Test IR block with one __yk_trace_basicblock call."""
+    ir_lines = """entry:
+  call void @__yk_trace_basicblock(i32 135, i32 0)
+  %2 = load double, ptr %0, align 8
+  ret double %2"""
+
+    parser = IRParser()
+    blk = parser._parse_basic_block(ir_lines.splitlines(), in_mir=False)
+    assert blk.instructions == 3
+    assert blk.yk_trace_bb_calls == 1
+
+
+def test_ir_yk_trace_basicblock_multiple_calls():
+    """Test IR block with multiple __yk_trace_basicblock calls."""
+    ir_lines = """entry:
+  call void @__yk_trace_basicblock(i32 135, i32 0)
+  %2 = load double, ptr %0, align 8
+  call void @__yk_trace_basicblock(i32 135, i32 1)
+  ret double %2"""
+
+    parser = IRParser()
+    blk = parser._parse_basic_block(ir_lines.splitlines(), in_mir=False)
+    assert blk.instructions == 4
+    assert blk.yk_trace_bb_calls == 2
+
+
+def test_ir_summary_report_yk_trace_stats():
+    """Test that summary report includes __yk_trace_basicblock statistics."""
+    ir_content = """define dso_local i32 @test_func1(ptr %0) {
+entry:
+  call void @__yk_trace_basicblock(i32 135, i32 0)
+  %2 = load i32, ptr %0, align 4
+  ret i32 %2
+}
+
+define dso_local double @test_func2(ptr %0) {
+entry:
+  %2 = load double, ptr %0, align 8
+  ret double %2
+
+bb1:
+  call void @__yk_trace_basicblock(i32 136, i32 1)
+  %3 = fadd double %2, 1.0
+  ret double %3
+}
+
+declare void @__yk_trace_basicblock(i32, i32)
+"""
+
+    parser = IRParser()
+    parser.parse_from_string(ir_content)
+    report = parser.create_summary_report()
+
+    # Check basic stats
+    assert report.num_functions == 2
+    assert report.num_basic_blocks == 3
+
+    # Check __yk_trace_basicblock stats
+    assert report.num_blocks_with_yk_trace == 2
+    assert report.total_yk_trace_calls == 2
+    assert report.num_instructions_in_yk_trace_blocks > 0
+    assert report.avg_instr_per_yk_trace_call > 0

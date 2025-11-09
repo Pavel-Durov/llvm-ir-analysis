@@ -195,3 +195,107 @@ def test_asm_empty_block():
     assert blk.instructions == 0
     assert len(blk.instruction_lines) == 0
 
+
+def test_asm_yk_trace_basicblock_no_calls():
+    """Test block with no __yk_trace_basicblock calls."""
+    lines = [
+        "# %bb.0:",
+        "	movq	%rax, %rbx",
+        "	addq	$16, %rsp",
+        "	retq",
+    ]
+    parser = ASMParser()
+    blk = parser._parse_basic_block(lines)
+    assert blk.instructions == 3
+    assert blk.yk_trace_bb_calls == 0
+
+
+def test_asm_yk_trace_basicblock_single_call():
+    """Test block with one __yk_trace_basicblock call."""
+    lines = [
+        "# %bb.1:",
+        "	movl	$135, %edi",
+        "	movl	$0, %esi",
+        "	callq	__yk_trace_basicblock",
+        "	movq	%rax, %rbx",
+        "	retq",
+    ]
+    parser = ASMParser()
+    blk = parser._parse_basic_block(lines)
+    assert blk.instructions == 5
+    assert blk.yk_trace_bb_calls == 1
+
+
+def test_asm_yk_trace_basicblock_multiple_calls():
+    """Test block with multiple __yk_trace_basicblock calls."""
+    lines = [
+        "# %bb.2:",
+        "	movl	$135, %edi",
+        "	movl	$0, %esi",
+        "	callq	__yk_trace_basicblock",
+        "	movq	%rax, %rbx",
+        "	callq	__yk_trace_basicblock",
+        "	addq	$16, %rsp",
+        "	retq",
+    ]
+    parser = ASMParser()
+    blk = parser._parse_basic_block(lines)
+    assert blk.instructions == 7
+    assert blk.yk_trace_bb_calls == 2
+
+
+def test_asm_summary_report_yk_trace_stats():
+    """Test that summary report includes __yk_trace_basicblock statistics."""
+    import tempfile
+    from pathlib import Path
+    
+    # Create a temporary ASM file with functions containing __yk_trace_basicblock calls
+    asm_content = """	.text
+	# -- Begin function test_func1
+	.globl	test_func1
+test_func1:
+# %bb.0:
+	movl	$135, %edi
+	movl	$0, %esi
+	callq	__yk_trace_basicblock
+	movq	%rax, %rbx
+	retq
+	# -- End function
+
+	# -- Begin function test_func2
+	.globl	test_func2
+test_func2:
+# %bb.0:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	retq
+# %bb.1:
+	movl	$136, %edi
+	movl	$1, %esi
+	callq	__yk_trace_basicblock
+	popq	%rbp
+	retq
+	# -- End function
+"""
+    
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.s', delete=False) as f:
+        f.write(asm_content)
+        temp_path = f.name
+    
+    try:
+        parser = ASMParser()
+        parser.parse(temp_path)
+        report = parser.create_summary_report()
+        
+        # Check basic stats
+        assert report.num_functions == 2
+        assert report.num_basic_blocks == 3
+        
+        # Check __yk_trace_basicblock stats
+        assert report.num_blocks_with_yk_trace == 2
+        assert report.total_yk_trace_calls == 2
+        assert report.num_instructions_in_yk_trace_blocks > 0
+        assert report.avg_instr_per_yk_trace_call > 0
+    finally:
+        Path(temp_path).unlink()
+

@@ -6,11 +6,19 @@ from pathlib import Path
 from typing import Dict, List
 
 from .base_parser import BaseParser
-from .model import Block, Function, RawBlock
+from .model import Block, Function, RawBlock, SummaryReport
 
 
 class IRParser(BaseParser):
     """Parser for LLVM IR (.ll/.ir) files."""
+
+    def __init__(self, allowed_functions: set[str] | None = None):
+        """Initialize IR parser.
+        
+        Args:
+            allowed_functions: Optional set of function names to include.
+        """
+        super().__init__(allowed_functions)
 
     def parse(self, filename: str, skip_patterns: List[str] | None = None,
               skip_prefixes: List[str] | None = None) -> Dict[str, Function]:
@@ -39,7 +47,9 @@ class IRParser(BaseParser):
                 if any(fn_name.startswith(p) for p in skip_prefixes):
                     del functions[fn_name]
 
-        return functions
+        self.functions = functions
+        self._apply_allowed_functions_filter()
+        return self.functions
 
     def parse_from_string(self, ir_text: str, skip_patterns: List[str] | None = None,
                           skip_prefixes: List[str] | None = None) -> Dict[str, Function]:
@@ -99,7 +109,11 @@ class IRParser(BaseParser):
                 continue
             collected.append(ln)
 
-        return Block(block=label, instructions=len(collected), instruction_lines=collected, text=text)
+        # Count __yk_trace_basicblock calls
+        yk_trace_bb_calls = sum(1 for ln in collected if '__yk_trace_basicblock' in ln)
+
+        return Block(block=label, instructions=len(collected), instruction_lines=collected, 
+                    text=text, yk_trace_bb_calls=yk_trace_bb_calls)
 
     def _is_ir_block_label(self, line_stripped: str) -> str | None:
         """Check if line is an IR block label."""
@@ -120,7 +134,7 @@ class IRParser(BaseParser):
         current_function: str | None = None
         blocks: List[RawBlock] = []
         current_block_lines: List[str] | None = None
-        synth_function_name = Path(filename).name
+
 
         with Path(filename).open('r', encoding='utf-8', errors='ignore') as f:
             for raw_line in f:
@@ -170,6 +184,65 @@ class IRParser(BaseParser):
             return filtered
 
         return blocks
+
+    def apply_func_type_filter(self, filename: str, func_type: str,
+                               skip_patterns: List[str] | None = None,
+                               skip_prefixes: List[str] | None = None) -> None:
+        """Apply function type filtering (declared/all) to parsed functions.
+
+        Args:
+            filename: Path to the IR file (needed to list declared functions)
+            func_type: Type of functions to include ('defined', 'declared', 'all')
+            skip_patterns: Skip functions whose name contains any of these substrings
+            skip_prefixes: Skip functions whose name starts with any of these prefixes
+        """
+        if func_type not in ('declared', 'all'):
+            return  # Nothing to do for 'defined'
+        _, declared_only = list_ir_functions(filename)
+
+        # Apply substring and prefix filters to declared_set
+        def keep_name(name: str) -> bool:
+            if skip_patterns and any(sub in name for sub in skip_patterns):
+                return False
+            if skip_prefixes and any(name.startswith(p) for p in skip_prefixes):
+                return False
+            return True
+
+        declared_filtered = {n for n in declared_only if keep_name(n)}
+
+        if func_type == 'declared':
+            # Replace with declared-only map (zero blocks)
+            self.functions = {n: Function(name=n) for n in declared_filtered}
+        else:  # all
+            # Keep existing defined (already filtered), add declared that are not present
+            for n in sorted(declared_filtered):
+                if n not in self.functions:
+                    self.functions[n] = Function(name=n)
+
+    def create_summary_report(self) -> SummaryReport:
+        """Create a summary report including IR-specific metrics."""
+        # Get base report from parent
+        report = super().create_summary_report()
+        
+        # Compute __yk_trace_basicblock statistics
+        blocks_with_yk_trace = []
+        for fn in self.functions.values():
+            for blk in fn.blocks_detail:
+                if blk.yk_trace_bb_calls > 0:
+                    blocks_with_yk_trace.append(blk)
+        
+        num_blocks_with_yk_trace = len(blocks_with_yk_trace)
+        num_instructions_in_yk_trace_blocks = sum(blk.instructions for blk in blocks_with_yk_trace)
+        total_yk_trace_calls = sum(blk.yk_trace_bb_calls for blk in blocks_with_yk_trace)
+        avg_instr_per_yk_trace_call = (num_instructions_in_yk_trace_blocks / total_yk_trace_calls) if total_yk_trace_calls > 0 else 0.0
+        
+        # Add __yk_trace_basicblock metrics to report
+        report.num_blocks_with_yk_trace = num_blocks_with_yk_trace
+        report.num_instructions_in_yk_trace_blocks = num_instructions_in_yk_trace_blocks
+        report.total_yk_trace_calls = total_yk_trace_calls
+        report.avg_instr_per_yk_trace_call = avg_instr_per_yk_trace_call
+        
+        return report
 
 
 def list_ir_functions(filename: str) -> tuple[set[str], set[str]]:

@@ -77,6 +77,20 @@ compile_llc_asm:
 	@echo "→ Compiling LLVM assembly..."
 	llc ./data/yklua.ir -o ./data/yklua.ll
 
+
+dump_func_stats:
+	@echo "→ Dumping function statistics..."
+	uv run python ./src/main.py --input-format llc_asm --print-analysis --print-function-list ./data/yklua.llc.asm  > reports/func.llc_asm
+	uv run python ./src/main.py --input-format mir --print-analysis --print-function-list ./data/yklua.mir > reports/func.mir
+	uv run python ./src/main.py --input-format ir --print-analysis --print-function-list ./data/yklua.ir > reports/func.ir
+
+func_stats:
+	@echo "asm stats:"
+	uv run python ./src/main.py --input-format llc_asm --print-analysis ./data/yklua.llc.asm
+	@echo "mir stats:"
+	uv run python ./src/main.py --input-format mir --print-analysis ./data/yklua.mir
+	@echo "ir stats:"
+	uv run python ./src/main.py --input-format ir --print-analysis ./data/yklua.ir
 # ============================================================================
 # Development & Maintenance
 # ============================================================================

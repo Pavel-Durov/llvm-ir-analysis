@@ -136,6 +136,19 @@ bb.0 (%ir-block.2):
 )
 
 
+NewFormatBlock = MIRTestCase(
+    mir="""
+bb.1 (%ir-block.6):
+; predecessors: %bb.0
+  successors: %bb.2(0x80000000); %bb.2(100.00%)
+  liveins: $edx, $esi, $rdi
+  MOV32mr renamable $rdi, 1, $noreg, 0, $noreg, killed renamable $esi :: (store (s32) into %ir.0, !tbaa !4)
+  MOV32mr killed renamable $rdi, 1, $noreg, 4, $noreg, killed renamable $edx :: (store (s32) into %ir.7, !tbaa !9)
+    """,
+    count=2,
+)
+
+
 @pytest.mark.parametrize("test_case", [
     SingleBlock,
     MultipleBlocks,
@@ -143,9 +156,109 @@ bb.0 (%ir-block.2):
     BlockWithSingleInstructions,
     BlockWithStackInstructions,
     SmallFunction,
+    NewFormatBlock,
 ])
 def test_mir_block_counts_instructions(test_case: MIRTestCase):
     parser = MIRParser()
     blk = parser._parse_basic_block(test_case.mir.splitlines())
     assert blk.instructions == test_case.count
     assert len(blk.instruction_lines) == test_case.count
+
+
+def test_mir_yk_trace_basicblock_no_calls():
+    """Test MIR block with no __yk_trace_basicblock calls."""
+    mir_lines = """bb.0 (%ir-block.2):
+  %2:gr32 = MOV32ri 200
+  $eax = COPY %2:gr32
+  RET 0, $eax"""
+
+    parser = MIRParser()
+    blk = parser._parse_basic_block(mir_lines.splitlines())
+    assert blk.instructions == 3
+    assert blk.yk_trace_bb_calls == 0
+
+
+def test_mir_yk_trace_basicblock_single_call():
+    """Test MIR block with one __yk_trace_basicblock call."""
+    mir_lines = """bb.0 (%ir-block.2):
+  liveins: $edi, $esi
+  $edi = MOV32ri 135
+  $esi = MOV32ri 0
+  CALL64pcrel32 target-flags(x86-plt) @__yk_trace_basicblock, <regmask>, implicit $rsp, implicit $ssp, implicit $edi, implicit $esi
+  %2:gr32 = MOV32ri 200
+  $eax = COPY %2:gr32
+  RET 0, $eax"""
+
+    parser = MIRParser()
+    blk = parser._parse_basic_block(mir_lines.splitlines())
+    assert blk.instructions == 6
+    assert blk.yk_trace_bb_calls == 1
+
+
+def test_mir_yk_trace_basicblock_multiple_calls():
+    """Test MIR block with multiple __yk_trace_basicblock calls."""
+    mir_lines = """bb.0 (%ir-block.2):
+  liveins: $edi, $esi
+  $edi = MOV32ri 135
+  $esi = MOV32ri 0
+  CALL64pcrel32 target-flags(x86-plt) @__yk_trace_basicblock, <regmask>, implicit $rsp, implicit $ssp, implicit $edi, implicit $esi
+  %2:gr32 = MOV32ri 200
+  CALL64pcrel32 target-flags(x86-plt) @__yk_trace_basicblock, <regmask>, implicit $rsp, implicit $ssp
+  $eax = COPY %2:gr32
+  RET 0, $eax"""
+    
+    parser = MIRParser()
+    blk = parser._parse_basic_block(mir_lines.splitlines())
+    assert blk.instructions == 7
+    assert blk.yk_trace_bb_calls == 2
+
+
+def test_mir_summary_report_yk_trace_stats():
+    """Test that summary report includes __yk_trace_basicblock statistics."""
+    import tempfile
+    from pathlib import Path
+    
+    # Create a temporary MIR file with a function containing __yk_trace_basicblock calls
+    # MIR parser looks for "# Machine code for function" markers and bb.N markers
+    mir_content = """# Machine code for function test_func:
+
+bb.0:
+  liveins: $edi, $esi
+  $edi = MOV32ri 135
+  $esi = MOV32ri 0
+  CALL64pcrel32 target-flags(x86-plt) @__yk_trace_basicblock, <regmask>, implicit $rsp, implicit $ssp, implicit $edi, implicit $esi
+  %2:gr32 = MOV32ri 200
+  $eax = COPY %2:gr32
+  RET 0, $eax
+
+bb.1:
+  %1:gr32 = MOV32ri 100
+  RET 0, %1:gr32
+
+bb.2:
+  liveins: $edi, $esi
+  CALL64pcrel32 target-flags(x86-plt) @__yk_trace_basicblock, <regmask>, implicit $rsp, implicit $ssp
+  %3:gr32 = MOV32ri 300
+  RET 0, %3:gr32
+"""
+
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.mir', delete=False) as f:
+        f.write(mir_content)
+        temp_path = f.name
+
+    try:
+        parser = MIRParser()
+        parser.parse(temp_path)
+        report = parser.create_summary_report()
+
+        # Check basic stats
+        assert report.num_functions == 1
+        assert report.num_basic_blocks == 3
+
+        # Check __yk_trace_basicblock stats
+        assert report.num_blocks_with_yk_trace == 2
+        assert report.total_yk_trace_calls == 2
+        assert report.num_instructions_in_yk_trace_blocks > 0
+        assert report.avg_instr_per_yk_trace_call > 0
+    finally:
+        Path(temp_path).unlink()

@@ -5,11 +5,19 @@ from pathlib import Path
 from typing import Dict, List
 
 from .base_parser import BaseParser
-from .model import Block, Function
+from .model import Block, Function, SummaryReport
 
 
 class ASMParser(BaseParser):
     """Parser for LLVM-style assembly (.s/.asm) files."""
+
+    def __init__(self, allowed_functions: set[str] | None = None):
+        """Initialize ASM parser.
+        
+        Args:
+            allowed_functions: Optional set of function names to include.
+        """
+        super().__init__(allowed_functions)
 
     def parse(self, filename: str, skip_patterns: List[str] | None = None,
               skip_prefixes: List[str] | None = None) -> Dict[str, Function]:
@@ -33,8 +41,10 @@ class ASMParser(BaseParser):
                 return
             label = (current_block_label or f"bb_{current_function.blocks}")
             instr_lines = [ln for ln in current_block_lines if self._is_instruction_line(ln)]
+            # Count __yk_trace_basicblock calls in this block
+            yk_trace_bb_calls = sum(1 for ln in instr_lines if '__yk_trace_basicblock' in ln)
             blk = Block(block=label, instructions=len(instr_lines), instruction_lines=instr_lines,
-                       text="\n".join(current_block_lines))
+                       text="\n".join(current_block_lines), yk_trace_bb_calls=yk_trace_bb_calls)
             current_function.blocks += 1
             current_function.total_instructions += blk.instructions
             current_function.blocks_detail.append(blk)
@@ -101,7 +111,9 @@ class ASMParser(BaseParser):
             if count_this_function:
                 flush_block()
 
-        return functions
+        self.functions = functions
+        self._apply_allowed_functions_filter()
+        return self.functions
 
     def _parse_basic_block(self, block_lines: List[str]) -> Block:
         """Parse a basic block from assembly lines (for testing)."""
@@ -115,9 +127,53 @@ class ASMParser(BaseParser):
                 label = first_line.rstrip(":")
         
         instr_lines = [ln for ln in block_lines if self._is_instruction_line(ln)]
+        # Count __yk_trace_basicblock calls
+        yk_trace_bb_calls = sum(1 for ln in instr_lines if '__yk_trace_basicblock' in ln)
         text = "\n".join(block_lines)
         return Block(block=label, instructions=len(instr_lines), 
-                    instruction_lines=instr_lines, text=text)
+                    instruction_lines=instr_lines, text=text, yk_trace_bb_calls=yk_trace_bb_calls)
+
+    def apply_func_type_filter(self, filename: str, func_type: str,
+                               skip_patterns: List[str] | None = None,
+                               skip_prefixes: List[str] | None = None) -> None:
+        """Apply function type filtering for ASM.
+
+        ASM has only defined functions; declared-only results in empty map.
+
+        Args:
+            filename: Path to the ASM file (unused, for API consistency)
+            func_type: Type of functions to include ('defined', 'declared', 'all')
+            skip_patterns: Skip functions (unused, for API consistency)
+            skip_prefixes: Skip prefixes (unused, for API consistency)
+        """
+        if func_type == 'declared':
+            # ASM has only defined functions; declared-only => empty map
+            self.functions = {}
+
+    def create_summary_report(self) -> SummaryReport:
+        """Create a summary report including ASM-specific metrics."""
+        # Get base report from parent
+        report = super().create_summary_report()
+
+        # Compute __yk_trace_basicblock statistics
+        blocks_with_yk_trace = []
+        for fn in self.functions.values():
+            for blk in fn.blocks_detail:
+                if blk.yk_trace_bb_calls > 0:
+                    blocks_with_yk_trace.append(blk)
+        
+        num_blocks_with_yk_trace = len(blocks_with_yk_trace)
+        num_instructions_in_yk_trace_blocks = sum(blk.instructions for blk in blocks_with_yk_trace)
+        total_yk_trace_calls = sum(blk.yk_trace_bb_calls for blk in blocks_with_yk_trace)
+        avg_instr_per_yk_trace_call = (num_instructions_in_yk_trace_blocks / total_yk_trace_calls) if total_yk_trace_calls > 0 else 0.0
+        
+        # Add __yk_trace_basicblock metrics to report
+        report.num_blocks_with_yk_trace = num_blocks_with_yk_trace
+        report.num_instructions_in_yk_trace_blocks = num_instructions_in_yk_trace_blocks
+        report.total_yk_trace_calls = total_yk_trace_calls
+        report.avg_instr_per_yk_trace_call = avg_instr_per_yk_trace_call
+        
+        return report
 
     @staticmethod
     def _is_instruction_line(line: str) -> bool:

@@ -1,0 +1,1723 @@
+# Function: hwt_set_cerr
+# Machine code for function hwt_set_cerr: NoPHIs, TracksLiveness, NoVRegs, TiedOpsRewritten, TracksDebugUserValues
+Function Live Ins: $rdi, $esi, $edx
+
+bb.0 (%ir-block.3):
+  successors: %bb.1(0x30000000), %bb.2(0x50000000); %bb.1(37.50%), %bb.2(62.50%)
+  liveins: $edx, $esi, $rdi
+  CMP32mi renamable $rdi, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.0, !tbaa !4)
+  JCC_1 %bb.2, 5, implicit $eflags
+
+bb.1 (%ir-block.6):
+; predecessors: %bb.0
+  successors: %bb.2(0x80000000); %bb.2(100.00%)
+  liveins: $edx, $esi, $rdi
+  MOV32mr renamable $rdi, 1, $noreg, 0, $noreg, killed renamable $esi :: (store (s32) into %ir.0, !tbaa !4)
+  MOV32mr killed renamable $rdi, 1, $noreg, 4, $noreg, killed renamable $edx :: (store (s32) into %ir.7, !tbaa !9)
+
+bb.2 (%ir-block.8):
+; predecessors: %bb.0, %bb.1
+
+  RET 0
+
+# End machine code for function hwt_set_cerr.
+
+
+# Function: hwt_perf_init_collector
+# Machine code for function hwt_perf_init_collector: NoPHIs, TracksLiveness, NoVRegs, TiedOpsRewritten, TracksDebugUserValues
+Frame Objects:
+  fi#-6: size=8, align=8, fixed, at location [SP-48]
+  fi#-5: size=8, align=16, fixed, at location [SP-40]
+  fi#-4: size=8, align=8, fixed, at location [SP-32]
+  fi#-3: size=8, align=16, fixed, at location [SP-24]
+  fi#-2: size=8, align=8, fixed, at location [SP-16]
+  fi#-1: size=8, align=16, fixed, at location [SP-8]
+  fi#0: size=136, align=16, at location [SP-712]
+  fi#1: size=8, align=1, at location [SP-736]
+  fi#2: size=8, align=8, at location [SP-744]
+  fi#3: size=8, align=8, at location [SP-752]
+  fi#4: size=8, align=8, at location [SP-760]
+  fi#5: size=512, align=16, at location [SP-568]
+  fi#6: size=8, align=8, at location [SP-768]
+  fi#7: size=16, align=16, at location [SP-728]
+  fi#8: size=1, align=1, at location [SP-769]
+Constant Pool:
+  cp#0: <i32 1127219200, i32 1160773632, i32 0, i32 0>, align=16
+  cp#1: <double 0x4330000000000000, double 0x4530000000000000>, align=16
+  cp#2: 0x43E0000000000000, align=8
+  cp#3: 5.000000e-01, align=8
+Function Live Ins: $rdi, $rsi
+
+bb.0 (%ir-block.2):
+  successors: %bb.1(0x30000000), %bb.3(0x50000000); %bb.1(37.50%), %bb.3(62.50%)
+  liveins: $rdi, $rsi, $rbp, $r15, $r14, $r13, $r12, $rbx
+  frame-setup PUSH64r killed $rbp, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 16
+  frame-setup PUSH64r killed $r15, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 24
+  frame-setup PUSH64r killed $r14, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 32
+  frame-setup PUSH64r killed $r13, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 40
+  frame-setup PUSH64r killed $r12, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 48
+  frame-setup PUSH64r killed $rbx, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 56
+  $rsp = frame-setup SUB64ri32 $rsp(tied-def 0), 728, implicit-def dead $eflags
+  frame-setup CFI_INSTRUCTION def_cfa_offset 784
+  CFI_INSTRUCTION offset $rbx, -56
+  CFI_INSTRUCTION offset $r12, -48
+  CFI_INSTRUCTION offset $r13, -40
+  CFI_INSTRUCTION offset $r14, -32
+  CFI_INSTRUCTION offset $r15, -24
+  CFI_INSTRUCTION offset $rbp, -16
+  renamable $r14 = COPY $rsi
+  renamable $r12 = COPY $rdi
+  $rdi = MOV32ri64 1
+  $rsi = MOV32ri64 64
+  CALL64pcrel32 target-flags(x86-plt) @calloc, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  TEST64rr $rax, $rax, implicit-def $eflags
+  JCC_1 %bb.3, 5, implicit killed $eflags
+
+bb.1 (%ir-block.11):
+; predecessors: %bb.0
+  successors: %bb.2(0x30000000), %bb.26(0x50000000); %bb.2(37.50%), %bb.26(62.50%)
+  liveins: $r14
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.1)
+  JCC_1 %bb.26, 5, implicit $eflags
+
+bb.2 (%ir-block.14):
+; predecessors: %bb.1
+  successors: %bb.44(0x80000000); %bb.44(100.00%)
+  liveins: $r14
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.15)
+  MOV32mi renamable $r14, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.1)
+  MOV32mr killed renamable $r14, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.17)
+  renamable $ebx = MOV32r0 implicit-def dead $eflags, implicit-def $rbx
+  JMP_1 %bb.44
+
+bb.3 (%ir-block.18):
+; predecessors: %bb.0
+  successors: %bb.4(0x30000000), %bb.29(0x50000000); %bb.4(37.50%), %bb.29(62.50%)
+  liveins: $rax:0x000000000000000B, $r12, $r14
+  renamable $rbx = COPY $rax
+  MOV64mi32 $rax, 1, $noreg, 16, $noreg, -1 :: (store (s64) into %ir.19)
+  MOV32mi $rax, 1, $noreg, 24, $noreg, -1 :: (store (s32) into %ir.21, align 8, !tbaa !11)
+  TLS_addr64 $noreg, 1, $noreg, target-flags(x86-tlsgd) @thread_cached, $noreg, implicit-def $rax, implicit-def dead $rcx, implicit-def dead $rdx, implicit-def dead $rsi, implicit-def dead $rdi, implicit-def dead $r8, implicit-def dead $r9, implicit-def dead $r10, implicit-def dead $r11, implicit-def dead $fp0, implicit-def dead $fp1, implicit-def dead $fp2, implicit-def dead $fp3, implicit-def dead $fp4, implicit-def dead $fp5, implicit-def dead $fp6, implicit-def dead $fp7, implicit-def dead $st0, implicit-def dead $st1, implicit-def dead $st2, implicit-def dead $st3, implicit-def dead $st4, implicit-def dead $st5, implicit-def dead $st6, implicit-def dead $st7, implicit-def dead $mm0, implicit-def dead $mm1, implicit-def dead $mm2, implicit-def dead $mm3, implicit-def dead $mm4, implicit-def dead $mm5, implicit-def dead $mm6, implicit-def dead $mm7, implicit-def dead $xmm0, implicit-def dead $xmm1, implicit-def dead $xmm2, implicit-def dead $xmm3, implicit-def dead $xmm4, implicit-def dead $xmm5, implicit-def dead $xmm6, implicit-def dead $xmm7, implicit-def dead $xmm8, implicit-def dead $xmm9, implicit-def dead $xmm10, implicit-def dead $xmm11, implicit-def dead $xmm12, implicit-def dead $xmm13, implicit-def dead $xmm14, implicit-def dead $xmm15, implicit-def dead $eflags, implicit-def dead $df, implicit $rsp, implicit $ssp
+  renamable $r15 = COPY $rax
+  renamable $ebp = MOV32rm $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.22, align 8)
+  CMP32ri renamable $ebp, -1, implicit-def $eflags
+  MOV64mr $rsp, 1, $noreg, 8, $noreg, killed renamable $r14 :: (store (s64) into %stack.6)
+  JCC_1 %bb.29, 5, implicit killed $eflags
+
+bb.4 (%ir-block.25):
+; predecessors: %bb.3
+  successors: %bb.5(0x30000000), %bb.6(0x50000000); %bb.5(37.50%), %bb.6(62.50%)
+  liveins: $rbx, $r12, $r15
+  renamable $r14 = MOV64rm renamable $r12, 1, $noreg, 8, $noreg :: (load (s64) from %ir.26)
+  renamable $bpl = MOV8rm renamable $r12, 1, $noreg, 24, $noreg :: (load (s8) from %ir.28, align 8, !range !21)
+  renamable $xmm0 = V_SET0
+  MOVAPSmr $rsp, 1, $noreg, 64, $noreg, renamable $xmm0 :: (store (s128) into %ir.3)
+  MOVAPSmr $rsp, 1, $noreg, 176, $noreg, renamable $xmm0 :: (store (s128) into %ir.3 + 112)
+  MOVAPSmr $rsp, 1, $noreg, 160, $noreg, renamable $xmm0 :: (store (s128) into %ir.3 + 96)
+  MOVAPSmr $rsp, 1, $noreg, 144, $noreg, renamable $xmm0 :: (store (s128) into %ir.3 + 80)
+  MOVAPSmr $rsp, 1, $noreg, 128, $noreg, renamable $xmm0 :: (store (s128) into %ir.3 + 64)
+  MOVAPSmr $rsp, 1, $noreg, 112, $noreg, renamable $xmm0 :: (store (s128) into %ir.3 + 48)
+  MOVAPSmr $rsp, 1, $noreg, 96, $noreg, renamable $xmm0 :: (store (s128) into %ir.3 + 32)
+  MOVAPSmr $rsp, 1, $noreg, 80, $noreg, killed renamable $xmm0 :: (store (s128) into %ir.3 + 16)
+  MOV64mi32 $rsp, 1, $noreg, 192, $noreg, 0 :: (store (s64) into %ir.3 + 128, align 16)
+  MOV32mi $rsp, 1, $noreg, 68, $noreg, 136 :: (store (s32) into %ir.30, !tbaa !23)
+  MOV64mi32 $rsp, 1, $noreg, 72, $noreg, 2048 :: (store (s64) into %ir.31, !tbaa !27)
+  renamable $rdi = LEA64r $rip, 1, $noreg, @.str.2, $noreg
+  renamable $rsi = LEA64r $rip, 1, $noreg, @.str.3, $noreg
+  CALL64pcrel32 target-flags(x86-plt) @fopen, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  TEST64rr $rax, $rax, implicit-def $eflags
+  JCC_1 %bb.6, 5, implicit killed $eflags
+
+bb.5 (%ir-block.34):
+; predecessors: %bb.4
+  successors: %bb.23(0x80000000); %bb.23(100.00%)
+  liveins: $rbx
+  renamable $r14 = MOV64rm $rsp, 1, $noreg, 8, $noreg :: (load (s64) from %stack.6)
+  JMP_1 %bb.23
+
+bb.6 (%ir-block.37):
+; predecessors: %bb.4
+  successors: %bb.7(0x30000000), %bb.10(0x50000000); %bb.7(37.50%), %bb.10(62.50%)
+  liveins: $bpl, $rax:0x000000000000000B, $rbx, $r12, $r14, $r15
+  renamable $r13 = COPY $rax
+  renamable $rdi = LEA64r $rsp, 1, $noreg, 40, $noreg
+  $esi = MOV32ri 8
+  $rdx = COPY $rax
+  CALL64pcrel32 target-flags(x86-plt) @fgets, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $esi, implicit $rdx, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  TEST64rr killed renamable $rax, renamable $rax, implicit-def $eflags
+  JCC_1 %bb.10, 5, implicit killed $eflags
+
+bb.7 (%ir-block.40):
+; predecessors: %bb.6
+  successors: %bb.8(0x80000000); %bb.8(100.00%)
+  liveins: $rbx, $r12, $r13, $r15
+  renamable $ebp = MOV32ri -1
+
+bb.8 (%ir-block.40):
+; predecessors: %bb.7, %bb.10
+  successors: %bb.9(0x30000000), %bb.22(0x50000000); %bb.9(37.50%), %bb.22(62.50%)
+  liveins: $ebp, $rbx, $r12, $r13, $r15
+  renamable $r14 = MOV64rm $rsp, 1, $noreg, 8, $noreg :: (load (s64) from %stack.6)
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.1)
+  JCC_1 %bb.22, 5, implicit $eflags
+
+bb.9 (%ir-block.43):
+; predecessors: %bb.8
+  successors: %bb.22(0x80000000); %bb.22(100.00%)
+  liveins: $ebp, $rbx, $r12, $r13, $r14, $r15
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.44), (load (s32) from %ir.70)
+  MOV32mi renamable $r14, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.1)
+  MOV32mr renamable $r14, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.46), (store (s32) into %ir.72)
+  JMP_1 %bb.22
+
+bb.10 (%ir-block.47):
+; predecessors: %bb.6
+  successors: %bb.8(0x30000000), %bb.11(0x50000000); %bb.8(37.50%), %bb.11(62.50%)
+  liveins: $bpl, $rbx, $r12, $r13, $r14, $r15
+  MOV8mr $rsp, 1, $noreg, 7, $noreg, killed renamable $bpl :: (store (s8) into %stack.8)
+  renamable $rdi = LEA64r $rsp, 1, $noreg, 40, $noreg
+  dead $esi = MOV32r0 implicit-def dead $eflags, implicit-def $rsi
+  $edx = MOV32ri 10
+  CALL64pcrel32 target-flags(x86-plt) @__isoc23_strtol, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $edx, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  MOV32mr $rsp, 1, $noreg, 64, $noreg, renamable $eax, implicit killed $rax :: (store (s32) into %ir.3, align 16, !tbaa !28)
+  MOV64mi32 $rsp, 1, $noreg, 104, $noreg, 114785 :: (store (s64) into %ir.50)
+  MOV32mi $rsp, 1, $noreg, 112, $noreg, 1 :: (store (s32) into %ir.51, align 16, !tbaa !29)
+  renamable $xmm0 = MOV64toPQIrr killed renamable $r14
+  renamable $xmm0 = PUNPCKLDQrm killed renamable $xmm0(tied-def 0), $rip, 1, $noreg, %const.0, $noreg :: (load (s128) from constant-pool)
+  renamable $xmm0 = nofpexcept SUBPDrm killed renamable $xmm0(tied-def 0), $rip, 1, $noreg, %const.1, $noreg, implicit $mxcsr :: (load (s128) from constant-pool)
+  renamable $xmm1 = COPY renamable $xmm0
+  renamable $xmm1 = UNPCKHPDrr killed renamable $xmm1(tied-def 0), $xmm0
+  renamable $xmm1 = nofpexcept ADDSDrr killed renamable $xmm1(tied-def 0), killed renamable $xmm0, implicit $mxcsr
+  MOVAPSmr $rsp, 1, $noreg, 48, $noreg, killed renamable $xmm1 :: (store (s128) into %stack.7)
+  CALL64pcrel32 target-flags(x86-plt) @getpagesize, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  renamable $xmm0 = CVTSI2SDrr killed renamable $eax
+  renamable $xmm0 = nofpexcept MULSDrm killed renamable $xmm0(tied-def 0), $rsp, 1, $noreg, 48, $noreg, implicit $mxcsr :: (load (s128) from %stack.7)
+  renamable $rax = nofpexcept CVTTSD2SI64rr_Int renamable $xmm0, implicit $mxcsr
+  renamable $rcx = COPY renamable $rax
+  renamable $rcx = SAR64ri killed renamable $rcx(tied-def 0), 63, implicit-def dead $eflags
+  renamable $xmm0 = nofpexcept SUBSDrm killed renamable $xmm0(tied-def 0), $rip, 1, $noreg, %const.2, $noreg, implicit $mxcsr :: (load (s64) from constant-pool)
+  renamable $rdx = nofpexcept CVTTSD2SI64rr_Int killed renamable $xmm0, implicit $mxcsr
+  renamable $rdx = AND64rr killed renamable $rdx(tied-def 0), killed renamable $rcx, implicit-def dead $eflags
+  renamable $rdx = OR64rr killed renamable $rdx(tied-def 0), killed renamable $rax, implicit-def dead $eflags
+  renamable $xmm0 = MOV64toPQIrr killed renamable $rdx
+  renamable $xmm0 = PUNPCKLDQrm killed renamable $xmm0(tied-def 0), $rip, 1, $noreg, %const.0, $noreg :: (load (s128) from constant-pool)
+  renamable $xmm0 = nofpexcept SUBPDrm killed renamable $xmm0(tied-def 0), $rip, 1, $noreg, %const.1, $noreg, implicit $mxcsr :: (load (s128) from constant-pool)
+  renamable $xmm1 = COPY renamable $xmm0
+  renamable $xmm1 = UNPCKHPDrr killed renamable $xmm1(tied-def 0), $xmm0
+  renamable $xmm1 = nofpexcept ADDSDrr killed renamable $xmm1(tied-def 0), killed renamable $xmm0, implicit $mxcsr
+  renamable $xmm1 = nofpexcept MULSDrm killed renamable $xmm1(tied-def 0), $rip, 1, $noreg, %const.3, $noreg, implicit $mxcsr :: (load (s64) from constant-pool)
+  renamable $rax = nofpexcept CVTTSD2SI64rr killed renamable $xmm1, implicit $mxcsr
+  MOV32mr $rsp, 1, $noreg, 168, $noreg, renamable $eax, implicit killed $rax :: (store (s32) into %ir.60, align 8, !tbaa !30)
+  $rdi = MOV32ri64 186
+  dead $eax = MOV32r0 implicit-def dead $eflags, implicit-def $al
+  CALL64pcrel32 target-flags(x86-plt) @syscall, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $al, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $rsi = LEA64r $rsp, 1, $noreg, 64, $noreg
+  renamable $ebp = MOV32ri -1
+  $rdi = MOV32ri64 298
+  $edx = COPY renamable $eax, implicit killed $rax
+  $ecx = MOV32ri -1
+  $r8d = MOV32ri -1
+  $r9d = MOV32r0 implicit-def dead $eflags
+  dead $eax = MOV32r0 implicit-def dead $eflags, implicit-def $al
+  CALL64pcrel32 target-flags(x86-plt) @syscall, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $edx, implicit $ecx, implicit $r8d, implicit $r9d, implicit $al, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  CMP32ri renamable $eax, -1, implicit-def $eflags
+  JCC_1 %bb.8, 4, implicit $eflags
+
+bb.11 (%ir-block.73):
+; predecessors: %bb.10
+  successors: %bb.12(0x30000000), %bb.13(0x50000000); %bb.12(37.50%), %bb.13(62.50%)
+  liveins: $rax, $rbx, $r12, $r13, $r15
+  CMP8mi $rsp, 1, $noreg, 7, $noreg, 0, implicit-def $eflags :: (load (s8) from %stack.8)
+  renamable $r14 = MOV64rm $rsp, 1, $noreg, 8, $noreg :: (load (s64) from %stack.6)
+  JCC_1 %bb.13, 5, implicit killed $eflags
+
+bb.12:
+; predecessors: %bb.11
+  successors: %bb.22(0x80000000); %bb.22(100.00%)
+  liveins: $rax, $rbx, $r12, $r13, $r14, $r15
+  renamable $ebp = COPY renamable $eax, implicit killed $rax
+  JMP_1 %bb.22
+
+bb.13 (%ir-block.75):
+; predecessors: %bb.11
+  successors: %bb.14(0x40000000), %bb.16(0x40000000); %bb.14(50.00%), %bb.16(50.00%)
+  liveins: $rax, $rbx, $r12, $r13, $r14, $r15
+  renamable $rbp = COPY killed renamable $rax
+  MOV64mi32 $rsp, 1, $noreg, 32, $noreg, 0 :: (store (s64) into %ir.5, !tbaa !31)
+  MOV64mi32 $rsp, 1, $noreg, 24, $noreg, 0 :: (store (s64) into %ir.6, !tbaa !32)
+  MOV64mi32 $rsp, 1, $noreg, 16, $noreg, 0 :: (store (s64) into %ir.7, !tbaa !32)
+  renamable $rdi = LEA64r $rsp, 1, $noreg, 32, $noreg
+  renamable $rsi = LEA64r $rsp, 1, $noreg, 24, $noreg
+  renamable $rdx = LEA64r $rsp, 1, $noreg, 16, $noreg
+  CALL64pcrel32 target-flags(x86-plt) @get_tracing_extent, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $rdx, implicit-def $rsp, implicit-def $ssp
+  renamable $rcx = MOV64rm $rsp, 1, $noreg, 24, $noreg :: (dereferenceable load (s64) from %ir.6, !tbaa !32)
+  renamable $r8 = MOV64rm $rsp, 1, $noreg, 16, $noreg :: (dereferenceable load (s64) from %ir.7, !tbaa !32)
+  renamable $r9 = MOV64rm $rsp, 1, $noreg, 32, $noreg :: (dereferenceable load (s64) from %ir.5, !tbaa !31)
+  renamable $rdx = LEA64r $rip, 1, $noreg, @.str.4, $noreg
+  renamable $rdi = LEA64r $rsp, 1, $noreg, 208, $noreg
+  $rsi = MOV32ri64 512
+  dead $eax = MOV32r0 implicit-def dead $eflags, implicit-def $al
+  CALL64pcrel32 target-flags(x86-plt) @snprintf, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $rdx, implicit $rcx, implicit $r8, implicit $r9, implicit $al, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  CMP32ri killed renamable $eax, 512, implicit-def $eflags
+  JCC_1 %bb.16, 2, implicit killed $eflags
+
+bb.14 (%ir-block.81):
+; predecessors: %bb.13
+  successors: %bb.15(0x30000000), %bb.20(0x50000000); %bb.15(37.50%), %bb.20(62.50%)
+  liveins: $rbp, $rbx, $r12, $r13, $r14, $r15
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.1)
+  renamable $rdi = COPY killed renamable $rbp
+  JCC_1 %bb.20, 5, implicit $eflags
+
+bb.15:
+; predecessors: %bb.14
+  successors: %bb.19(0x80000000); %bb.19(100.00%)
+  liveins: $rbx, $rdi, $r12, $r13, $r14, $r15
+  renamable $eax = MOV32ri 1
+  renamable $ecx = MOV32r0 implicit-def dead $eflags
+  JMP_1 %bb.19
+
+bb.16 (%ir-block.84):
+; predecessors: %bb.13
+  successors: %bb.17(0x30000000), %bb.21(0x50000000); %bb.17(37.50%), %bb.21(62.50%)
+  liveins: $rbp, $rbx, $r12, $r13, $r14, $r15
+  renamable $rdx = LEA64r $rsp, 1, $noreg, 208, $noreg
+  $rsi = MOV32ri64 1074275334
+  $edi = COPY renamable $ebp
+  dead $eax = MOV32r0 implicit-def dead $eflags, implicit-def $al
+  CALL64pcrel32 target-flags(x86-plt) @ioctl, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit $rsi, implicit $rdx, implicit $al, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  CMP32ri killed renamable $eax, -1, implicit-def $eflags
+  JCC_1 %bb.21, 5, implicit $eflags
+
+bb.17 (%ir-block.87):
+; predecessors: %bb.16
+  successors: %bb.18(0x30000000), %bb.20(0x50000000); %bb.18(37.50%), %bb.20(62.50%)
+  liveins: $rbp, $rbx, $r12, $r13, $r14, $r15
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.1)
+  renamable $rdi = COPY renamable $rbp
+  JCC_1 %bb.20, 5, implicit $eflags
+
+bb.18 (%ir-block.90):
+; predecessors: %bb.17
+  successors: %bb.19(0x80000000); %bb.19(100.00%)
+  liveins: $rbp, $rbx, $r12, $r13, $r14, $r15
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $rdi = COPY killed renamable $rbp
+  renamable $ecx = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.91)
+  renamable $eax = MOV32ri 2
+
+bb.19 (%ir-block.93):
+; predecessors: %bb.18, %bb.15
+  successors: %bb.20(0x80000000); %bb.20(100.00%)
+  liveins: $eax, $ecx, $rbx, $rdi, $r12, $r13, $r14, $r15
+  MOV32mr renamable $r14, 1, $noreg, 0, $noreg, killed renamable $eax :: (store (s32) into %ir.1)
+  MOV32mr renamable $r14, 1, $noreg, 4, $noreg, killed renamable $ecx :: (store (s32) into %ir.96)
+
+bb.20 (%ir-block.97):
+; predecessors: %bb.17, %bb.14, %bb.19
+  successors: %bb.21(0x80000000); %bb.21(100.00%)
+  liveins: $rbx, $rdi, $r12, $r13, $r14, $r15
+  $edi = KILL renamable $edi, implicit killed $rdi
+  CALL64pcrel32 target-flags(x86-plt) @close, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit-def $rsp, implicit-def $ssp, implicit-def dead $eax
+  renamable $ebp = MOV32ri -1, implicit-def $rbp
+
+bb.21 (%ir-block.99):
+; predecessors: %bb.20, %bb.16
+  successors: %bb.22(0x80000000); %bb.22(100.00%)
+  liveins: $rbp, $rbx, $r12, $r13, $r14, $r15
+  renamable $ebp = KILL renamable $ebp, implicit killed $rbp
+
+bb.22 (%ir-block.101):
+; predecessors: %bb.21, %bb.9, %bb.12, %bb.8
+  successors: %bb.23(0x30000000), %bb.27(0x50000000); %bb.23(37.50%), %bb.27(62.50%)
+  liveins: $ebp, $rbx, $r12, $r13, $r14, $r15
+  $rdi = COPY killed renamable $r13
+  CALL64pcrel32 target-flags(x86-plt) @fclose, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  CMP32ri killed renamable $eax, -1, implicit-def $eflags
+  JCC_1 %bb.27, 5, implicit killed $eflags
+
+bb.23 (%ir-block.105):
+; predecessors: %bb.22, %bb.5, %bb.27, %bb.32
+  successors: %bb.24(0x2ffffeee), %bb.25(0x50000112); %bb.24(37.50%), %bb.25(62.50%)
+  liveins: $rbx, $r14
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.1)
+  JCC_1 %bb.25, 5, implicit $eflags
+
+bb.24 (%ir-block.108):
+; predecessors: %bb.23
+  successors: %bb.25(0x80000000); %bb.25(100.00%)
+  liveins: $rbx, $r14
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.109), (load (s32) from %ir.120), (load (s32) from %ir.195), (load (s32) from %ir.148)
+  MOV32mi renamable $r14, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.1)
+  MOV32mr killed renamable $r14, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.111), (store (s32) into %ir.122), (store (s32) into %ir.197), (store (s32) into %ir.150)
+
+bb.25 (%ir-block.202):
+; predecessors: %bb.23, %bb.24
+  successors: %bb.26(0x80000000); %bb.26(100.00%)
+  liveins: $rbx
+  $rdi = COPY killed renamable $rbx
+  CALL64pcrel32 target-flags(x86-plt) @free, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit-def $rsp, implicit-def $ssp
+
+bb.26 (%ir-block.203):
+; predecessors: %bb.25, %bb.1
+  successors: %bb.44(0x80000000); %bb.44(100.00%)
+
+  renamable $ebx = MOV32r0 implicit-def dead $eflags, implicit-def $rbx
+  JMP_1 %bb.44
+
+bb.27 (%ir-block.113):
+; predecessors: %bb.22
+  successors: %bb.23(0x30000000), %bb.28(0x50000000); %bb.23(37.50%), %bb.28(62.50%)
+  liveins: $ebp, $rbx, $r12, $r14, $r15
+  MOV32mr renamable $rbx, 1, $noreg, 24, $noreg, renamable $ebp :: (store (s32) into %ir.114, align 8, !tbaa !11)
+  CMP32ri renamable $ebp, -1, implicit-def $eflags
+  JCC_1 %bb.23, 4, implicit $eflags
+
+bb.28 (%ir-block.123):
+; predecessors: %bb.27
+  successors: %bb.30(0x80000000); %bb.30(100.00%)
+  liveins: $ebp, $rbx, $r12, $r15
+  MOV32mr renamable $r15, 1, $noreg, 0, $noreg, renamable $ebp :: (store (s32) into %ir.22, align 8)
+  JMP_1 %bb.30
+
+bb.29 (%ir-block.124):
+; predecessors: %bb.3
+  successors: %bb.30(0x80000000); %bb.30(100.00%)
+  liveins: $ebp, $rbx, $r12, $r15
+  MOV32mr renamable $rbx, 1, $noreg, 24, $noreg, renamable $ebp :: (store (s32) into %ir.125, align 8, !tbaa !11)
+
+bb.30 (%ir-block.126):
+; predecessors: %bb.29, %bb.28
+  successors: %bb.31(0x30000000), %bb.34(0x50000000); %bb.31(37.50%), %bb.34(62.50%)
+  liveins: $ebp, $rbx, $r12, $r15
+  CALL64pcrel32 target-flags(x86-plt) @getpagesize, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  renamable $r13 = MOV64rm renamable $r12, 1, $noreg, 0, $noreg :: (load (s64) from %ir.0)
+  renamable $r13 = INC64r killed renamable $r13(tied-def 0), implicit-def dead $eflags
+  renamable $r14 = MOVSX64rr32 killed renamable $eax
+  renamable $r13 = IMUL64rr killed renamable $r13(tied-def 0), renamable $r14, implicit-def dead $eflags
+  renamable $r14 = IMUL64rm killed renamable $r14(tied-def 0), killed renamable $r12, 1, $noreg, 8, $noreg, implicit-def dead $eflags :: (load (s64) from %ir.133)
+  renamable $rax = MOV64rm renamable $r15, 1, $noreg, 24, $noreg :: (load (s64) from %ir.136)
+  TEST64rr renamable $rax, renamable $rax, implicit-def $eflags
+  JCC_1 %bb.34, 5, implicit killed $eflags
+
+bb.31 (%ir-block.139):
+; predecessors: %bb.30
+  successors: %bb.32(0x30000000), %bb.33(0x50000000); %bb.32(37.50%), %bb.33(62.50%)
+  liveins: $ebp, $rbx, $r13, $r14, $r15
+  MOV64mr renamable $rbx, 1, $noreg, 56, $noreg, renamable $r13 :: (store (s64) into %ir.140, !tbaa !35)
+  dead $edi = MOV32r0 implicit-def dead $eflags, implicit-def $rdi
+  $rsi = COPY renamable $r13
+  $edx = MOV32ri 2
+  $ecx = MOV32ri 1
+  $r8d = COPY renamable $ebp
+  dead $r9d = MOV32r0 implicit-def dead $eflags, implicit-def $r9
+  CALL64pcrel32 target-flags(x86-plt) @mmap, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $edx, implicit $ecx, implicit $r8d, implicit $r9, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  MOV64mr renamable $rbx, 1, $noreg, 48, $noreg, renamable $rax :: (store (s64) into %ir.142, !tbaa !36)
+  CMP64ri32 renamable $rax, -1, implicit-def $eflags
+  JCC_1 %bb.33, 5, implicit killed $eflags
+
+bb.32 (%ir-block.144):
+; predecessors: %bb.31, %bb.41
+  successors: %bb.23(0x80000000); %bb.23(100.00%)
+  liveins: $rbx
+  renamable $r14 = MOV64rm $rsp, 1, $noreg, 8, $noreg :: (load (s64) from %stack.6)
+  JMP_1 %bb.23
+
+bb.33 (%ir-block.151):
+; predecessors: %bb.31
+  successors: %bb.40(0x80000000); %bb.40(100.00%)
+  liveins: $ebp, $rax, $rbx, $r13, $r14, $r15
+  renamable $rcx = MOV64rm renamable $rax, 1, $noreg, 1048, $noreg :: (load (s64) from %ir.154)
+  renamable $rcx = ADD64rm killed renamable $rcx(tied-def 0), renamable $rax, 1, $noreg, 1040, $noreg, implicit-def dead $eflags :: (load (s64) from %ir.152)
+  MOV64mr renamable $rax, 1, $noreg, 1072, $noreg, killed renamable $rcx :: (store (s64) into %ir.157)
+  MOV64mr renamable $rbx, 1, $noreg, 40, $noreg, renamable $r14 :: (store (s64) into %ir.158, !tbaa !41)
+  MOV64mr renamable $rax, 1, $noreg, 1080, $noreg, renamable $r14 :: (store (s64) into %ir.159)
+  MOV64mr renamable $r15, 1, $noreg, 32, $noreg, killed renamable $r13 :: (store (s64) into %ir.160)
+  MOV64mr renamable $r15, 1, $noreg, 24, $noreg, renamable $rax :: (store (s64) into %ir.161)
+  renamable $rcx = COPY renamable $r15
+  renamable $rcx = nuw ADD64ri32 killed renamable $rcx(tied-def 0), 16, implicit-def dead $eflags
+  JMP_1 %bb.40
+
+bb.34 (%ir-block.163):
+; predecessors: %bb.30
+  successors: %bb.37(0x7ffff800), %bb.35(0x00000800); %bb.37(100.00%), %bb.35(0.00%)
+  liveins: $ebp, $rax, $rbx, $r13, $r14, $r15
+  CMP64rm renamable $r13, renamable $r15, 1, $noreg, 32, $noreg, implicit-def $eflags :: (load (s64) from %ir.164)
+  JCC_1 %bb.37, 4, implicit killed $eflags
+
+bb.35 (%ir-block.167):
+; predecessors: %bb.34
+  successors: %bb.36(0x80000000); %bb.36(100.00%)
+
+  renamable $rsi = LEA64r $rip, 1, $noreg, @.str, $noreg
+
+bb.36 (%ir-block.167):
+; predecessors: %bb.35, %bb.38
+  liveins: $rsi
+  $edi = MOV32ri 1
+  dead $eax = MOV32r0 implicit-def dead $eflags, implicit-def $al
+  CALL64pcrel32 target-flags(x86-plt) @errx, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit $rsi, implicit $al, implicit-def $rsp, implicit-def $ssp
+
+bb.37 (%ir-block.168):
+; predecessors: %bb.34
+  successors: %bb.39(0x7ffff800), %bb.38(0x00000800); %bb.39(100.00%), %bb.38(0.00%)
+  liveins: $ebp, $rax, $rbx, $r13, $r14, $r15
+  CMP64rm renamable $r14, renamable $r15, 1, $noreg, 16, $noreg, implicit-def $eflags :: (load (s64) from %ir.169)
+  JCC_1 %bb.39, 4, implicit killed $eflags
+
+bb.38 (%ir-block.172):
+; predecessors: %bb.37
+  successors: %bb.36(0x80000000); %bb.36(100.00%)
+
+  renamable $rsi = LEA64r $rip, 1, $noreg, @.str.1, $noreg
+  JMP_1 %bb.36
+
+bb.39 (%ir-block.173):
+; predecessors: %bb.37
+  successors: %bb.40(0x80000000); %bb.40(100.00%)
+  liveins: $ebp, $rax, $rbx, $r13, $r14, $r15
+  MOV64mr renamable $rbx, 1, $noreg, 56, $noreg, killed renamable $r13 :: (store (s64) into %ir.174, !tbaa !35)
+  MOV64mr renamable $rbx, 1, $noreg, 48, $noreg, renamable $rax :: (store (s64) into %ir.175, !tbaa !36)
+  renamable $rcx = COPY renamable $rbx
+  renamable $rcx = nuw ADD64ri32 killed renamable $rcx(tied-def 0), 40, implicit-def dead $eflags
+
+bb.40 (%ir-block.177):
+; predecessors: %bb.39, %bb.33
+  successors: %bb.41(0x30000000), %bb.43(0x50000000); %bb.41(37.50%), %bb.43(62.50%)
+  liveins: $ebp, $rax, $rbx, $rcx, $r14, $r15
+  MOV64mr killed renamable $rcx, 1, $noreg, 0, $noreg, killed renamable $r14 :: (store (s64) into %ir.178)
+  renamable $rcx = MOV64rm renamable $r15, 1, $noreg, 8, $noreg :: (load (s64) from %ir.180)
+  TEST64rr renamable $rcx, renamable $rcx, implicit-def $eflags
+  JCC_1 %bb.43, 5, implicit killed $eflags
+
+bb.41 (%ir-block.183):
+; predecessors: %bb.40
+  successors: %bb.32(0x30000000), %bb.42(0x50000000); %bb.32(37.50%), %bb.42(62.50%)
+  liveins: $ebp, $rax, $rbx, $r15
+  renamable $r9 = MOV64rm renamable $rax, 1, $noreg, 1072, $noreg :: (load (s64) from %ir.186)
+  renamable $rsi = MOV64rm killed renamable $rax, 1, $noreg, 1080, $noreg :: (load (s64) from %ir.184)
+  dead $edi = MOV32r0 implicit-def dead $eflags, implicit-def $rdi
+  $edx = MOV32ri 3
+  $ecx = MOV32ri 1
+  $r8d = COPY killed renamable $ebp
+  CALL64pcrel32 target-flags(x86-plt) @mmap, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $edx, implicit $ecx, implicit $r8d, implicit $r9, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  MOV64mr renamable $rbx, 1, $noreg, 32, $noreg, renamable $rax :: (store (s64) into %ir.189, !tbaa !46)
+  CMP64ri32 renamable $rax, -1, implicit-def $eflags
+  JCC_1 %bb.32, 4, implicit $eflags
+
+bb.42 (%ir-block.198):
+; predecessors: %bb.41
+  successors: %bb.44(0x80000000); %bb.44(100.00%)
+  liveins: $rax, $rbx, $r15
+  MOV64mr killed renamable $r15, 1, $noreg, 8, $noreg, killed renamable $rax :: (store (s64) into %ir.199)
+  JMP_1 %bb.44
+
+bb.43 (%ir-block.200):
+; predecessors: %bb.40
+  successors: %bb.44(0x80000000); %bb.44(100.00%)
+  liveins: $rbx, $rcx
+  MOV64mr renamable $rbx, 1, $noreg, 32, $noreg, killed renamable $rcx :: (store (s64) into %ir.201, !tbaa !46)
+
+bb.44 (%ir-block.203):
+; predecessors: %bb.43, %bb.42, %bb.26, %bb.2
+  liveins: $rbx
+  $rax = COPY killed renamable $rbx
+  $rsp = frame-destroy ADD64ri32 $rsp(tied-def 0), 728, implicit-def dead $eflags
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 56
+  $rbx = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 48
+  $r12 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 40
+  $r13 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 32
+  $r14 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 24
+  $r15 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 16
+  $rbp = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 8
+  RET 0, $rax
+
+# End machine code for function hwt_perf_init_collector.
+
+
+# Function: hwt_perf_free_collector
+# Machine code for function hwt_perf_free_collector: NoPHIs, TracksLiveness, NoVRegs, TiedOpsRewritten, TracksDebugUserValues
+Frame Objects:
+  fi#-3: size=8, align=16, fixed, at location [SP-24]
+  fi#-2: size=8, align=8, fixed, at location [SP-16]
+  fi#-1: size=8, align=16, fixed, at location [SP-8]
+Function Live Ins: $rdi, $rsi
+
+bb.0 (%ir-block.2):
+  successors: %bb.5(0x30000000), %bb.1(0x50000000); %bb.5(37.50%), %bb.1(62.50%)
+  liveins: $rdi, $rsi, $rbp, $r14, $rbx
+  frame-setup PUSH64r killed $rbp, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 16
+  frame-setup PUSH64r killed $r14, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 24
+  frame-setup PUSH64r killed $rbx, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 32
+  CFI_INSTRUCTION offset $rbx, -32
+  CFI_INSTRUCTION offset $r14, -24
+  CFI_INSTRUCTION offset $rbp, -16
+  renamable $rbx = COPY $rdi
+  renamable $edi = MOV32rm $rdi, 1, $noreg, 20, $noreg :: (load (s32) from %ir.3, !tbaa !10)
+  renamable $bpl = MOV8ri 1, implicit-def $ebp
+  CMP32ri renamable $edi, -1, implicit-def $eflags
+  JCC_1 %bb.5, 4, implicit $eflags
+
+bb.1 (%ir-block.6):
+; predecessors: %bb.0
+  successors: %bb.5(0x30000000), %bb.2(0x50000000); %bb.5(37.50%), %bb.2(62.50%)
+  liveins: $ebp, $edi, $rbx, $rsi:0x000000000000000D
+  renamable $r14 = COPY $rsi
+  CALL64pcrel32 target-flags(x86-plt) @close, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit-def $rsp, implicit-def $ssp, implicit-def dead $eax
+  renamable $rdi = MOV64rm renamable $rbx, 1, $noreg, 0, $noreg :: (load (s64) from %ir.0, !tbaa !47)
+  dead $esi = MOV32r0 implicit-def dead $eflags, implicit-def $rsi
+  CALL64pcrel32 target-flags(x86-plt) @pthread_join, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  TEST32rr killed renamable $eax, renamable $eax, implicit-def $eflags
+  JCC_1 %bb.5, 4, implicit $eflags
+
+bb.2 (%ir-block.11):
+; predecessors: %bb.1
+  successors: %bb.3(0x30000000), %bb.4(0x50000000); %bb.3(37.50%), %bb.4(62.50%)
+  liveins: $rbx, $r14
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.1, !tbaa !4)
+  JCC_1 %bb.4, 5, implicit $eflags
+
+bb.3 (%ir-block.14):
+; predecessors: %bb.2
+  successors: %bb.4(0x80000000); %bb.4(100.00%)
+  liveins: $rbx, $r14
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.15, !tbaa !10)
+  MOV32mi renamable $r14, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.1, !tbaa !4)
+  MOV32mr killed renamable $r14, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.17, !tbaa !9)
+
+bb.4 (%ir-block.18):
+; predecessors: %bb.3, %bb.2
+  successors: %bb.5(0x80000000); %bb.5(100.00%)
+  liveins: $rbx
+  renamable $ebp = MOV32r0 implicit-def dead $eflags
+
+bb.5 (%ir-block.18):
+; predecessors: %bb.1, %bb.4, %bb.0
+  successors: %bb.7(0x30000000), %bb.6(0x50000000); %bb.7(37.50%), %bb.6(62.50%)
+  liveins: $ebp, $rbx
+  renamable $edi = MOV32rm renamable $rbx, 1, $noreg, 16, $noreg :: (load (s32) from %ir.20, align 8, !tbaa !10)
+  CMP32ri renamable $edi, -1, implicit-def $eflags
+  JCC_1 %bb.7, 4, implicit $eflags
+
+bb.6 (%ir-block.23):
+; predecessors: %bb.5
+  successors: %bb.7(0x80000000); %bb.7(100.00%)
+  liveins: $ebp, $edi, $rbx
+  CALL64pcrel32 target-flags(x86-plt) @close, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit-def $rsp, implicit-def $ssp, implicit-def dead $eax
+
+bb.7 (%ir-block.25):
+; predecessors: %bb.5, %bb.6
+  liveins: $ebp, $rbx
+  $rdi = COPY killed renamable $rbx
+  CALL64pcrel32 target-flags(x86-plt) @free, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit-def $rsp, implicit-def $ssp
+  $al = COPY renamable $bpl, implicit killed $ebp
+  $rbx = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 24
+  $r14 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 16
+  $rbp = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 8
+  RET 0, $al
+
+# End machine code for function hwt_perf_free_collector.
+
+
+# Function: hwt_perf_start_collector
+# Machine code for function hwt_perf_start_collector: NoPHIs, TracksLiveness, NoVRegs, TiedOpsRewritten, TracksDebugUserValues
+Frame Objects:
+  fi#-6: size=8, align=8, fixed, at location [SP-48]
+  fi#-5: size=8, align=16, fixed, at location [SP-40]
+  fi#-4: size=8, align=8, fixed, at location [SP-32]
+  fi#-3: size=8, align=16, fixed, at location [SP-24]
+  fi#-2: size=8, align=8, fixed, at location [SP-16]
+  fi#-1: size=8, align=16, fixed, at location [SP-8]
+  fi#0: size=32, align=8, at location [SP-80]
+  fi#1: size=48, align=8, at location [SP-128]
+Function Live Ins: $rdi, $rsi, $rdx
+
+bb.0 (%ir-block.3):
+  successors: %bb.4(0x30000000), %bb.1(0x50000000); %bb.4(37.50%), %bb.1(62.50%)
+  liveins: $rdi, $rdx, $rsi, $rbp, $r15, $r14, $r13, $r12, $rbx
+  frame-setup PUSH64r killed $rbp, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 16
+  frame-setup PUSH64r killed $r15, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 24
+  frame-setup PUSH64r killed $r14, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 32
+  frame-setup PUSH64r killed $r13, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 40
+  frame-setup PUSH64r killed $r12, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 48
+  frame-setup PUSH64r killed $rbx, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 56
+  $rsp = frame-setup SUB64ri32 $rsp(tied-def 0), 88, implicit-def dead $eflags
+  frame-setup CFI_INSTRUCTION def_cfa_offset 144
+  CFI_INSTRUCTION offset $rbx, -56
+  CFI_INSTRUCTION offset $r12, -48
+  CFI_INSTRUCTION offset $r13, -40
+  CFI_INSTRUCTION offset $r14, -32
+  CFI_INSTRUCTION offset $r15, -24
+  CFI_INSTRUCTION offset $rbp, -16
+  renamable $r14 = COPY $rdx
+  renamable $r12 = COPY $rsi
+  renamable $rbx = COPY $rdi
+  renamable $rax = MOV64rm $rdi, 1, $noreg, 48, $noreg :: (load (s64) from %ir.6, !tbaa !36)
+  renamable $rcx = MOV64rm renamable $rax, 1, $noreg, 1024, $noreg :: (load acquire (s64) from %ir.8)
+  MOV64mr renamable $rax, 1, $noreg, 1032, $noreg, killed renamable $rcx :: (store monotonic (s64) into %ir.10)
+  renamable $rcx = MOV64rm renamable $rax, 1, $noreg, 1056, $noreg :: (load acquire (s64) from %ir.11)
+  MOV64mr killed renamable $rax, 1, $noreg, 1064, $noreg, killed renamable $rcx :: (store monotonic (s64) into %ir.13)
+  renamable $rdi = LEA64r $rdi, 1, $noreg, 16, $noreg
+  CALL64pcrel32 target-flags(x86-plt) @pipe, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  TEST32rr killed renamable $eax, renamable $eax, implicit-def $eflags
+  JCC_1 %bb.4, 4, implicit killed $eflags
+
+bb.1 (%ir-block.17):
+; predecessors: %bb.0
+  successors: %bb.2(0x80000000); %bb.2(100.00%)
+  liveins: $r14
+  renamable $r15d = MOV32r0 implicit-def dead $eflags, implicit-def $r15
+
+bb.2 (%ir-block.17):
+; predecessors: %bb.1, %bb.4
+  successors: %bb.3(0x2ff4b75c), %bb.20(0x500b48a4); %bb.3(37.47%), %bb.20(62.53%)
+  liveins: $r15, $r14
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.2, !tbaa !4)
+  JCC_1 %bb.20, 5, implicit $eflags
+
+bb.3 (%ir-block.20):
+; predecessors: %bb.2
+  successors: %bb.20(0x80000000); %bb.20(100.00%)
+  liveins: $r15, $r14
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.21, !tbaa !10), (load (s32) from %ir.31, !tbaa !10)
+  MOV32mi renamable $r14, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.2, !tbaa !4)
+  MOV32mr killed renamable $r14, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.23, !tbaa !9), (store (s32) into %ir.33, !tbaa !9)
+  JMP_1 %bb.20
+
+bb.4 (%ir-block.24):
+; predecessors: %bb.0
+  successors: %bb.2(0x30000000), %bb.5(0x50000000); %bb.2(37.50%), %bb.5(62.50%)
+  liveins: $rbx, $r12, $r14
+  renamable $r13 = LEA64r $rsp, 1, $noreg, 56, $noreg
+  renamable $r15d = MOV32r0 implicit-def dead $eflags, implicit-def $r15
+  $rdi = COPY renamable $r13
+  $esi = MOV32r0 implicit-def dead $eflags
+  $edx = MOV32r0 implicit-def dead $eflags
+  CALL64pcrel32 target-flags(x86-plt) @sem_init, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $esi, implicit $edx, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  CMP32ri killed renamable $eax, -1, implicit-def $eflags
+  JCC_1 %bb.2, 4, implicit $eflags
+
+bb.5 (%ir-block.34):
+; predecessors: %bb.4
+  successors: %bb.6(0x30000000), %bb.10(0x50000000); %bb.6(37.50%), %bb.10(62.50%)
+  liveins: $rbx, $r12, $r13, $r14
+  renamable $rax = LEA64r renamable $rbx, 1, $noreg, 8, $noreg
+  MOV64mi32 renamable $rbx, 1, $noreg, 8, $noreg, 0 :: (store (s64) into %ir.35)
+  renamable $ecx = MOV32rm renamable $rbx, 1, $noreg, 24, $noreg :: (load (s32) from %ir.37, align 8, !tbaa !11)
+  MOV32mr $rsp, 1, $noreg, 8, $noreg, killed renamable $ecx :: (store (s32) into %ir.5, align 8, !tbaa !50)
+  renamable $ecx = MOV32rm renamable $rbx, 1, $noreg, 16, $noreg :: (load (s32) from %ir.40, align 8, !tbaa !10)
+  MOV32mr $rsp, 1, $noreg, 12, $noreg, killed renamable $ecx :: (store (s32) into %ir.39, !tbaa !52)
+  MOV64mr $rsp, 1, $noreg, 16, $noreg, killed renamable $r13 :: (store (s64) into %ir.42, !tbaa !53)
+  MOV64mr $rsp, 1, $noreg, 24, $noreg, killed renamable $r12 :: (store (s64) into %ir.43, !tbaa !54)
+  renamable $rcx = MOV64rm renamable $rbx, 1, $noreg, 32, $noreg :: (load (s64) from %ir.45, !tbaa !46)
+  MOV64mr $rsp, 1, $noreg, 32, $noreg, killed renamable $rcx :: (store (s64) into %ir.44, !tbaa !55)
+  renamable $rcx = MOV64rm renamable $rbx, 1, $noreg, 48, $noreg :: (load (s64) from %ir.48, !tbaa !36)
+  MOV64mr $rsp, 1, $noreg, 40, $noreg, killed renamable $rcx :: (store (s64) into %ir.47, !tbaa !56)
+  MOV64mr $rsp, 1, $noreg, 48, $noreg, killed renamable $rax :: (store (s64) into %ir.50, !tbaa !57)
+  renamable $rdx = LEA64r $rip, 1, $noreg, @collector_thread, $noreg
+  renamable $r15d = MOV32r0 implicit-def dead $eflags, implicit-def $r15
+  renamable $rcx = LEA64r $rsp, 1, $noreg, 8, $noreg
+  $rdi = COPY renamable $rbx
+  dead $esi = MOV32r0 implicit-def dead $eflags, implicit-def $rsi
+  CALL64pcrel32 target-flags(x86-plt) @pthread_create, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $rdx, implicit $rcx, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  renamable $ebp = COPY $eax
+  TEST32rr $eax, $eax, implicit-def $eflags
+  JCC_1 %bb.10, 5, implicit killed $eflags
+
+bb.6:
+; predecessors: %bb.5
+  successors: %bb.7(0x80000000); %bb.7(100.00%)
+  liveins: $ebp, $rbx, $r14, $r15
+  renamable $r12 = LEA64r $rsp, 1, $noreg, 56, $noreg
+
+bb.7 (%ir-block.57):
+; predecessors: %bb.8, %bb.6
+  successors: %bb.8(0x7c000000), %bb.11(0x04000000); %bb.8(96.88%), %bb.11(3.12%)
+  liveins: $ebp, $rbx, $r12, $r14, $r15
+  $rdi = COPY renamable $r12
+  CALL64pcrel32 target-flags(x86-plt) @sem_wait, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  CMP32ri killed renamable $eax, -1, implicit-def $eflags
+  JCC_1 %bb.11, 5, implicit killed $eflags
+
+bb.8 (%ir-block.60):
+; predecessors: %bb.7
+  successors: %bb.7(0x7c000000), %bb.9(0x04000000); %bb.7(96.88%), %bb.9(3.12%)
+  liveins: $ebp, $rbx, $r12, $r14, $r15
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.61, !tbaa !10)
+  CMP32ri renamable $eax, 4, implicit-def $eflags
+  JCC_1 %bb.7, 4, implicit $eflags
+
+bb.9 (%ir-block.64):
+; predecessors: %bb.8
+  successors: %bb.14(0x30000000), %bb.15(0x50000000); %bb.14(37.50%), %bb.15(62.50%)
+  liveins: $eax, $ebp, $rbx, $r14, $r15
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.2, !tbaa !4)
+  JCC_1 %bb.14, 4, implicit $eflags
+  JMP_1 %bb.15
+
+bb.10 (%ir-block.54):
+; predecessors: %bb.5
+  successors: %bb.13(0x30000000), %bb.15(0x50000000); %bb.13(37.50%), %bb.15(62.50%)
+  liveins: $ebp, $rbx, $r14, $r15
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.2, !tbaa !4)
+  JCC_1 %bb.13, 4, implicit $eflags
+  JMP_1 %bb.15
+
+bb.11 (%ir-block.67):
+; predecessors: %bb.7
+  successors: %bb.12(0x30000000), %bb.15(0x50000000); %bb.12(37.50%), %bb.15(62.50%)
+  liveins: $ebp, $rbx, $r14
+  renamable $edi = MOV32rm renamable $rbx, 1, $noreg, 24, $noreg :: (load (s32) from %ir.68, align 8, !tbaa !11)
+  $rsi = MOV32ri64 9216
+  $edx = MOV32r0 implicit-def dead $eflags
+  dead $eax = MOV32r0 implicit-def dead $eflags, implicit-def $al
+  CALL64pcrel32 target-flags(x86-plt) @ioctl, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit $rsi, implicit $edx, implicit $al, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  renamable $r15d = MOV32ri 1, implicit-def $r15
+  TEST32rr killed renamable $eax, renamable $eax, implicit-def $eflags
+  JCC_1 %bb.15, 9, implicit $eflags
+
+bb.12 (%ir-block.72):
+; predecessors: %bb.11
+  successors: %bb.13(0x30000000), %bb.15(0x50000000); %bb.13(37.50%), %bb.15(62.50%)
+  liveins: $ebp, $rbx, $r14
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.2, !tbaa !4)
+  renamable $r15d = MOV32ri 0, implicit-def $r15
+  JCC_1 %bb.15, 5, implicit $eflags
+
+bb.13 (%ir-block.75):
+; predecessors: %bb.10, %bb.12
+  successors: %bb.14(0x80000000); %bb.14(100.00%)
+  liveins: $ebp, $rbx, $r14
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.76, !tbaa !10)
+
+bb.14 (%ir-block.78):
+; predecessors: %bb.13, %bb.9
+  successors: %bb.15(0x80000000); %bb.15(100.00%)
+  liveins: $eax, $ebp, $rbx, $r14
+  MOV32mi renamable $r14, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.2, !tbaa !4)
+  MOV32mr renamable $r14, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.80, !tbaa !9)
+  renamable $r15d = MOV32r0 implicit-def dead $eflags, implicit-def $r15
+
+bb.15 (%ir-block.81):
+; predecessors: %bb.11, %bb.12, %bb.14, %bb.10, %bb.9
+  successors: %bb.16(0x30000000), %bb.18(0x50000000); %bb.16(37.50%), %bb.18(62.50%)
+  liveins: $ebp, $rbx, $r14, $r15
+  renamable $rdi = LEA64r $rsp, 1, $noreg, 56, $noreg
+  CALL64pcrel32 target-flags(x86-plt) @sem_destroy, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  CMP32ri killed renamable $eax, -1, implicit-def $eflags
+  JCC_1 %bb.18, 5, implicit $eflags
+
+bb.16 (%ir-block.85):
+; predecessors: %bb.15
+  successors: %bb.17(0x30000000), %bb.18(0x50000000); %bb.17(37.50%), %bb.18(62.50%)
+  liveins: $ebp, $rbx, $r14
+  renamable $r15d = MOV32r0 implicit-def dead $eflags, implicit-def $r15
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.2, !tbaa !4)
+  JCC_1 %bb.18, 5, implicit $eflags
+
+bb.17 (%ir-block.88):
+; predecessors: %bb.16
+  successors: %bb.18(0x80000000); %bb.18(100.00%)
+  liveins: $ebp, $rbx, $r14, $r15
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.89, !tbaa !10)
+  MOV32mi renamable $r14, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.2, !tbaa !4)
+  MOV32mr killed renamable $r14, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.91, !tbaa !9)
+
+bb.18 (%ir-block.92):
+; predecessors: %bb.15, %bb.17, %bb.16
+  successors: %bb.19(0x30000000), %bb.20(0x50000000); %bb.19(37.50%), %bb.20(62.50%)
+  liveins: $ebp, $rbx, $r15
+  dead renamable $ebp = OR32rr killed renamable $ebp(tied-def 0), renamable $r15d, implicit-def $eflags
+  JCC_1 %bb.20, 5, implicit $eflags
+
+bb.19 (%ir-block.96):
+; predecessors: %bb.18
+  successors: %bb.20(0x80000000); %bb.20(100.00%)
+  liveins: $rbx
+  renamable $edi = MOV32rm renamable $rbx, 1, $noreg, 20, $noreg :: (load (s32) from %ir.97, !tbaa !10)
+  CALL64pcrel32 target-flags(x86-plt) @close, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit-def $rsp, implicit-def $ssp, implicit-def dead $eax
+  MOV32mi renamable $rbx, 1, $noreg, 20, $noreg, -1 :: (store (s32) into %ir.97, !tbaa !10)
+  renamable $rdi = MOV64rm renamable $rbx, 1, $noreg, 0, $noreg :: (load (s64) from %ir.0, !tbaa !47)
+  renamable $r15d = MOV32r0 implicit-def dead $eflags, implicit-def $r15
+  dead $esi = MOV32r0 implicit-def dead $eflags, implicit-def $rsi
+  CALL64pcrel32 target-flags(x86-plt) @pthread_join, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit-def $rsp, implicit-def $ssp, implicit-def dead $eax
+  renamable $edi = MOV32rm renamable $rbx, 1, $noreg, 16, $noreg :: (load (s32) from %ir.102, align 8, !tbaa !10)
+  CALL64pcrel32 target-flags(x86-plt) @close, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit-def $rsp, implicit-def $ssp, implicit-def dead $eax
+  MOV32mi killed renamable $rbx, 1, $noreg, 16, $noreg, -1 :: (store (s32) into %ir.102, align 8, !tbaa !10)
+
+bb.20 (%ir-block.105):
+; predecessors: %bb.3, %bb.18, %bb.19, %bb.2
+  liveins: $r15
+  $al = COPY renamable $r15b, implicit killed $r15
+  $rsp = frame-destroy ADD64ri32 $rsp(tied-def 0), 88, implicit-def dead $eflags
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 56
+  $rbx = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 48
+  $r12 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 40
+  $r13 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 32
+  $r14 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 24
+  $r15 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 16
+  $rbp = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 8
+  RET 0, $al
+
+# End machine code for function hwt_perf_start_collector.
+
+
+# Function: collector_thread
+# Machine code for function collector_thread: NoPHIs, TracksLiveness, NoVRegs, TiedOpsRewritten, TracksDebugUserValues
+Frame Objects:
+  fi#-6: size=8, align=8, fixed, at location [SP-48]
+  fi#-5: size=8, align=16, fixed, at location [SP-40]
+  fi#-4: size=8, align=8, fixed, at location [SP-32]
+  fi#-3: size=8, align=16, fixed, at location [SP-24]
+  fi#-2: size=8, align=8, fixed, at location [SP-16]
+  fi#-1: size=8, align=16, fixed, at location [SP-8]
+  fi#0: size=16, align=16, at location [SP-120]
+  fi#1: size=8, align=8, at location [SP-56]
+  fi#2: size=8, align=8, at location [SP-128]
+  fi#3: size=8, align=8, at location [SP-80]
+  fi#4: size=8, align=8, at location [SP-88]
+  fi#5: size=8, align=8, at location [SP-64]
+  fi#6: size=8, align=8, at location [SP-144]
+  fi#7: size=8, align=8, at location [SP-136]
+  fi#8: size=8, align=8, at location [SP-72]
+  fi#9: size=4, align=4, at location [SP-92]
+  fi#10: dead
+  fi#11: dead
+Jump Tables:
+%jump-table.0: %bb.52 %bb.57 %bb.57 %bb.57 %bb.57 %bb.57 %bb.57 %bb.57 %bb.57 %bb.33 %bb.49 %bb.54 %bb.57 %bb.57 %bb.57 %bb.57 %bb.57 %bb.57 %bb.57 %bb.56
+
+Function Live Ins: $rdi
+
+bb.0 (%ir-block.1):
+  successors: %bb.5(0x30000000), %bb.1(0x50000000); %bb.5(37.50%), %bb.1(62.50%)
+  liveins: $rdi, $rbp, $r15, $r14, $r13, $r12, $rbx
+  frame-setup PUSH64r killed $rbp, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 16
+  frame-setup PUSH64r killed $r15, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 24
+  frame-setup PUSH64r killed $r14, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 32
+  frame-setup PUSH64r killed $r13, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 40
+  frame-setup PUSH64r killed $r12, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 48
+  frame-setup PUSH64r killed $rbx, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 56
+  $rsp = frame-setup SUB64ri32 $rsp(tied-def 0), 104, implicit-def dead $eflags
+  frame-setup CFI_INSTRUCTION def_cfa_offset 160
+  CFI_INSTRUCTION offset $rbx, -56
+  CFI_INSTRUCTION offset $r12, -48
+  CFI_INSTRUCTION offset $r13, -40
+  CFI_INSTRUCTION offset $r14, -32
+  CFI_INSTRUCTION offset $r15, -24
+  CFI_INSTRUCTION offset $rbp, -16
+  renamable $rbx = COPY $rdi
+  renamable $ebp = MOV32rm $rdi, 1, $noreg, 0, $noreg :: (load (s32) from %ir.0, align 8)
+  renamable $eax = MOV32rm $rdi, 1, $noreg, 4, $noreg :: (load (s32) from %ir.5)
+  MOV32mr $rsp, 1, $noreg, 24, $noreg, killed renamable $eax :: (store (s32) into %stack.2)
+  renamable $r14 = MOV64rm $rdi, 1, $noreg, 16, $noreg :: (load (s64) from %ir.7)
+  renamable $r13 = MOV64rm $rdi, 1, $noreg, 24, $noreg :: (load (s64) from %ir.9)
+  renamable $r12 = MOV64rm $rdi, 1, $noreg, 32, $noreg :: (load (s64) from %ir.11)
+  renamable $r15 = MOV64rm $rdi, 1, $noreg, 40, $noreg :: (load (s64) from %ir.13)
+  renamable $rdi = MOV64rm $rdi, 1, $noreg, 8, $noreg :: (load (s64) from %ir.15)
+  CALL64pcrel32 target-flags(x86-plt) @sem_post, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  TEST32rr killed renamable $eax, renamable $eax, implicit-def $eflags
+  JCC_1 %bb.5, 4, implicit $eflags
+
+bb.1 (%ir-block.19):
+; predecessors: %bb.0
+  successors: %bb.2(0x30000000), %bb.3(0x50000000); %bb.2(37.50%), %bb.3(62.50%)
+  liveins: $rbx, $r15
+  CMP32mi renamable $r15, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.14)
+  JCC_1 %bb.3, 5, implicit $eflags
+
+bb.2 (%ir-block.22):
+; predecessors: %bb.1
+  successors: %bb.3(0x80000000); %bb.3(100.00%)
+  liveins: $rbx, $r15
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.23)
+  MOV32mi renamable $r15, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.14)
+  MOV32mr killed renamable $r15, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.25)
+
+bb.3 (%ir-block.237):
+; predecessors: %bb.1, %bb.2
+  successors: %bb.4(0x80000000); %bb.4(100.00%)
+  liveins: $rbx
+  renamable $rdi = MOV64rm killed renamable $rbx, 1, $noreg, 8, $noreg :: (load (s64) from %ir.238)
+  CALL64pcrel32 target-flags(x86-plt) @sem_post, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit-def $rsp, implicit-def $ssp, implicit-def dead $eax
+
+bb.4 (%ir-block.241):
+; predecessors: %bb.3, %bb.10
+  successors: %bb.62(0x80000000); %bb.62(100.00%)
+
+  renamable $eax = MOV32r0 implicit-def dead $eflags, implicit-def $rax
+  JMP_1 %bb.62
+
+bb.5 (%ir-block.26):
+; predecessors: %bb.0
+  successors: %bb.10(0x30000000), %bb.6(0x50000000); %bb.10(37.50%), %bb.6(62.50%)
+  liveins: $ebp, $r12, $r13, $r14, $r15
+  MOV64mr $rsp, 1, $noreg, 16, $noreg, killed renamable $r15 :: (store (s64) into %stack.7)
+  MOV64mr $rsp, 1, $noreg, 64, $noreg, killed renamable $r13 :: (store (s64) into %stack.4)
+  MOV64mr $rsp, 1, $noreg, 80, $noreg, killed renamable $r14 :: (store (s64) into %stack.8)
+  MOV32mr $rsp, 1, $noreg, 32, $noreg, renamable $ebp :: (store (s32) into %ir.2, align 16, !tbaa !58)
+  MOV32mi $rsp, 1, $noreg, 36, $noreg, 17 :: (store (s32) into %ir.27)
+  renamable $eax = MOV32rm $rsp, 1, $noreg, 24, $noreg :: (load (s32) from %stack.2)
+  MOV32mr $rsp, 1, $noreg, 40, $noreg, killed renamable $eax :: (store (s32) into %ir.29, align 8, !tbaa !58)
+  MOV32mi $rsp, 1, $noreg, 44, $noreg, 16 :: (store (s32) into %ir.30)
+  renamable $rdi = MOV64rm renamable $r12, 1, $noreg, 1048, $noreg :: (load (s64) from %ir.32)
+  CALL64pcrel32 target-flags(x86-plt) @malloc, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  MOV64mr $rsp, 1, $noreg, 8, $noreg, renamable $rax :: (store (s64) into %stack.6)
+  TEST64rr killed renamable $rax, renamable $rax, implicit-def $eflags
+  JCC_1 %bb.10, 4, implicit $eflags
+
+bb.6:
+; predecessors: %bb.5
+  successors: %bb.7(0x80000000); %bb.7(100.00%)
+  liveins: $ebp, $r12
+  renamable $rbx = LEA64r $rsp, 1, $noreg, 32, $noreg
+  renamable $r14 = MOV64rm $rsp, 1, $noreg, 16, $noreg :: (load (s64) from %stack.7)
+  MOV32mr $rsp, 1, $noreg, 60, $noreg, renamable $ebp :: (store (s32) into %stack.9)
+  MOV64mr $rsp, 1, $noreg, 72, $noreg, renamable $r12 :: (store (s64) into %stack.3)
+
+bb.7 (%ir-block.44):
+; predecessors: %bb.60, %bb.6
+  successors: %bb.8(0x04000000), %bb.12(0x7c000000); %bb.8(3.12%), %bb.12(96.88%)
+  liveins: $ebp, $rbx, $r12, $r14
+  $rsi = MOV32ri64 2
+  $rdi = COPY renamable $rbx
+  $edx = MOV32ri -1
+  CALL64pcrel32 target-flags(x86-plt) @poll, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $edx, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  CMP32ri killed renamable $eax, -1, implicit-def $eflags
+  JCC_1 %bb.12, 5, implicit $eflags
+
+bb.8 (%ir-block.47):
+; predecessors: %bb.7
+  successors: %bb.9(0x30000000), %bb.21(0x50000000); %bb.9(37.50%), %bb.21(62.50%)
+  liveins: $r14
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.14)
+  JCC_1 %bb.21, 5, implicit $eflags
+
+bb.9 (%ir-block.50):
+; predecessors: %bb.8
+  successors: %bb.20(0x80000000); %bb.20(100.00%)
+  liveins: $r14
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.51)
+  MOV32mi renamable $r14, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.14)
+  JMP_1 %bb.20
+
+bb.10 (%ir-block.37):
+; predecessors: %bb.5
+  successors: %bb.11(0x30000000), %bb.4(0x50000000); %bb.11(37.50%), %bb.4(62.50%)
+
+  renamable $rbx = MOV64rm $rsp, 1, $noreg, 16, $noreg :: (load (s64) from %stack.7)
+  CMP32mi renamable $rbx, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.14)
+  JCC_1 %bb.4, 5, implicit $eflags
+
+bb.11 (%ir-block.40):
+; predecessors: %bb.10
+  successors: %bb.62(0x80000000); %bb.62(100.00%)
+  liveins: $rbx
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.41)
+  MOV32mi renamable $rbx, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.14)
+  MOV32mr killed renamable $rbx, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.43)
+  renamable $eax = MOV32r0 implicit-def dead $eflags, implicit-def $rax
+  JMP_1 %bb.62
+
+bb.12 (%ir-block.54):
+; predecessors: %bb.7
+  successors: %bb.13(0x40000000), %bb.16(0x40000000); %bb.13(50.00%), %bb.16(50.00%)
+  liveins: $ebp, $rbx, $r12, $r14
+  renamable $ax = MOV16rm $rsp, 1, $noreg, 38, $noreg, implicit-def $eax :: (dereferenceable load (s16) from %ir.55, !tbaa !61)
+  TEST8ri renamable $al, 1, implicit-def $eflags
+  JCC_1 %bb.16, 5, implicit $eflags
+
+bb.13 (%ir-block.59):
+; predecessors: %bb.12
+  successors: %bb.60(0x40000000), %bb.14(0x40000000); %bb.60(50.00%), %bb.14(50.00%)
+  liveins: $eax, $ebp, $rbx, $r12, $r14
+  TEST8mi $rsp, 1, $noreg, 46, $noreg, 16, implicit-def $eflags :: (load (s8) from %ir.60, align 2)
+  JCC_1 %bb.60, 4, implicit $eflags
+
+bb.14 (%ir-block.74):
+; predecessors: %bb.16, %bb.13
+  successors: %bb.15(0x30000000), %bb.22(0x50000000); %bb.15(37.50%), %bb.22(62.50%)
+  liveins: $r12
+  renamable $r15 = MOV64rm renamable $r12, 1, $noreg, 1040, $noreg :: (load (s64) from %ir.75)
+  renamable $r15 = ADD64rr killed renamable $r15(tied-def 0), renamable $r12, implicit-def dead $eflags
+  renamable $rax = MOV64rm renamable $r12, 1, $noreg, 1024, $noreg :: (load acquire (s64) from %ir.78)
+  renamable $rbp = MOV64rm renamable $r12, 1, $noreg, 1048, $noreg :: (load (s64) from %ir.80)
+  renamable $rcx = COPY renamable $rax
+  renamable $rcx = OR64rr killed renamable $rcx(tied-def 0), renamable $rbp, implicit-def dead $eflags
+  dead renamable $rcx = SHR64ri killed renamable $rcx(tied-def 0), 32, implicit-def $eflags
+  MOV64mr $rsp, 1, $noreg, 24, $noreg, renamable $rax :: (store (s64) into %stack.2)
+  JCC_1 %bb.22, 5, implicit $eflags
+
+bb.15 (%ir-block.85):
+; predecessors: %bb.14
+  successors: %bb.23(0x80000000); %bb.23(100.00%)
+  liveins: $rax, $rbp, $r12, $r15
+  $eax = KILL renamable $eax, implicit killed $rax
+  $edx = MOV32r0 implicit-def dead $eflags
+  DIV32r renamable $ebp, implicit-def dead $eax, implicit-def $edx, implicit-def dead $eflags, implicit $eax, implicit $edx
+  renamable $ebx = COPY $edx, implicit-def $rbx
+  JMP_1 %bb.23
+
+bb.16 (%ir-block.65):
+; predecessors: %bb.12
+  successors: %bb.17(0x04000000), %bb.14(0x7c000000); %bb.17(3.12%), %bb.14(96.88%)
+  liveins: $ebp, $r12, $r14
+  $rdx = MOV32ri64 8
+  $edi = COPY killed renamable $ebp
+  renamable $rsi = LEA64r $rsp, 1, $noreg, 96, $noreg
+  CALL64pcrel32 target-flags(x86-plt) @read, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit $rsi, implicit $rdx, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  CMP64ri32 killed renamable $rax, -1, implicit-def $eflags
+  JCC_1 %bb.14, 5, implicit $eflags
+
+bb.17 (%ir-block.68):
+; predecessors: %bb.16
+  successors: %bb.18(0x30000000), %bb.21(0x50000000); %bb.18(37.50%), %bb.21(62.50%)
+  liveins: $r14
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.14)
+  JCC_1 %bb.21, 5, implicit $eflags
+
+bb.18 (%ir-block.71):
+; predecessors: %bb.17
+  successors: %bb.19(0x80000000); %bb.19(100.00%)
+  liveins: $r14
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.72)
+  renamable $ecx = MOV32ri 2
+
+bb.19 (%ir-block.221):
+; predecessors: %bb.18, %bb.35, %bb.44, %bb.53
+  successors: %bb.20(0x80000000); %bb.20(100.00%)
+  liveins: $eax, $ecx, $r14
+  MOV32mr renamable $r14, 1, $noreg, 0, $noreg, killed renamable $ecx :: (store (s32) into %ir.14)
+
+bb.20 (%ir-block.235):
+; predecessors: %bb.19, %bb.9
+  successors: %bb.21(0x80000000); %bb.21(100.00%)
+  liveins: $r14, $eax
+  MOV32mr killed renamable $r14, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.224), (store (s32) into %ir.53)
+
+bb.21 (%ir-block.235):
+; predecessors: %bb.17, %bb.52, %bb.34, %bb.43, %bb.8, %bb.20
+  successors: %bb.62(0x80000000); %bb.62(100.00%)
+
+  $rdi = MOV64rm $rsp, 1, $noreg, 8, $noreg :: (load (s64) from %stack.6)
+  CALL64pcrel32 target-flags(x86-plt) @free, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit-def $rsp, implicit-def $ssp
+  renamable $eax = MOV32r0 implicit-def dead $eflags, implicit-def $rax
+  JMP_1 %bb.62
+
+bb.22 (%ir-block.90):
+; predecessors: %bb.14
+  successors: %bb.23(0x80000000); %bb.23(100.00%)
+  liveins: $rax, $rbp, $r12, $r15
+  dead $edx = MOV32r0 implicit-def dead $eflags, implicit-def $rdx
+  DIV64r renamable $rbp, implicit-def dead $rax, implicit-def $rdx, implicit-def dead $eflags, implicit $rax, implicit $rdx
+  renamable $rbx = COPY $rdx
+
+bb.23 (%ir-block.92):
+; predecessors: %bb.22, %bb.15
+  successors: %bb.24(0x30000000), %bb.25(0x50000000); %bb.24(37.50%), %bb.25(62.50%)
+  liveins: $rbp, $rbx, $r12, $r15
+  renamable $rax = MOV64rm renamable $r12, 1, $noreg, 1032, $noreg :: (load monotonic (s64) from %ir.94)
+  renamable $rcx = COPY renamable $rax
+  renamable $rcx = OR64rr killed renamable $rcx(tied-def 0), renamable $rbp, implicit-def dead $eflags
+  dead renamable $rcx = SHR64ri killed renamable $rcx(tied-def 0), 32, implicit-def $eflags
+  JCC_1 %bb.25, 5, implicit $eflags
+
+bb.24 (%ir-block.99):
+; predecessors: %bb.23
+  successors: %bb.26(0x80000000); %bb.26(100.00%)
+  liveins: $rax, $rbp, $rbx, $r12, $r15
+  $eax = KILL renamable $eax, implicit killed $rax
+  $edx = MOV32r0 implicit-def dead $eflags
+  DIV32r renamable $ebp, implicit-def dead $eax, implicit-def $edx, implicit-def dead $eflags, implicit $eax, implicit $edx
+  renamable $r14d = COPY $edx, implicit-def $r14
+  JMP_1 %bb.26
+
+bb.25 (%ir-block.104):
+; predecessors: %bb.23
+  successors: %bb.26(0x80000000); %bb.26(100.00%)
+  liveins: $rax, $rbp, $rbx, $r12, $r15
+  dead $edx = MOV32r0 implicit-def dead $eflags, implicit-def $rdx
+  DIV64r renamable $rbp, implicit-def dead $rax, implicit-def $rdx, implicit-def dead $eflags, implicit $rax, implicit $rdx
+  renamable $r14 = COPY $rdx
+
+bb.26 (%ir-block.106):
+; predecessors: %bb.25, %bb.24
+  successors: %bb.28(0x40000000), %bb.27(0x40000000); %bb.28(50.00%), %bb.27(50.00%)
+  liveins: $rbp, $rbx, $r12, $r14, $r15
+  renamable $rsi = LEA64r renamable $r15, 1, renamable $r14, 0, $noreg
+  renamable $r13 = COPY renamable $rbx
+  renamable $r13 = SUB64rr killed renamable $r13(tied-def 0), renamable $r14, implicit-def $eflags
+  JCC_1 %bb.28, 2, implicit $eflags
+
+bb.27 (%ir-block.110):
+; predecessors: %bb.26
+  successors: %bb.29(0x80000000); %bb.29(100.00%)
+  liveins: $rsi, $r12, $r13
+  renamable $r14 = MOV64rm $rsp, 1, $noreg, 8, $noreg :: (load (s64) from %stack.6)
+  $rdi = COPY renamable $r14
+  $rdx = COPY renamable $r13
+  CALL64pcrel32 target-flags(x86-plt) &memcpy, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $rdx, implicit-def $rsp, implicit-def $ssp, implicit-def dead $rax
+  renamable $r13 = ADD64rr killed renamable $r13(tied-def 0), renamable $r14, implicit-def dead $eflags
+  JMP_1 %bb.29
+
+bb.28 (%ir-block.113):
+; predecessors: %bb.26
+  successors: %bb.29(0x80000000); %bb.29(100.00%)
+  liveins: $rbp, $rbx, $rsi, $r14, $r15
+  renamable $r13 = COPY renamable $rbp
+  renamable $r13 = SUB64rr killed renamable $r13(tied-def 0), renamable $r14, implicit-def dead $eflags
+  renamable $r12 = MOV64rm $rsp, 1, $noreg, 8, $noreg :: (load (s64) from %stack.6)
+  $rdi = COPY renamable $r12
+  $rdx = COPY renamable $r13
+  CALL64pcrel32 target-flags(x86-plt) &memcpy, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $rdx, implicit-def $rsp, implicit-def $ssp, implicit-def dead $rax
+  renamable $rbp = ADD64rr killed renamable $rbp(tied-def 0), renamable $r12, implicit-def dead $eflags
+  renamable $rbp = SUB64rr killed renamable $rbp(tied-def 0), killed renamable $r14, implicit-def dead $eflags
+  renamable $r14 = COPY killed renamable $r12
+  renamable $r12 = MOV64rm $rsp, 1, $noreg, 72, $noreg :: (load (s64) from %stack.3)
+  $rdi = COPY killed renamable $rbp
+  $rsi = COPY killed renamable $r15
+  $rdx = COPY renamable $rbx
+  CALL64pcrel32 target-flags(x86-plt) &memcpy, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $rdx, implicit-def $rsp, implicit-def $ssp, implicit-def dead $rax
+  renamable $rbx = ADD64rr killed renamable $rbx(tied-def 0), renamable $r14, implicit-def dead $eflags
+  renamable $rbx = ADD64rr killed renamable $rbx(tied-def 0), killed renamable $r13, implicit-def dead $eflags
+  renamable $r13 = COPY killed renamable $rbx
+
+bb.29 (%ir-block.120):
+; predecessors: %bb.27, %bb.28
+  successors: %bb.30(0x40000000), %bb.50(0x40000000); %bb.30(50.00%), %bb.50(50.00%)
+  liveins: $r12, $r13, $r14
+  renamable $rax = MOV64rm $rsp, 1, $noreg, 24, $noreg :: (load (s64) from %stack.2)
+  MOV64mr renamable $r12, 1, $noreg, 1032, $noreg, killed renamable $rax :: (store monotonic (s64) into %ir.122)
+  renamable $rax = COPY renamable $r14
+  CMP64rr renamable $r13, $r14, implicit-def $eflags
+  renamable $rsi = MOV64rm $rsp, 1, $noreg, 80, $noreg :: (load (s64) from %stack.8)
+  JCC_1 %bb.50, 6, implicit $eflags
+
+bb.30 (%ir-block.124):
+; predecessors: %bb.29
+  successors: %bb.31(0x80000000); %bb.31(100.00%)
+  liveins: $rsi, $r12, $r13
+  renamable $r14 = MOV64rm $rsp, 1, $noreg, 8, $noreg :: (load (s64) from %stack.6)
+  MOV64mr $rsp, 1, $noreg, 88, $noreg, renamable $r13 :: (store (s64) into %stack.5)
+
+bb.31 (%ir-block.125):
+; predecessors: %bb.30, %bb.49
+  successors: %bb.57(0x000001f8), %bb.32(0x7ffffe08); %bb.57(0.00%), %bb.32(100.00%)
+  liveins: $rsi, $r12, $r13, $r14
+  renamable $edx = MOV32rm renamable $r14, 1, $noreg, 0, $noreg, implicit-def $rdx :: (load (s32) from %ir.126, !tbaa !62)
+  renamable $eax = LEA64_32r renamable $rdx, 1, $noreg, -2, $noreg, implicit-def $rax
+  CMP32ri renamable $eax, 19, implicit-def $eflags
+  JCC_1 %bb.57, 7, implicit $eflags
+
+bb.32 (%ir-block.125):
+; predecessors: %bb.31
+  successors: %bb.52(0x0208205a), %bb.57(0x000001f8), %bb.33(0x3efbeae7), %bb.49(0x3efbeae7), %bb.54(0x000003f0), %bb.56(0x000003f0); %bb.52(1.59%), %bb.57(0.00%), %bb.33(49.21%), %bb.49(49.21%), %bb.54(0.00%), %bb.56(0.00%)
+  liveins: $rax, $rdx, $rsi, $r12, $r13, $r14
+  renamable $rcx = LEA64r $rip, 1, $noreg, %jump-table.0, $noreg
+  renamable $rax = MOVSX64rm32 renamable $rcx, 4, killed renamable $rax, 0, $noreg :: (load (s32) from jump-table)
+  renamable $rax = ADD64rr killed renamable $rax(tied-def 0), killed renamable $rcx, implicit-def dead $eflags
+  JMP64r killed renamable $rax
+
+bb.33 (%ir-block.128):
+; predecessors: %bb.32
+  successors: %bb.36(0x7c000000), %bb.34(0x04000000); %bb.36(96.88%), %bb.34(3.12%)
+  liveins: $rsi, $r12, $r14
+  TEST8mi renamable $r14, 1, $noreg, 24, $noreg, 1, implicit-def $eflags :: (load (s8) from %ir.129, align 8)
+  JCC_1 %bb.36, 4, implicit $eflags
+
+bb.34 (%ir-block.133):
+; predecessors: %bb.33
+  successors: %bb.35(0x30000000), %bb.21(0x50000000); %bb.35(37.50%), %bb.21(62.50%)
+
+  renamable $r14 = MOV64rm $rsp, 1, $noreg, 16, $noreg :: (load (s64) from %stack.7)
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.14)
+  JCC_1 %bb.21, 5, implicit $eflags
+
+bb.35:
+; predecessors: %bb.34
+  successors: %bb.19(0x80000000); %bb.19(100.00%)
+  liveins: $r14
+  renamable $eax = MOV32r0 implicit-def dead $eflags
+  renamable $ecx = MOV32ri 3
+  JMP_1 %bb.19
+
+bb.36 (%ir-block.136):
+; predecessors: %bb.33
+  successors: %bb.37(0x30000000), %bb.38(0x50000000); %bb.37(37.50%), %bb.38(62.50%)
+  liveins: $rsi, $r12, $r14
+  renamable $r8 = MOV64rm renamable $r12, 1, $noreg, 1056, $noreg :: (load acquire (s64) from %ir.137)
+  renamable $r15 = MOV64rm renamable $r12, 1, $noreg, 1080, $noreg :: (load (s64) from %ir.139)
+  renamable $rax = COPY renamable $r8
+  renamable $rax = OR64rr killed renamable $rax(tied-def 0), renamable $r15, implicit-def dead $eflags
+  dead renamable $rax = SHR64ri killed renamable $rax(tied-def 0), 32, implicit-def $eflags
+  JCC_1 %bb.38, 5, implicit $eflags
+
+bb.37 (%ir-block.144):
+; predecessors: %bb.36
+  successors: %bb.39(0x80000000); %bb.39(100.00%)
+  liveins: $rsi, $r8, $r12, $r14, $r15
+  $eax = COPY renamable $r8d
+  $edx = MOV32r0 implicit-def dead $eflags
+  DIV32r renamable $r15d, implicit-def dead $eax, implicit-def $edx, implicit-def dead $eflags, implicit $eax, implicit $edx
+  renamable $ebp = COPY $edx, implicit-def $rbp
+  JMP_1 %bb.39
+
+bb.38 (%ir-block.149):
+; predecessors: %bb.36
+  successors: %bb.39(0x80000000); %bb.39(100.00%)
+  liveins: $rsi, $r8, $r12, $r14, $r15
+  $rax = COPY renamable $r8
+  dead $edx = MOV32r0 implicit-def dead $eflags, implicit-def $rdx
+  DIV64r renamable $r15, implicit-def dead $rax, implicit-def $rdx, implicit-def dead $eflags, implicit $rax, implicit $rdx
+  renamable $rbp = COPY $rdx
+
+bb.39 (%ir-block.151):
+; predecessors: %bb.38, %bb.37
+  successors: %bb.40(0x30000000), %bb.41(0x50000000); %bb.40(37.50%), %bb.41(62.50%)
+  liveins: $rbp, $rsi, $r8, $r12, $r14, $r15
+  renamable $rax = MOV64rm killed renamable $r12, 1, $noreg, 1064, $noreg :: (load monotonic (s64) from %ir.153)
+  renamable $rcx = COPY renamable $rax
+  renamable $rcx = OR64rr killed renamable $rcx(tied-def 0), renamable $r15, implicit-def dead $eflags
+  dead renamable $rcx = SHR64ri killed renamable $rcx(tied-def 0), 32, implicit-def $eflags
+  JCC_1 %bb.41, 5, implicit $eflags
+
+bb.40 (%ir-block.158):
+; predecessors: %bb.39
+  successors: %bb.42(0x80000000); %bb.42(100.00%)
+  liveins: $rax, $rbp, $rsi, $r8, $r14, $r15
+  $eax = KILL renamable $eax, implicit killed $rax
+  $edx = MOV32r0 implicit-def dead $eflags
+  DIV32r renamable $r15d, implicit-def dead $eax, implicit-def $edx, implicit-def dead $eflags, implicit $eax, implicit $edx
+  renamable $edx = KILL $edx, implicit-def $rdx
+  JMP_1 %bb.42
+
+bb.41 (%ir-block.163):
+; predecessors: %bb.39
+  successors: %bb.42(0x80000000); %bb.42(100.00%)
+  liveins: $rax, $rbp, $rsi, $r8, $r14, $r15
+  dead $edx = MOV32r0 implicit-def dead $eflags, implicit-def $rdx
+  DIV64r renamable $r15, implicit-def dead $rax, implicit-def $rdx, implicit-def dead $eflags, implicit $rax, implicit $rdx
+
+bb.42 (%ir-block.165):
+; predecessors: %bb.41, %bb.40
+  successors: %bb.43(0x04000000), %bb.45(0x7c000000); %bb.43(3.12%), %bb.45(96.88%)
+  liveins: $rbp, $rdx, $rsi, $r8, $r15, $r14
+  renamable $r12 = MOV64rm $rsp, 1, $noreg, 64, $noreg :: (load (s64) from %stack.4)
+  renamable $r15 = SUB64rr killed renamable $r15(tied-def 0), renamable $rdx, implicit-def dead $eflags
+  renamable $rax = LEA64r renamable $r15, 1, renamable $rbp, 0, $noreg
+  renamable $rbx = COPY renamable $rbp
+  renamable $rbx = SUB64rr killed renamable $rbx(tied-def 0), renamable $rdx, implicit-def $eflags
+  renamable $rax = CMOV64rr killed renamable $rax(tied-def 0), renamable $rbx, 3, implicit $eflags
+  renamable $rdi = MOV64rm renamable $rsi, 1, $noreg, 8, $noreg :: (load (s64) from %ir.173)
+  renamable $rax = ADD64rr killed renamable $rax(tied-def 0), renamable $rdi, implicit-def dead $eflags
+  CMP64rm killed renamable $rax, renamable $rsi, 1, $noreg, 16, $noreg, implicit-def $eflags :: (load (s64) from %ir.176)
+  JCC_1 %bb.45, 6, implicit $eflags
+
+bb.43 (%ir-block.179):
+; predecessors: %bb.42
+  successors: %bb.44(0x30000000), %bb.21(0x50000000); %bb.44(37.50%), %bb.21(62.50%)
+
+  renamable $r14 = MOV64rm $rsp, 1, $noreg, 16, $noreg :: (load (s64) from %stack.7)
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.14)
+  JCC_1 %bb.21, 5, implicit $eflags
+
+bb.44:
+; predecessors: %bb.43
+  successors: %bb.19(0x80000000); %bb.19(100.00%)
+  liveins: $r14
+  renamable $eax = MOV32ri 1
+  renamable $ecx = MOV32ri 3
+  JMP_1 %bb.19
+
+bb.45 (%ir-block.182):
+; predecessors: %bb.42
+  successors: %bb.47(0x40000000), %bb.46(0x40000000); %bb.47(50.00%), %bb.46(50.00%)
+  liveins: $rbp, $rbx, $rdi, $rdx, $rsi, $r8, $r12, $r14, $r15
+  MOV64mr $rsp, 1, $noreg, 24, $noreg, killed renamable $r8 :: (store (s64) into %stack.2)
+  renamable $rdi = ADD64rm killed renamable $rdi(tied-def 0), renamable $rsi, 1, $noreg, 0, $noreg, implicit-def dead $eflags :: (load (s64) from %ir.8)
+  renamable $r13 = COPY killed renamable $rsi
+  renamable $rsi = LEA64r renamable $r12, 1, renamable $rdx, 0, $noreg
+  CMP64rr renamable $rbp, killed renamable $rdx, implicit-def $eflags
+  JCC_1 %bb.47, 2, implicit $eflags
+
+bb.46 (%ir-block.187):
+; predecessors: %bb.45
+  successors: %bb.48(0x80000000); %bb.48(100.00%)
+  liveins: $rbx, $rdi, $rsi, $r13, $r14
+  $rdx = COPY renamable $rbx
+  CALL64pcrel32 target-flags(x86-plt) &memcpy, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $rdx, implicit-def $rsp, implicit-def $ssp, implicit-def dead $rax
+  JMP_1 %bb.48
+
+bb.47 (%ir-block.188):
+; predecessors: %bb.45
+  successors: %bb.48(0x80000000); %bb.48(100.00%)
+  liveins: $rbp, $rdi, $rsi, $r12, $r13, $r14, $r15
+  $rdx = COPY renamable $r15
+  CALL64pcrel32 target-flags(x86-plt) &memcpy, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $rdx, implicit-def $rsp, implicit-def $ssp, implicit-def dead $rax
+  renamable $r15 = ADD64rm killed renamable $r15(tied-def 0), renamable $r13, 1, $noreg, 8, $noreg, implicit-def dead $eflags :: (load (s64) from %ir.189)
+  MOV64mr renamable $r13, 1, $noreg, 8, $noreg, renamable $r15 :: (store (s64) into %ir.189)
+  renamable $r15 = ADD64rm killed renamable $r15(tied-def 0), renamable $r13, 1, $noreg, 0, $noreg, implicit-def dead $eflags :: (load (s64) from %ir.8)
+  $rdi = COPY killed renamable $r15
+  $rsi = COPY killed renamable $r12
+  $rdx = COPY renamable $rbp
+  CALL64pcrel32 target-flags(x86-plt) &memcpy, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $rdx, implicit-def $rsp, implicit-def $ssp, implicit-def dead $rax
+  renamable $rbx = COPY killed renamable $rbp
+
+bb.48 (%ir-block.194):
+; predecessors: %bb.46, %bb.47
+  successors: %bb.49(0x80000000); %bb.49(100.00%)
+  liveins: $rbx, $r13, $r14
+  ADD64mr renamable $r13, 1, $noreg, 8, $noreg, killed renamable $rbx, implicit-def dead $eflags :: (store (s64) into %ir.196), (load (s64) from %ir.196)
+  renamable $r12 = MOV64rm $rsp, 1, $noreg, 72, $noreg :: (load (s64) from %stack.3)
+  renamable $rax = MOV64rm $rsp, 1, $noreg, 24, $noreg :: (load (s64) from %stack.2)
+  MOV64mr renamable $r12, 1, $noreg, 1064, $noreg, killed renamable $rax :: (store release (s64) into %ir.199)
+  renamable $rsi = COPY killed renamable $r13
+  renamable $r13 = MOV64rm $rsp, 1, $noreg, 88, $noreg :: (load (s64) from %stack.5)
+
+bb.49 (%ir-block.206):
+; predecessors: %bb.32, %bb.48
+  successors: %bb.31(0x7c000000), %bb.50(0x04000000); %bb.31(96.88%), %bb.50(3.12%)
+  liveins: $rsi, $r12, $r13, $r14
+  renamable $eax = MOVZX32rm16 renamable $r14, 1, $noreg, 6, $noreg, implicit-def $rax :: (load (s16) from %ir.207, !tbaa !71)
+  renamable $r14 = ADD64rr killed renamable $r14(tied-def 0), killed renamable $rax, implicit-def dead $eflags
+  CMP64rr renamable $r14, renamable $r13, implicit-def $eflags
+  JCC_1 %bb.31, 2, implicit $eflags
+
+bb.50 (%ir-block.212):
+; predecessors: %bb.29, %bb.49
+  successors: %bb.58(0x7ffff800), %bb.51(0x00000800); %bb.58(100.00%), %bb.51(0.00%)
+  liveins: $r12, $r13, $r14
+  CMP64rr killed renamable $r14, killed renamable $r13, implicit-def $eflags
+  JCC_1 %bb.58, 4, implicit $eflags
+
+bb.51 (%ir-block.215):
+; predecessors: %bb.50
+
+  renamable $rdi = LEA64r $rip, 1, $noreg, @.str.8, $noreg
+  renamable $rsi = LEA64r $rip, 1, $noreg, @.str.9, $noreg
+  renamable $rcx = LEA64r $rip, 1, $noreg, @__PRETTY_FUNCTION__.handle_sample, $noreg
+  $edx = MOV32ri 285
+  CALL64pcrel32 target-flags(x86-plt) @__assert_fail, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit $edx, implicit $rcx, implicit-def $rsp, implicit-def $ssp
+
+bb.52 (%ir-block.200):
+; predecessors: %bb.32
+  successors: %bb.53(0x30000000), %bb.21(0x50000000); %bb.53(37.50%), %bb.21(62.50%)
+
+  renamable $r14 = MOV64rm $rsp, 1, $noreg, 16, $noreg :: (load (s64) from %stack.7)
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.14)
+  JCC_1 %bb.21, 5, implicit $eflags
+
+bb.53:
+; predecessors: %bb.52
+  successors: %bb.19(0x80000000); %bb.19(100.00%)
+  liveins: $r14
+  renamable $eax = MOV32ri 2
+  renamable $ecx = MOV32ri 3
+  JMP_1 %bb.19
+
+bb.54 (%ir-block.203):
+; predecessors: %bb.32
+  successors: %bb.55(0x80000000); %bb.55(100.00%)
+
+  renamable $rsi = LEA64r $rip, 1, $noreg, @.str.5, $noreg
+
+bb.55 (%ir-block.203):
+; predecessors: %bb.54, %bb.56
+  liveins: $rsi
+  $edi = MOV32ri 1
+  dead $eax = MOV32r0 implicit-def dead $eflags, implicit-def $al
+  CALL64pcrel32 target-flags(x86-plt) @errx, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit $rsi, implicit $al, implicit-def $rsp, implicit-def $ssp
+
+bb.56 (%ir-block.204):
+; predecessors: %bb.32
+  successors: %bb.55(0x80000000); %bb.55(100.00%)
+
+  renamable $rsi = LEA64r $rip, 1, $noreg, @.str.6, $noreg
+  JMP_1 %bb.55
+
+bb.57 (%ir-block.205):
+; predecessors: %bb.32, %bb.31
+  liveins: $rdx
+  renamable $rsi = LEA64r $rip, 1, $noreg, @.str.7, $noreg
+  $edi = MOV32ri 1
+  $edx = KILL renamable $edx, implicit killed $rdx
+  dead $eax = MOV32r0 implicit-def dead $eflags, implicit-def $al
+  CALL64pcrel32 target-flags(x86-plt) @errx, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit $rsi, implicit $edx, implicit $al, implicit-def $rsp, implicit-def $ssp
+
+bb.58 (%ir-block.216):
+; predecessors: %bb.50
+  successors: %bb.59(0x7c000000), %bb.61(0x04000000); %bb.59(96.88%), %bb.61(3.12%)
+  liveins: $r12
+  renamable $eax = MOVZX32rm16 $rsp, 1, $noreg, 46, $noreg :: (dereferenceable load (s16) from %ir.217, !tbaa !61)
+  TEST8ri renamable $al, 16, implicit-def $eflags, implicit killed $eax
+  renamable $r14 = MOV64rm $rsp, 1, $noreg, 16, $noreg :: (load (s64) from %stack.7)
+  renamable $ebp = MOV32rm $rsp, 1, $noreg, 60, $noreg :: (load (s32) from %stack.9)
+  renamable $rbx = LEA64r $rsp, 1, $noreg, 32, $noreg
+  JCC_1 %bb.61, 5, implicit $eflags
+
+bb.59 (%ir-block.225):
+; predecessors: %bb.58
+  successors: %bb.60(0x80000000); %bb.60(100.00%)
+  liveins: $ebp, $rbx, $r12, $r14
+  renamable $ax = MOV16rm $rsp, 1, $noreg, 38, $noreg, implicit-def $eax :: (dereferenceable load (s16) from %ir.226, !tbaa !61)
+
+bb.60 (%ir-block.228):
+; predecessors: %bb.13, %bb.59
+  successors: %bb.7(0x7c000000), %bb.61(0x04000000); %bb.7(96.88%), %bb.61(3.12%)
+  liveins: $eax, $ebp, $rbx, $r12, $r14
+  TEST8ri renamable $al, 16, implicit-def $eflags, implicit killed $eax
+  JCC_1 %bb.7, 4, implicit $eflags
+
+bb.61 (%ir-block.232):
+; predecessors: %bb.60, %bb.58
+  successors: %bb.62(0x80000000); %bb.62(100.00%)
+
+  $rdi = MOV64rm $rsp, 1, $noreg, 8, $noreg :: (load (s64) from %stack.6)
+  CALL64pcrel32 target-flags(x86-plt) @free, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit-def $rsp, implicit-def $ssp
+  renamable $rax = MOV32ri64 1
+
+bb.62 (%ir-block.241):
+; predecessors: %bb.61, %bb.4, %bb.21, %bb.11
+  liveins: $rax
+  $rsp = frame-destroy ADD64ri32 $rsp(tied-def 0), 104, implicit-def dead $eflags
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 56
+  $rbx = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 48
+  $r12 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 40
+  $r13 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 32
+  $r14 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 24
+  $r15 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 16
+  $rbp = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 8
+  RET 0, $rax
+
+# End machine code for function collector_thread.
+
+
+# Function: hwt_perf_stop_collector
+# Machine code for function hwt_perf_stop_collector: NoPHIs, TracksLiveness, NoVRegs, TiedOpsRewritten, TracksDebugUserValues
+Frame Objects:
+  fi#-3: size=8, align=16, fixed, at location [SP-24]
+  fi#-2: size=8, align=8, fixed, at location [SP-16]
+  fi#-1: size=8, align=16, fixed, at location [SP-8]
+  fi#0: size=8, align=8, at location [SP-32]
+Function Live Ins: $rdi, $rsi
+
+bb.0 (%ir-block.2):
+  successors: %bb.1(0x30000000), %bb.4(0x50000000); %bb.1(37.50%), %bb.4(62.50%)
+  liveins: $rdi, $rsi, $rbp, $r14, $rbx
+  frame-setup PUSH64r killed $rbp, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 16
+  frame-setup PUSH64r killed $r14, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 24
+  frame-setup PUSH64r killed $rbx, implicit-def $rsp, implicit $rsp
+  frame-setup CFI_INSTRUCTION def_cfa_offset 32
+  $rsp = frame-setup SUB64ri32 $rsp(tied-def 0), 16, implicit-def dead $eflags
+  frame-setup CFI_INSTRUCTION def_cfa_offset 48
+  CFI_INSTRUCTION offset $rbx, -32
+  CFI_INSTRUCTION offset $r14, -24
+  CFI_INSTRUCTION offset $rbp, -16
+  renamable $r14 = COPY $rsi
+  renamable $rbx = COPY $rdi
+  renamable $edi = MOV32rm $rdi, 1, $noreg, 24, $noreg :: (load (s32) from %ir.4, align 8, !tbaa !11)
+  $rsi = MOV32ri64 9217
+  $edx = MOV32r0 implicit-def dead $eflags
+  dead $eax = MOV32r0 implicit-def dead $eflags, implicit-def $al
+  CALL64pcrel32 target-flags(x86-plt) @ioctl, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit $rsi, implicit killed $edx, implicit $al, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  renamable $ebp = MOV32ri 1
+  TEST32rr killed renamable $eax, renamable $eax, implicit-def $eflags
+  JCC_1 %bb.4, 9, implicit $eflags
+
+bb.1 (%ir-block.8):
+; predecessors: %bb.0
+  successors: %bb.2(0x30000000), %bb.3(0x50000000); %bb.2(37.50%), %bb.3(62.50%)
+  liveins: $rbx, $r14
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.1, !tbaa !4)
+  JCC_1 %bb.3, 5, implicit $eflags
+
+bb.2 (%ir-block.11):
+; predecessors: %bb.1
+  successors: %bb.3(0x80000000); %bb.3(100.00%)
+  liveins: $rbx, $r14
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.12, !tbaa !10)
+  MOV32mi renamable $r14, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.1, !tbaa !4)
+  MOV32mr renamable $r14, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.14, !tbaa !9)
+
+bb.3 (%ir-block.15):
+; predecessors: %bb.2, %bb.1
+  successors: %bb.4(0x80000000); %bb.4(100.00%)
+  liveins: $rbx, $r14
+  renamable $ebp = MOV32r0 implicit-def dead $eflags
+
+bb.4 (%ir-block.15):
+; predecessors: %bb.0, %bb.3
+  successors: %bb.5(0x30000000), %bb.7(0x50000000); %bb.5(37.50%), %bb.7(62.50%)
+  liveins: $ebp, $rbx, $r14
+  renamable $edi = MOV32rm renamable $rbx, 1, $noreg, 20, $noreg :: (load (s32) from %ir.17, !tbaa !10)
+  CALL64pcrel32 target-flags(x86-plt) @close, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  CMP32ri killed renamable $eax, -1, implicit-def $eflags
+  JCC_1 %bb.7, 5, implicit $eflags
+
+bb.5 (%ir-block.21):
+; predecessors: %bb.4
+  successors: %bb.6(0x30000000), %bb.7(0x50000000); %bb.6(37.50%), %bb.7(62.50%)
+  liveins: $rbx, $r14
+  renamable $ebp = MOV32r0 implicit-def dead $eflags
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.1, !tbaa !4)
+  JCC_1 %bb.7, 5, implicit $eflags
+
+bb.6 (%ir-block.24):
+; predecessors: %bb.5
+  successors: %bb.7(0x80000000); %bb.7(100.00%)
+  liveins: $ebp, $rbx, $r14
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.25, !tbaa !10)
+  MOV32mi renamable $r14, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.1, !tbaa !4)
+  MOV32mr renamable $r14, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.27, !tbaa !9)
+
+bb.7 (%ir-block.28):
+; predecessors: %bb.4, %bb.6, %bb.5
+  successors: %bb.10(0x30000000), %bb.8(0x50000000); %bb.10(37.50%), %bb.8(62.50%)
+  liveins: $ebp, $rbx, $r14
+  MOV32mi renamable $rbx, 1, $noreg, 20, $noreg, -1 :: (store (s32) into %ir.30, !tbaa !10)
+  renamable $rdi = MOV64rm renamable $rbx, 1, $noreg, 0, $noreg :: (load (s64) from %ir.0, !tbaa !47)
+  renamable $rsi = LEA64r $rsp, 1, $noreg, 8, $noreg
+  CALL64pcrel32 target-flags(x86-plt) @pthread_join, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $rdi, implicit $rsi, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  TEST32rr killed renamable $eax, renamable $eax, implicit-def $eflags
+  JCC_1 %bb.10, 4, implicit $eflags
+
+bb.8 (%ir-block.34):
+; predecessors: %bb.7
+  successors: %bb.9(0x30000000), %bb.10(0x50000000); %bb.9(37.50%), %bb.10(62.50%)
+  liveins: $rbx, $r14
+  renamable $ebp = MOV32r0 implicit-def dead $eflags
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.1, !tbaa !4)
+  JCC_1 %bb.10, 5, implicit $eflags
+
+bb.9 (%ir-block.37):
+; predecessors: %bb.8
+  successors: %bb.10(0x80000000); %bb.10(100.00%)
+  liveins: $ebp, $rbx, $r14
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.38, !tbaa !10)
+  MOV32mi renamable $r14, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.1, !tbaa !4)
+  MOV32mr renamable $r14, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.40, !tbaa !9)
+
+bb.10 (%ir-block.41):
+; predecessors: %bb.7, %bb.9, %bb.8
+  successors: %bb.11(0x30000000), %bb.13(0x50000000); %bb.11(37.50%), %bb.13(62.50%)
+  liveins: $ebp, $rbx, $r14
+  CMP64mi32 $rsp, 1, $noreg, 8, $noreg, 0, implicit-def $eflags :: (dereferenceable load (s64) from %ir.3, !tbaa !31)
+  JCC_1 %bb.13, 5, implicit $eflags
+
+bb.11 (%ir-block.45):
+; predecessors: %bb.10
+  successors: %bb.12(0x30000000), %bb.13(0x50000000); %bb.12(37.50%), %bb.13(62.50%)
+  liveins: $rbx, $r14
+  renamable $ebp = MOV32r0 implicit-def dead $eflags
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.1, !tbaa !4)
+  JCC_1 %bb.13, 5, implicit $eflags
+
+bb.12 (%ir-block.48):
+; predecessors: %bb.11
+  successors: %bb.13(0x80000000); %bb.13(100.00%)
+  liveins: $ebp, $rbx, $r14
+  renamable $rax = MOV64rm renamable $rbx, 1, $noreg, 8, $noreg :: (load (s64) from %ir.49)
+  MOV64mr renamable $r14, 1, $noreg, 0, $noreg, killed renamable $rax :: (store (s64) into %ir.1, align 4)
+
+bb.13 (%ir-block.51):
+; predecessors: %bb.10, %bb.12, %bb.11
+  successors: %bb.14(0x30000000), %bb.16(0x50000000); %bb.14(37.50%), %bb.16(62.50%)
+  liveins: $ebp, $rbx, $r14
+  renamable $edi = MOV32rm renamable $rbx, 1, $noreg, 16, $noreg :: (load (s32) from %ir.53, align 8, !tbaa !10)
+  CALL64pcrel32 target-flags(x86-plt) @close, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit $edi, implicit-def $rsp, implicit-def $ssp, implicit-def $eax
+  CMP32ri killed renamable $eax, -1, implicit-def $eflags
+  JCC_1 %bb.16, 5, implicit $eflags
+
+bb.14 (%ir-block.57):
+; predecessors: %bb.13
+  successors: %bb.15(0x30000000), %bb.16(0x50000000); %bb.15(37.50%), %bb.16(62.50%)
+  liveins: $rbx, $r14
+  renamable $ebp = MOV32r0 implicit-def dead $eflags
+  CMP32mi renamable $r14, 1, $noreg, 0, $noreg, 0, implicit-def $eflags :: (load (s32) from %ir.1, !tbaa !4)
+  JCC_1 %bb.16, 5, implicit $eflags
+
+bb.15 (%ir-block.60):
+; predecessors: %bb.14
+  successors: %bb.16(0x80000000); %bb.16(100.00%)
+  liveins: $ebp, $rbx, $r14
+  CALL64pcrel32 target-flags(x86-plt) @__errno_location, <regmask $bh $bl $bp $bph $bpl $bx $ebp $ebx $hbp $hbx $rbp $rbx $r12 $r13 $r14 $r15 $r12b $r13b $r14b $r15b $r12bh $r13bh $r14bh $r15bh $r12d $r13d $r14d $r15d $r12w $r13w $r14w $r15w $r12wh and 3 more...>, implicit $rsp, implicit $ssp, implicit-def $rsp, implicit-def $ssp, implicit-def $rax
+  renamable $eax = MOV32rm killed renamable $rax, 1, $noreg, 0, $noreg :: (load (s32) from %ir.61, !tbaa !10)
+  MOV32mi renamable $r14, 1, $noreg, 0, $noreg, 2 :: (store (s32) into %ir.1, !tbaa !4)
+  MOV32mr killed renamable $r14, 1, $noreg, 4, $noreg, killed renamable $eax :: (store (s32) into %ir.63, !tbaa !9)
+
+bb.16 (%ir-block.64):
+; predecessors: %bb.13, %bb.15, %bb.14
+  liveins: $ebp, $rbx
+  MOV32mi killed renamable $rbx, 1, $noreg, 16, $noreg, -1 :: (store (s32) into %ir.66, align 8, !tbaa !10)
+  $al = COPY renamable $bpl, implicit killed $ebp
+  $rsp = frame-destroy ADD64ri32 $rsp(tied-def 0), 16, implicit-def dead $eflags
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 32
+  $rbx = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 24
+  $r14 = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 16
+  $rbp = frame-destroy POP64r implicit-def $rsp, implicit $rsp
+  frame-destroy CFI_INSTRUCTION def_cfa_offset 8
+  RET 0, $al
+
+# End machine code for function hwt_perf_stop_collector.
+
+

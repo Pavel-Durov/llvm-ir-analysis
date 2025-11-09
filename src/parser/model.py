@@ -12,6 +12,7 @@ class Block:
     instruction_lines: List[str] = field(default_factory=list)
     conditional_branches: int = 0
     text: str = ""
+    yk_trace_bb_calls: int = 0  # Number of __yk_trace_basicblock calls in this block
 
 
 @dataclass

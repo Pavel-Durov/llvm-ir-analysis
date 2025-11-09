@@ -150,114 +150,46 @@ def main():
 
     if args.input_format == 'llc_asm':
         # Use ASMParser
-        parser = ASMParser()
-        output_fs = (args.output_format == 'fs')
-        if output_fs:
+        parser = ASMParser(allowed_functions=allowed_functions)
+        # Parse the file
+        parser.parse(filename, skip_prefixes=(args.skip_func_prefix or []))
+
+        # Apply func-type filtering
+        parser.apply_func_type_filter(filename, args.func_type, skip_patterns, args.skip_func_prefix)
+        # Handle filesystem output
+        if args.output_format == 'fs':
             if not args.output_dir:
                 raise SystemExit("--output-dir is required when --output-format fs is used.")
-            functions_map = parser.parse(filename, skip_prefixes=(args.skip_func_prefix or []))
-            # Apply func-type for ASM:
+            write_fs_output(parser.get_functions(), Path(args.output_dir), instructions_file=ASM_INSTRUCTIONS_FILE)
+
+        # Write function names if requested
+        if args.output_functions:
+            names = sorted(parser.get_functions().keys())  # assembly has only defined functions
+            # If user asked for declared only in ASM, it's empty
             if args.func_type == 'declared':
-                # No declarations in ASM; empty analysis
-                functions_map = {}
-            # Apply allow-list filter if provided
+                names = []
             if allowed_functions is not None:
-                functions_map = {n: fn for n, fn in functions_map.items() if n in allowed_functions}
-            # Compute counts from detailed map
-            num_functions = len(functions_map)
-            function_names = list(functions_map.keys())
-            num_basic_blocks = sum(fn.blocks for fn in functions_map.values())
-            num_instructions = sum(fn.total_instructions for fn in functions_map.values())
-            write_fs_output(functions_map, Path(args.output_dir), instructions_file=ASM_INSTRUCTIONS_FILE)
-            # Write function names if requested
-            if args.output_functions:
-                names = sorted(functions_map.keys())  # assembly has only defined functions
-                # If user asked for declared only in ASM, it's empty
-                if args.func_type == 'declared':
-                    names = []
-                _out = Path(args.output_functions)
-                _out.parent.mkdir(parents=True, exist_ok=True)
-                _out.write_text("\n".join(names) + ("\n" if names else ""), encoding="utf-8")
-        else:
-            if allowed_functions is not None or args.func_type == 'declared':
-                # Need per-function detail to filter or to handle 'declared' (which is empty)
-                functions_map = parser.parse(filename, skip_prefixes=(args.skip_func_prefix or []))
-                if args.func_type == 'declared':
-                    functions_map = {}
-                if allowed_functions is not None:
-                    functions_map = {n: fn for n, fn in functions_map.items() if n in allowed_functions}
-                num_functions = len(functions_map)
-                function_names = list(functions_map.keys())
-                num_basic_blocks = sum(fn.blocks for fn in functions_map.values())
-                num_instructions = sum(fn.total_instructions for fn in functions_map.values())
-            else:
-                # Fast path: just count without detailed parsing
-                functions_map = parser.parse(filename, skip_prefixes=(args.skip_func_prefix or []))
-                num_functions = len(functions_map)
-                function_names = list(functions_map.keys())
-                num_basic_blocks = sum(fn.blocks for fn in functions_map.values())
-                num_instructions = sum(fn.total_instructions for fn in functions_map.values())
-            # Write function names if requested
-            if args.output_functions:
-                names = sorted(function_names)
-                if args.func_type == 'declared':
-                    names = []
-                if allowed_functions is not None:
-                    names = [n for n in names if n in allowed_functions]
-                _out = Path(args.output_functions)
-                _out.parent.mkdir(parents=True, exist_ok=True)
-                _out.write_text("\n".join(names) + ("\n" if names else ""), encoding="utf-8")
+                names = [n for n in names if n in allowed_functions]
+            _out = Path(args.output_functions)
+            _out.parent.mkdir(parents=True, exist_ok=True)
+            _out.write_text("\n".join(names) + ("\n" if names else ""), encoding="utf-8")
 
         if args.print_analysis:
-            avg_instr_per_block = (num_instructions / num_basic_blocks) if num_basic_blocks > 0 else 0.0
-            print(f"Functions: {num_functions}")
-            if args.print_function_list and function_names:
-                print("Function list:")
-                for name in function_names:
-                    print(f"  {name}")
-            print(f"Basic blocks (in functions): {num_basic_blocks}")
-            print(f"Instructions (in basic blocks): {num_instructions}")
-            print(f"Average instructions per basic block: {avg_instr_per_block:.2f}")
+            report = parser.create_summary_report()
+            report.print_to_console(print_function_list=args.print_function_list)
         return
 
     # IR/MIR summary path - use appropriate parser
     if args.input_format == 'mir':
-        parser = MIRParser()
+        parser = MIRParser(allowed_functions=allowed_functions)
     else:  # ir
-        parser = IRParser()
+        parser = IRParser(allowed_functions=allowed_functions)
 
-    functions = parser.parse(filename, skip_patterns=skip_patterns, skip_prefixes=args.skip_func_prefix)
-    # Apply func-type selection for IR/MIR
-    if args.func_type in ('declared', 'all'):
-        defined_names = set(functions.keys())
-        _, declared_only = list_ir_functions(filename)
-        # declared_only returned by list_ir_functions excludes defined already,
-        # but recompute 'declared' set with filters
-        declared_set = declared_only
-        # Apply substring and prefix filters to declared_set
-        def keep_name(name: str) -> bool:
-            if any(sub in name for sub in (args.skip_functions or [])):
-                return False
-            if any(name.startswith(p) for p in (args.skip_func_prefix or [])):
-                return False
-            return True
-        declared_filtered = {n for n in declared_set if keep_name(n)}
-        if args.func_type == 'declared':
-            # Replace with declared-only map (zero blocks)
-            functions = {n: Function(name=n) for n in declared_filtered}
-        else:  # all
-            # Keep existing defined (already filtered), add declared that are not present
-            for n in sorted(declared_filtered):
-                if n not in functions:
-                    functions[n] = Function(name=n)
-    elif args.input_format == 'mir' and args.func_type == 'declared':
-        # MIR has only defined functions; declared-only => empty map
-        functions = {}
-    # Apply allow-list in IR/MIR mode, if provided
-    if allowed_functions is not None:
-        for fn_name in list(functions.keys()):
-            if fn_name not in allowed_functions:
-                del functions[fn_name]
+    parser.parse(filename, skip_patterns=skip_patterns, skip_prefixes=args.skip_func_prefix)
+    
+    # Apply func-type filtering
+    parser.apply_func_type_filter(filename, args.func_type, skip_patterns, args.skip_func_prefix)
+
     if args.output_format == 'fs':
         if not args.output_dir:
             raise SystemExit("--output-dir is required when --output-format fs is used.")
@@ -268,7 +200,8 @@ def main():
             instr_file = IR_INSTRUCTIONS_FILE
         else:
             instr_file = IR_INSTRUCTIONS_FILE  # fallback
-        write_fs_output(functions, Path(args.output_dir), instructions_file=instr_file)
+        write_fs_output(parser.get_functions(), Path(args.output_dir), instructions_file=instr_file)
+
     # Write function names if requested (IR/MIR path)
     if args.output_functions:
         if args.input_format == 'ir':
@@ -291,27 +224,16 @@ def main():
             if args.func_type == 'declared':
                 names = []
             else:
-                names = sorted(functions.keys())
+                names = sorted(parser.functions.keys())
         if allowed_functions is not None:
             names = [n for n in names if n in allowed_functions]
         _out = Path(args.output_functions)
         _out.parent.mkdir(parents=True, exist_ok=True)
         _out.write_text("\n".join(names) + ("\n" if names else ""), encoding="utf-8")
+
     if args.print_analysis:
-        num_functions = len(functions)
-        num_basic_blocks = sum(fn.blocks for fn in functions.values())
-        num_instructions = sum(fn.total_instructions for fn in functions.values())
-        function_names = list(functions.keys())
-        avg_instr_per_block = (num_instructions / num_basic_blocks) if num_basic_blocks > 0 else 0.0
-        
-        print(f"Functions: {num_functions}")
-        if args.print_function_list and function_names:
-            print("Function list:")
-            for name in sorted(function_names):
-                print(f"  {name}")
-        print(f"Basic blocks (in functions): {num_basic_blocks}")
-        print(f"Instructions (in basic blocks): {num_instructions}")
-        print(f"Average instructions per basic block: {avg_instr_per_block:.2f}")
+        report = parser.create_summary_report()
+        report.print_to_console(print_function_list=args.print_function_list)
 
 
 if __name__ == '__main__':
