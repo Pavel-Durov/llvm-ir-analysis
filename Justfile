@@ -72,6 +72,11 @@ print_analysis: mir_analysis llc_asm_analysis
 # Parse both assembly and MIR to filesystem
 parse_to_fs: parse_llc_asm_to_fs parse_mir_to_fs
 
+
+compile_llc_asm:
+	@echo "→ Compiling LLVM assembly..."
+	llc ./data/yklua.ir -o ./data/yklua.ll
+
 # ============================================================================
 # Development & Maintenance
 # ============================================================================

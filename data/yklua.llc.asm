@@ -112,7 +112,6 @@ main:                                   # @main
 	.globl	pmain                           # -- Begin function pmain
 	.p2align	4, 0x90
 	.type	pmain,@function
-
 pmain:                                  # @pmain
 	.cfi_startproc
 # %bb.0:
