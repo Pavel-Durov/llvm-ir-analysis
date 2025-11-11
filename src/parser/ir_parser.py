@@ -3,10 +3,13 @@ from __future__ import annotations
 import re
 import tempfile
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, TYPE_CHECKING
 
 from .base_parser import BaseParser
-from .model import Block, Function, RawBlock, SummaryReport
+from .model import Block, Function, RawBlock, YK_TRACE_BASICBLOCK_FUNC
+
+if TYPE_CHECKING:
+    from report.report import SummaryReport
 
 
 class IRParser(BaseParser):
@@ -110,9 +113,10 @@ class IRParser(BaseParser):
             collected.append(ln)
 
         # Count __yk_trace_basicblock calls
-        yk_trace_bb_calls = sum(1 for ln in collected if '__yk_trace_basicblock' in ln)
+        yk_trace_bb_calls = sum(1 for ln in collected if YK_TRACE_BASICBLOCK_FUNC in ln)
 
-        return Block(block=label, instructions=len(collected), instruction_lines=collected, 
+        # Exclude tracing calls from instruction count
+        return Block(block=label, instructions=len(collected) - yk_trace_bb_calls, instruction_lines=collected, 
                     text=text, yk_trace_bb_calls=yk_trace_bb_calls)
 
     def _is_ir_block_label(self, line_stripped: str) -> str | None:

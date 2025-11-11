@@ -1,6 +1,8 @@
 import argparse
+import sys
 from pathlib import Path
 from parser import IRParser, MIRParser, ASMParser, list_ir_functions, Function
+from export_blocks_csv import export_to_csv
 
 def read_allowed_functions(file_path: str | Path) -> set[str]:
     p = Path(file_path)
@@ -39,7 +41,7 @@ def main():
         description='Analyze IR CSV or parse textual LLVM IR/MIR to summarize basic blocks and instructions, '
                     'or compute assembly stats from LLVM-style .s files. Use --input-format to select parser.'
     )
-    parser.add_argument('input', help='Path to .csv (from analyze_ir.py), textual .ir/.mir, or .s file')
+    parser.add_argument('input', nargs='?', help='Path to .csv (from analyze_ir.py), textual .ir/.mir, or .s file (not required for --export-csv)')
     parser.add_argument(
         '--skip-func', dest='skip_functions', metavar='SUBSTR', action='append', default=None,
         help='Skip functions whose name contains SUBSTR. Can be repeated; defaults to __yk_trace_basicblock'
@@ -120,9 +122,69 @@ def main():
         dest='functions_file',
         help='Optional path to a file containing function names to include (one per line).'
     )
+    parser.add_argument(
+        '--export-csv',
+        dest='export_csv',
+        action='store_true',
+        default=False,
+        help='Export block comparison to CSV format (requires --mir-file, --asm-file, and --csv-output).'
+    )
+    parser.add_argument(
+        '--mir-file',
+        dest='mir_file',
+        help='Path to MIR file for CSV export.'
+    )
+    parser.add_argument(
+        '--asm-file',
+        dest='asm_file',
+        help='Path to ASM file for CSV export.'
+    )
+    parser.add_argument(
+        '--csv-output',
+        dest='csv_output',
+        help='Path to output CSV file for block comparison.'
+    )
+    parser.add_argument(
+        '--csv-function',
+        dest='csv_function',
+        help='Optional function name filter for CSV export (export only this function).'
+    )
 
     args = parser.parse_args()
 
+    # Validate input argument based on mode
+    if not args.export_csv and not args.input:
+        parser.error("the following arguments are required: input (unless using --export-csv)")
+    
+    # Handle CSV export mode (early exit, doesn't need input file)
+    if args.export_csv:
+        if not args.mir_file:
+            print("Error: --export-csv requires --mir-file to be specified", file=sys.stderr)
+            sys.exit(1)
+        if not args.asm_file:
+            print("Error: --export-csv requires --asm-file to be specified", file=sys.stderr)
+            sys.exit(1)
+        if not args.csv_output:
+            print("Error: --export-csv requires --csv-output to be specified", file=sys.stderr)
+            sys.exit(1)
+        
+        # Validate files exist
+        if not Path(args.mir_file).exists():
+            print(f"Error: MIR file not found: {args.mir_file}", file=sys.stderr)
+            sys.exit(1)
+        if not Path(args.asm_file).exists():
+            print(f"Error: ASM file not found: {args.asm_file}", file=sys.stderr)
+            sys.exit(1)
+        
+        # Perform CSV export
+        try:
+            export_to_csv(args.mir_file, args.asm_file, args.csv_output, args.csv_function)
+            return
+        except Exception as e:
+            print(f"Error during CSV export: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    # Regular mode (non-CSV export)
     filename = args.input
     skip_patterns = args.skip_functions or ['__yk_trace_basicblock']
 
@@ -145,8 +207,6 @@ def main():
     allowed_functions: set[str] | None = None
     if args.functions_file:
         allowed_functions = read_allowed_functions(args.functions_file)
-
-
 
     if args.input_format == 'llc_asm':
         # Use ASMParser

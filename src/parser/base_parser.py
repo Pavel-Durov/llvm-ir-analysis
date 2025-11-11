@@ -82,12 +82,12 @@ class BaseParser(ABC):
 
     def create_summary_report(self) -> 'SummaryReport':
         """Create a summary report for the parsed functions.
-        
+
         Returns:
             SummaryReport object with statistics
         """
         from report.report import SummaryReport
-        
+
         num_functions = len(self.functions)
         function_names = list(self.functions.keys())
         num_basic_blocks = sum(fn.blocks for fn in self.functions.values())

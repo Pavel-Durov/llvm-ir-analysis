@@ -22,16 +22,16 @@ class SummaryReport:
     def print_to_console(self, print_function_list: bool = False) -> None:
         """Print the report to console."""
         print(f"Functions: {self.num_functions}")
-        
+
         if print_function_list and self.function_names:
             print("Function list:")
             for name in sorted(self.function_names):
                 print(f"  {name}")
-        
+
         print(f"Basic blocks (in functions): {self.num_basic_blocks}")
         print(f"Instructions (in basic blocks): {self.num_instructions}")
         print(f"Average instructions per basic block: {self.avg_instr_per_block:.2f}")
-        
+
         # Print __yk_trace_basicblock statistics if they exist
         if self.yk_trace_stats and self.yk_trace_stats.has_data():
             print(f"\nBlocks with __yk_trace_basicblock: {self.yk_trace_stats.num_blocks}")

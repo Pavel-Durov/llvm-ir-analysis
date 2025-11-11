@@ -161,7 +161,8 @@ def test_ir_yk_trace_basicblock_single_call():
 
     parser = IRParser()
     blk = parser._parse_basic_block(ir_lines.splitlines(), in_mir=False)
-    assert blk.instructions == 3
+    # Instructions exclude the tracing call: 3 total - 1 trace call = 2
+    assert blk.instructions == 2
     assert blk.yk_trace_bb_calls == 1
 
 
@@ -175,7 +176,8 @@ def test_ir_yk_trace_basicblock_multiple_calls():
 
     parser = IRParser()
     blk = parser._parse_basic_block(ir_lines.splitlines(), in_mir=False)
-    assert blk.instructions == 4
+    # Instructions exclude the tracing calls: 4 total - 2 trace calls = 2
+    assert blk.instructions == 2
     assert blk.yk_trace_bb_calls == 2
 
 

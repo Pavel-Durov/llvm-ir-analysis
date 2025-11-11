@@ -91,6 +91,9 @@ func_stats:
 	uv run python ./src/main.py --input-format mir --print-analysis ./data/yklua.mir
 	@echo "ir stats:"
 	uv run python ./src/main.py --input-format ir --print-analysis ./data/yklua.ir
+
+compare_blocks:
+	uv run python src/match_blocks.py   --mir data/yklua.ir.llc.mir   --asm data/yklua.llc.asm   --function getobjname
 # ============================================================================
 # Development & Maintenance
 # ============================================================================

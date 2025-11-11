@@ -48,6 +48,35 @@ uv run python ./src/main.py \
   data/yklua.llc.asm
 ```
 
+### Export MIR/ASM block comparison to CSV
+
+```bash
+# Export all functions with tracing calls
+uv run python ./src/main.py \
+  --export-csv \
+  --mir-file data/yklua.ir.llc.mir \
+  --asm-file data/yklua.llc.asm \
+  --csv-output blocks_comparison.csv
+
+# Export specific function only
+uv run python ./src/main.py \
+  --export-csv \
+  --mir-file data/yklua.ir.llc.mir \
+  --asm-file data/yklua.llc.asm \
+  --csv-output luaG_typeerror.csv \
+  --csv-function luaG_typeerror
+```
+
+### Match and display MIR/ASM blocks
+
+```bash
+# Display matched blocks for a specific function
+uv run python ./src/match_blocks.py \
+  --mir data/yklua.ir.llc.mir \
+  --asm data/yklua.llc.asm \
+  --function luaG_typeerror
+```
+
 ## CLI Options
 
 ### Input
@@ -70,41 +99,18 @@ uv run python ./src/main.py \
 - `--print-analysis` - Print statistics to stdout
 - `--print-function-list` - Print function names (requires --print-analysis)
 
-## Justfile Recipes
+### CSV Export (MIR/ASM Comparison)
 
-Common tasks are defined in the `Justfile`:
+Exports block-level comparison data for functions with `__yk_trace_basicblock` calls.
 
-```bash
-# Set up environment
-just init
+CSV columns: `function_name`, `bb_id`, `mir_file`, `mir_line`, `mir_bb_raw`, `mir_real_inst_count`, `mir_total_inst_count`, `asm_file`, `asm_line`, `asm_bb_raw`, `asm_real_inst_count`
 
-# Format code
-just fmt
+- `--export-csv` - Enable CSV export mode
+- `--mir-file FILE` - Path to MIR file for comparison
+- `--asm-file FILE` - Path to ASM file for comparison
+- `--csv-output FILE` - Path to output CSV file
+- `--csv-function FUNC` - Optional: export only specific function
 
-# Lint code
-just lint
-
-# Run tests
-just test
-
-# Extract IR function names
-just extract_ir_defined_functions
-
-# Parse assembly to filesystem
-just parse_llc_asm_to_fs
-
-# Parse MIR to filesystem
-just parse_mir_to_fs
-
-# Parse both ASM and MIR
-just parse_to_fs
-
-# Run CLI with custom args
-just run -- --input-format mir --print-analysis ir/yklua.mir
-
-# Clean generated files
-just clean
-```
 
 ## Testing
 
@@ -124,3 +130,13 @@ uv run pre-commit run --all-files
 What runs:
 - Ruff (autofix + format)
 - Unit tests via pytest
+
+
+## LLC Commands:
+
+```shell
+# print mir from .ll
+lc -stop-after=machine-cp  ./yklua.ir.ll -o ./yklua.ir.llc.mir
+# print asm from .ll
+lc ./yklua.ir.ll -o ./yklua.ir.llc.asm
+```

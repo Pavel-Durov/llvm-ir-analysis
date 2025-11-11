@@ -5,6 +5,10 @@ from dataclasses import dataclass, field
 from typing import Dict, List
 
 
+# Constants
+YK_TRACE_BASICBLOCK_FUNC = '__yk_trace_basicblock'
+
+
 @dataclass
 class YkTraceStats:
     """Statistics for __yk_trace_basicblock calls."""
@@ -20,11 +24,13 @@ class YkTraceStats:
 @dataclass
 class Block:
     block: str
-    instructions: int
+    instructions: int  # Real instructions (excludes pseudo-ops in MIR)
     instruction_lines: List[str] = field(default_factory=list)
     conditional_branches: int = 0
     text: str = ""
     yk_trace_bb_calls: int = 0  # Number of __yk_trace_basicblock calls in this block
+    start_line: int = 0  # Line number in the source file where this block starts
+    total_instructions: int = 0  # Total instructions including pseudo-ops (MIR only)
 
 
 @dataclass
@@ -34,6 +40,7 @@ class Function:
     total_instructions: int = 0
     total_cond_branches: int = 0
     blocks_detail: List[Block] = field(default_factory=list)
+    function_index: int = 0  # The index passed as first argument to __yk_trace_basicblock (e.g., movl $134, %edi)
 
 
 @dataclass
@@ -113,5 +120,6 @@ class RawBlock:
     function_name: str
     in_mir: bool
     lines: List[str]
+    start_line: int = 0  # Line number in the source file where this block starts
 
 

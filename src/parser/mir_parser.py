@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Dict, List, TYPE_CHECKING
 
 from .base_parser import BaseParser
-from .model import Block, Function, RawBlock
+from .model import Block, Function, RawBlock, YK_TRACE_BASICBLOCK_FUNC
 
 if TYPE_CHECKING:
     from report.report import SummaryReport
@@ -32,6 +32,7 @@ class MIRParser(BaseParser):
             blk = self._parse_basic_block(rb.lines)
             if blk.instructions <= 0:
                 continue
+            blk.start_line = rb.start_line  # Set the line number from RawBlock
             fn = functions.get(rb.function_name)
             if fn is None:
                 fn = Function(name=rb.function_name)
@@ -76,6 +77,9 @@ class MIRParser(BaseParser):
             else:
                 label = label_raw
 
+        # Collect ALL instruction lines (including pseudo-ops) for display
+        all_instructions: List[str] = []
+        
         for ln in block_lines:
             s = ln.strip()
             if not s:
@@ -86,6 +90,12 @@ class MIRParser(BaseParser):
                 continue
             if s == '"':
                 continue
+            # Skip YAML document separators
+            if s == "..." or s == "---":
+                continue
+
+            # Add to all_instructions for display
+            all_instructions.append(ln)
 
             # Skip MIR metadata and pseudo-instructions that don't correspond to real machine code.
             # This emulates LLVM's MachineInstr predicates for text-based MIR parsing:
@@ -118,40 +128,73 @@ class MIRParser(BaseParser):
 
             collected.append(ln)
 
-        # Count __yk_trace_basicblock calls
-        yk_trace_bb_calls = sum(1 for ln in collected if '__yk_trace_basicblock' in ln)
+        # Count __yk_trace_basicblock calls (in all instructions)
+        yk_trace_bb_calls = sum(1 for ln in all_instructions if YK_TRACE_BASICBLOCK_FUNC in ln)
         
-        return Block(block=label, instructions=len(collected), instruction_lines=collected, 
-                    text=text, yk_trace_bb_calls=yk_trace_bb_calls)
+        # Return block with:
+        # - instructions: real instruction count (excluding trace calls and pseudo-ops)
+        # - instruction_lines: ALL instructions including pseudo-ops
+        # - total_instructions: count of all instructions (including pseudo-ops, excluding trace calls)
+        return Block(
+            block=label,
+            instructions=len(collected) - yk_trace_bb_calls,  # Real instructions only
+            instruction_lines=all_instructions,  # ALL instructions for display
+            text=text,
+            yk_trace_bb_calls=yk_trace_bb_calls,
+            total_instructions=len(all_instructions) - yk_trace_bb_calls  # Total including pseudo-ops
+        )
 
     def _extract_blocks(self, filename: str, skip_patterns: List[str] | None) -> List[RawBlock]:
-        """Extract raw basic blocks from MIR file."""
+        """Extract raw basic blocks from MIR file.
+        
+        Supports two MIR formats:
+        1. YAML format with "name: <function>" and "body: |" sections
+        2. Legacy format with "# Machine code for function <name>:" comments
+        """
         func_mir_machine_code_re = re.compile(r'#\s*Machine code for function\s+(\S+):')
+        func_yaml_name_re = re.compile(r'^name:\s+(\S+)')
         bb_mir_re = re.compile(r'^\s*bb\.(\d+)\b')
 
         current_function: str | None = None
         blocks: List[RawBlock] = []
         current_block_lines: List[str] | None = None
+        current_block_start_line: int = 0
         synth_function_name = Path(filename).name
+        line_number = 0
 
         with Path(filename).open('r', encoding='utf-8', errors='ignore') as f:
             for raw_line in f:
+                line_number += 1
                 line = raw_line.rstrip('\n')
 
-                # Match "# Machine code for function <name>:"
+                # Match "name: <function>" (YAML format)
+                m_yaml_name = func_yaml_name_re.match(line)
+                if m_yaml_name:
+                    # Flush previous block if any
+                    if current_block_lines is not None:
+                        blocks.append(RawBlock(function_name=(current_function or synth_function_name), 
+                                             in_mir=True, lines=current_block_lines, start_line=current_block_start_line))
+                        current_block_lines = None
+                    current_function = m_yaml_name.group(1)
+                    continue
+
+                # Match "# Machine code for function <name>:" (legacy format)
                 m_mir_mc = func_mir_machine_code_re.search(line)
                 if m_mir_mc:
                     current_function = m_mir_mc.group(1)
                     if current_block_lines is not None:
-                        blocks.append(RawBlock(function_name=current_function, in_mir=True, lines=current_block_lines))
+                        blocks.append(RawBlock(function_name=current_function, in_mir=True, lines=current_block_lines, 
+                                             start_line=current_block_start_line))
                         current_block_lines = None
                     continue
 
                 # MIR block start
                 if bb_mir_re.match(line):
                     if current_block_lines is not None:
-                        blocks.append(RawBlock(function_name=(current_function or synth_function_name), in_mir=True, lines=current_block_lines))
+                        blocks.append(RawBlock(function_name=(current_function or synth_function_name), in_mir=True, 
+                                             lines=current_block_lines, start_line=current_block_start_line))
                     current_block_lines = [line]
+                    current_block_start_line = line_number
                     if current_function is None:
                         current_function = synth_function_name
                     continue
@@ -162,7 +205,8 @@ class MIRParser(BaseParser):
 
             # EOF flush
             if current_block_lines is not None:
-                blocks.append(RawBlock(function_name=(current_function or synth_function_name), in_mir=True, lines=current_block_lines))
+                blocks.append(RawBlock(function_name=(current_function or synth_function_name), in_mir=True,
+                                     lines=current_block_lines, start_line=current_block_start_line))
 
         # Apply skip filters
         if skip_patterns:
