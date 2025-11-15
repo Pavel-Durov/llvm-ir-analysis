@@ -1,0 +1,83 @@
+=== IR Analysis Pass Statistics (Tracing vs Non-Tracing Blocks) ===
+
+Module: ld-temp.o
+  AOT IR Statistics:
+    Total Basic Blocks: 15774
+    Total Instructions: 93611
+    Average Instructions per Block: 5.93
+    
+    Tracing Blocks: 1612
+    Tracing Block Instructions: 9448
+    Average Tracing Block Instructions per Block: 5.86
+    
+    Non-Tracing Blocks: 14162
+    Non-Tracing Block Instructions: 84163
+    Average Non-Tracing Block Instructions per Block: 5.94
+  
+  MIR Statistics:
+    Total Basic Blocks: 16713
+    Total Instructions: 72272
+    Average Instructions per Block: 4.32
+    
+    Tracing Blocks: 1612
+    Tracing Block Instructions: 15528
+    Average Tracing Block Instructions per Block: 9.63
+    
+    Non-Tracing Blocks: 15101
+    Non-Tracing Block Instructions: 56744
+    Average Non-Tracing Block Instructions per Block: 3.76
+
+===========================
+
+Basic block information (tracing and non-tracing) written to: /home/pd/ir_analysis_basicblocks.csv
+Total basic blocks processed: 16452
+=== IR Analysis Pass Statistics (Tracing vs Non-Tracing Blocks) ===
+
+Module: ld-temp.o
+  AOT IR Statistics:
+    Total Basic Blocks: 20357
+    Total Instructions: 119746
+    Average Instructions per Block: 5.88
+
+    Tracing Blocks: 1612
+    Tracing Block Instructions: 9448
+    Average Tracing Block Instructions per Block: 5.86
+
+    Non-Tracing Blocks: 18745
+    Non-Tracing Block Instructions: 110298
+    Average Non-Tracing Block Instructions per Block: 5.88
+
+  MIR Statistics:
+    Total Basic Blocks: 21573
+    Total Instructions: 90214
+    Average Instructions per Block: 4.18
+
+    Tracing Blocks: 1612
+    Tracing Block Instructions: 15528
+    Average Tracing Block Instructions per Block: 9.63
+
+    Non-Tracing Blocks: 19961
+    Non-Tracing Block Instructions: 74686
+    Average Non-Tracing Block Instructions per Block: 3.74
+
+===========================
+
+
+Stats for all mir blocks:
+
+Total Blocks: 21573
+Instructions: 90214
+Average: 4.18
+
+
+Stats for mir blocks with tracing instructions:
+
+Total Blocks: 1612
+Instructions: 15528
+Average: 9.63
+
+Stats for mir blocks without tracing instructions:
+
+Total Blocks: 19961
+Instructions: 74686
+Average: 3.74

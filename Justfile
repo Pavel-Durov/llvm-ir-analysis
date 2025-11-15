@@ -94,6 +94,131 @@ func_stats:
 
 compare_blocks:
 	uv run python src/match_blocks.py   --mir data/yklua.ir.llc.mir   --asm data/yklua.llc.asm   --function getobjname
+
+# Match IR, MIR, and ASM blocks for all __yk_opt_ functions and output to CSV
+match_all_blocks:
+	uv run python src/match_blocks.py \
+		--mir data/yklua.ir.llc.mir \
+		--asm data/yklua.llc.asm \
+		--ir data/yklua.ir \
+		--csv reports/matched_blocks.csv
+
+# Match IR, MIR, and ASM blocks for a specific function
+match_function FUNC:
+	uv run python src/match_blocks.py \
+		--mir data/yklua.ir.llc.mir \
+		--asm data/yklua.llc.asm \
+		--ir data/yklua.ir \
+		--function {{FUNC}} \
+		--csv reports/matched_{{FUNC}}.csv \
+		--verbose
+
+# ============================================================================
+# Size Distribution Analysis
+# ============================================================================
+
+# Analyze block size distribution from CSV file
+analyze_csv_size:
+	@echo "→ Analysing block size distribution from CSV..."
+	uv run python ./src/main.py --analyze-size-distribution db/ir_analysis_basicblocks_fixed.csv
+
+# Analyze block size distribution from ASM file
+analyze_asm_size:
+	@echo "→ Analysing block size distribution from ASM..."
+	uv run python ./src/main.py --analyze-asm-size-distribution data/yklua.llc.asm
+
+# Analyze block size distribution from specific CSV file
+analyze_csv_size_file CSV:
+	@echo "→ Analysing block size distribution from {{CSV}}..."
+	uv run python ./src/main.py --analyze-size-distribution {{CSV}}
+
+# Analyze block size distribution from specific ASM file
+analyze_asm_size_file ASM:
+	@echo "→ Analysing block size distribution from {{ASM}}..."
+	uv run python ./src/main.py --analyze-asm-size-distribution {{ASM}}
+
+# ============================================================================
+# Database Setup (PostgreSQL)
+# ============================================================================
+
+# Set up PostgreSQL database in Docker and import CSV data
+setup_db:
+	@echo "→ Setting up PostgreSQL database in Docker..."
+	cd db && bash ./setup_postgres.sh
+
+# Start PostgreSQL container
+db_start:
+	@echo "→ Starting PostgreSQL container..."
+	@docker start ir_analysis_postgres 2>/dev/null || docker run -d \
+		--name ir_analysis_postgres \
+		-e POSTGRES_USER=test \
+		-e POSTGRES_PASSWORD=test \
+		-e POSTGRES_DB=ir_analysis \
+		-p 5432:5432 \
+		-v ir_analysis_pgdata:/var/lib/postgresql/data \
+		-v $(PWD)/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro \
+		postgres:16-alpine
+	@echo "✓ Container started. Waiting for PostgreSQL..."
+	@sleep 3
+	@echo "✓ PostgreSQL is ready!"
+
+# Stop PostgreSQL container
+db_stop:
+	@echo "→ Stopping PostgreSQL container..."
+	@docker stop ir_analysis_postgres
+	@echo "✓ Container stopped"
+
+# Restart PostgreSQL container
+db_restart:
+	@echo "→ Restarting PostgreSQL container..."
+	@docker restart ir_analysis_postgres
+	@echo "✓ Container restarted"
+
+# Remove PostgreSQL container and data
+db_clean:
+	@echo "→ Removing PostgreSQL container and data..."
+	@docker stop ir_analysis_postgres 2>/dev/null || true
+	@docker rm ir_analysis_postgres 2>/dev/null || true
+	@docker volume rm ir_analysis_pgdata 2>/dev/null || true
+	@echo "✓ Container and data removed"
+
+# Query the database - Functions with most basic blocks
+db_top_functions:
+	@echo "→ Functions with most basic blocks:"
+	@docker exec -it ir_analysis_postgres psql -U test -d ir_analysis -c "SELECT function_name, COUNT(*) as bb_count FROM basicblocks GROUP BY function_name ORDER BY bb_count DESC LIMIT 15;"
+
+# Query the database - Largest basic blocks
+db_largest_blocks:
+	@echo "→ Largest basic blocks (>50 instructions):"
+	@docker exec -it ir_analysis_postgres psql -U test -d ir_analysis -c "SELECT function_name, basicblock_id, number_of_instructions FROM basicblocks WHERE number_of_instructions > 50 ORDER BY number_of_instructions DESC LIMIT 15;"
+
+# Query the database - Database statistics
+db_stats:
+	@echo "→ Database statistics:"
+	@docker exec -it ir_analysis_postgres psql -U test -d ir_analysis -c "SELECT 'Total rows' as metric, COUNT(*) as value FROM basicblocks UNION ALL SELECT 'Unique functions', COUNT(DISTINCT function_name) FROM basicblocks UNION ALL SELECT 'Avg instructions/block', ROUND(AVG(number_of_instructions), 2) FROM basicblocks UNION ALL SELECT 'Max instructions/block', MAX(number_of_instructions) FROM basicblocks;"
+
+# Open database in interactive mode (psql)
+db_interactive:
+	@echo "→ Opening PostgreSQL interactive shell..."
+	@echo "  Tip: Try \\dt, \\d basicblocks, SELECT * FROM basicblocks LIMIT 5;"
+	@docker exec -it ir_analysis_postgres psql -U test -d ir_analysis
+
+# View database logs
+db_logs:
+	@echo "→ PostgreSQL container logs:"
+	@docker logs ir_analysis_postgres --tail 50 --follow
+
+# ============================================================================
+# Complete Workflow Automation
+# ============================================================================
+
+# Run complete analysis pipeline (all steps)
+run_all: match_all_blocks setup_db db_stats
+	@echo ""
+	@echo "✓ Complete analysis pipeline finished!"
+	@echo "  - IR/MIR/ASM blocks matched: reports/matched_blocks.csv"
+	@echo "  - Database created: db/ir_analysis.db"
+
 # ============================================================================
 # Development & Maintenance
 # ============================================================================

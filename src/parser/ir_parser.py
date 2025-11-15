@@ -115,8 +115,8 @@ class IRParser(BaseParser):
         # Count __yk_trace_basicblock calls
         yk_trace_bb_calls = sum(1 for ln in collected if YK_TRACE_BASICBLOCK_FUNC in ln)
 
-        # Exclude tracing calls from instruction count
-        return Block(block=label, instructions=len(collected) - yk_trace_bb_calls, instruction_lines=collected, 
+        # Include tracing calls in instruction count
+        return Block(block=label, instructions=len(collected), instruction_lines=collected, 
                     text=text, yk_trace_bb_calls=yk_trace_bb_calls)
 
     def _is_ir_block_label(self, line_stripped: str) -> str | None:

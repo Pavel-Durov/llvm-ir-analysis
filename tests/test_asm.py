@@ -175,7 +175,7 @@ def test_asm_yk_trace_basicblock_no_calls():
 
 
 def test_asm_yk_trace_basicblock_single_call():
-    """Test that __yk_trace_basicblock calls are excluded from instruction count."""
+    """Test that __yk_trace_basicblock calls are included in instruction count."""
     asm = """# %bb.0:
 	pushq	%rbp
 	movq	%rsp, %rbp
@@ -189,10 +189,8 @@ def test_asm_yk_trace_basicblock_single_call():
     parser = ASMParser()
     blk = parser._parse_basic_block(asm.split("\n"))
     # Total lines: pushq, movq, movl, xorl, callq, movq, popq, retq = 8
-    # Trace call lines: movl, xorl, callq = 3
-    # Expected: 8 - 3 = 5 (excluding the trace call setup and call itself)
-    # But we only exclude the callq line itself from count
-    assert blk.instructions == 7  # 8 instructions - 1 trace call
+    # All instructions are counted INCLUDING the trace call
+    assert blk.instructions == 8  # 8 instructions INCLUDING trace call
     assert blk.yk_trace_bb_calls == 1
 
 
@@ -213,9 +211,8 @@ def test_asm_yk_trace_basicblock_multiple_calls():
     parser = ASMParser()
     blk = parser._parse_basic_block(asm.split("\n"))
     # Total: pushq, movl, movl, callq, movq, movl, movl, callq, popq, retq = 10
-    # Trace calls: 2
-    # Expected: 10 - 2 = 8
-    assert blk.instructions == 8
+    # All instructions are counted INCLUDING trace calls
+    assert blk.instructions == 10
     assert blk.yk_trace_bb_calls == 2
 
 

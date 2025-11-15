@@ -3,18 +3,172 @@ import sys
 from pathlib import Path
 from parser import IRParser, MIRParser, ASMParser, list_ir_functions, Function
 from export_blocks_csv import export_to_csv
+from size_analysis import analyze_csv_blocks, analyze_asm_blocks, analyze_mir_blocks
+from utils import safe_name, read_allowed_functions
 
-def read_allowed_functions(file_path: str | Path) -> set[str]:
-    p = Path(file_path)
-    if not p.exists():
-        raise SystemExit(f"--functions-file not found: {p}")
-    raw = p.read_text(encoding="utf-8", errors="ignore").splitlines()
-    return {ln.strip() for ln in raw if ln.strip() and not ln.lstrip().startswith("#")}
+def analyze_size_distribution(csv_file: Path) -> None:
+    """Analyze and print block size distribution from CSV file."""
+    
+    # Perform analysis
+    try:
+        analysis = analyze_csv_blocks(csv_file)
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+    
+    # Print results
+    print("="*80)
+    print("BLOCK SIZE DISTRIBUTION ANALYSIS")
+    print("="*80)
+    print()
+    
+    print(f"Total unique blocks: {analysis.total_blocks:,}")
+    print(f"  - Traced blocks: {analysis.traced_count:,} ({analysis.traced_percentage:.1f}%)")
+    print(f"  - Untraced blocks: {analysis.untraced_count:,} ({analysis.untraced_percentage:.1f}%)")
+    print()
+    
+    print("="*80)
+    print("SIZE DISTRIBUTION")
+    print("="*80)
+    print()
+    print(f"{'Size (inst)':<15} {'Traced':<15} {'Traced %':<12} {'Untraced':<15} {'Untraced %':<12}")
+    print("-"*80)
+    
+    for size_label, t_count in analysis.traced_dist.items():
+        # Find corresponding untraced count
+        u_count = dict(analysis.untraced_dist.items())[size_label]
+        t_pct = analysis.traced_dist.get_percentage(t_count)
+        u_pct = analysis.untraced_dist.get_percentage(u_count)
+        
+        print(f"{size_label:<15} {t_count:<15,} {t_pct:<11.1f}% {u_count:<15,} {u_pct:<11.1f}%")
+    
+    print("-"*80)
+    print(f"{'Total':<15} {analysis.traced_count:<15,} {'100.0%':<12} {analysis.untraced_count:<15,} {'100.0%':<12}")
+    print()
+    
+    print("="*80)
+    print("AVERAGES")
+    print("="*80)
+    print()
+    print(f"Traced blocks:   {analysis.traced_avg:.2f} instructions/block")
+    print(f"Untraced blocks: {analysis.untraced_avg:.2f} instructions/block")
+    print(f"Difference:      {analysis.difference:.2f} instructions")
+    if analysis.untraced_avg > 0:
+        print(f"Ratio:           {analysis.ratio:.2f}×")
+    print()
+    
+    print("="*80)
+    print("KEY INSIGHTS")
+    print("="*80)
+    print()
+    
+    tiny_traced_pct = analysis.traced_dist.get_percentage(analysis.traced_dist.tiny)
+    tiny_untraced_pct = analysis.untraced_dist.get_percentage(analysis.untraced_dist.tiny)
+    
+    print(f"• {tiny_traced_pct:.1f}% of traced blocks are tiny (1-3 inst)")
+    print(f"• {tiny_untraced_pct:.1f}% of untraced blocks are tiny (1-3 inst)")
+    print(f"• Untraced population dominated by {analysis.untraced_dist.tiny:,} tiny blocks")
+    print(f"• Selection bias: Only {analysis.traced_percentage:.1f}% of blocks are traced")
+    print()
 
-def safe_name(name: str) -> str:
-        # Replace path separators and disallowed chars with underscore
-        allowed = "-._abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        return "".join(ch if ch in allowed else "_" for ch in name)
+def _print_size_analysis(analysis: 'BlockSizeAnalysis', traced_funcs: dict[str, int], 
+                         title: str, file_path: Path, num_functions: int) -> None:
+    """Helper function to print size distribution analysis results."""
+    print("="*80)
+    print(title)
+    print("="*80)
+    print()
+    
+    print(f"File: {file_path}")
+    print(f"Total functions: {num_functions:,}")
+    print(f"Total blocks: {analysis.total_blocks:,}")
+    print(f"  - Traced blocks: {analysis.traced_count:,} ({analysis.traced_percentage:.1f}%)")
+    print(f"  - Untraced blocks: {analysis.untraced_count:,} ({analysis.untraced_percentage:.1f}%)")
+    print()
+    
+    print("="*80)
+    print("SIZE DISTRIBUTION")
+    print("="*80)
+    print()
+    print(f"{'Size (inst)':<15} {'Traced':<15} {'Traced %':<12} {'Untraced':<15} {'Untraced %':<12}")
+    print("-"*80)
+    
+    for size_label, t_count in analysis.traced_dist.items():
+        # Find corresponding untraced count
+        u_count = dict(analysis.untraced_dist.items())[size_label]
+        t_pct = analysis.traced_dist.get_percentage(t_count)
+        u_pct = analysis.untraced_dist.get_percentage(u_count)
+        
+        print(f"{size_label:<15} {t_count:<15,} {t_pct:<11.1f}% {u_count:<15,} {u_pct:<11.1f}%")
+    
+    print("-"*80)
+    print(f"{'Total':<15} {analysis.traced_count:<15,} {'100.0%':<12} {analysis.untraced_count:<15,} {'100.0%':<12}")
+    print()
+    
+    print("="*80)
+    print("AVERAGES")
+    print("="*80)
+    print()
+    print(f"Traced blocks:   {analysis.traced_avg:.2f} instructions/block")
+    print(f"Untraced blocks: {analysis.untraced_avg:.2f} instructions/block")
+    print(f"Difference:      {analysis.difference:.2f} instructions")
+    if analysis.untraced_avg > 0:
+        print(f"Ratio:           {analysis.ratio:.2f}×")
+    print()
+    
+    print("="*80)
+    print("KEY INSIGHTS")
+    print("="*80)
+    print()
+    
+    tiny_traced_pct = analysis.traced_dist.get_percentage(analysis.traced_dist.tiny)
+    tiny_untraced_pct = analysis.untraced_dist.get_percentage(analysis.untraced_dist.tiny)
+    
+    print(f"• {tiny_traced_pct:.1f}% of traced blocks are tiny (1-3 inst)")
+    print(f"• {tiny_untraced_pct:.1f}% of untraced blocks are tiny (1-3 inst)")
+    print(f"• Untraced population: {analysis.untraced_dist.tiny:,} tiny blocks")
+    print(f"• Selection pattern: Only {analysis.traced_percentage:.1f}% of blocks have tracing")
+    print()
+    
+    # Show sample functions with traced blocks
+    if traced_funcs:
+        print("="*80)
+        print("SAMPLE FUNCTIONS WITH TRACING (top 10)")
+        print("="*80)
+        print()
+        for i, (func, count) in enumerate(sorted(traced_funcs.items(), key=lambda x: x[1], reverse=True)[:10], 1):
+            print(f"{i:2d}. {func}: {count} traced blocks")
+        print()
+
+def analyze_asm_size_distribution(asm_file: Path) -> None:
+    """Analyze and print block size distribution from ASM file."""
+    
+    # Perform analysis
+    analysis, traced_funcs = analyze_asm_blocks(asm_file)
+    
+    # Count unique functions (we need to reparse to get this)
+    from parser import ASMParser
+    parser = ASMParser()
+    parser.parse(str(asm_file), skip_prefixes=[])
+    num_functions = len(parser.get_functions())
+    
+    _print_size_analysis(analysis, traced_funcs, "ASM BLOCK SIZE DISTRIBUTION ANALYSIS", 
+                        asm_file, num_functions)
+
+def analyze_mir_size_distribution(mir_file: Path) -> None:
+    """Analyze and print block size distribution from MIR file."""
+    
+    # Perform analysis
+    analysis, traced_funcs = analyze_mir_blocks(mir_file)
+    
+    # Count unique functions (we need to reparse to get this)
+    from parser import MIRParser
+    parser = MIRParser()
+    parser.parse(str(mir_file), skip_patterns=[], skip_prefixes=[])
+    num_functions = len(parser.get_functions())
+    
+    _print_size_analysis(analysis, traced_funcs, "MIR BLOCK SIZE DISTRIBUTION ANALYSIS", 
+                        mir_file, num_functions)
 
 ASM_INSTRUCTIONS_FILE = "instructions.s"
 IR_INSTRUCTIONS_FILE = "instructions.ll"
@@ -149,12 +303,66 @@ def main():
         dest='csv_function',
         help='Optional function name filter for CSV export (export only this function).'
     )
+    parser.add_argument(
+        '--analyze-size-distribution',
+        dest='analyze_size_dist',
+        action='store_true',
+        default=False,
+        help='Analyze block size distribution from CSV file (requires CSV input with has_tracing_call column).'
+    )
+    parser.add_argument(
+        '--analyze-asm-size-distribution',
+        dest='analyze_asm_size_dist',
+        action='store_true',
+        default=False,
+        help='Analyze block size distribution from ASM file (detects __yk_trace_basicblock calls).'
+    )
 
     args = parser.parse_args()
 
     # Validate input argument based on mode
-    if not args.export_csv and not args.input:
-        parser.error("the following arguments are required: input (unless using --export-csv)")
+    if not args.export_csv and not args.analyze_size_dist and not args.analyze_asm_size_dist and not args.input:
+        parser.error("the following arguments are required: input (unless using --export-csv, --analyze-size-distribution, or --analyze-asm-size-distribution)")
+    
+    # Handle ASM size distribution analysis mode (early exit)
+    if args.analyze_asm_size_dist:
+        if not args.input:
+            print("Error: --analyze-asm-size-distribution requires input ASM file", file=sys.stderr)
+            sys.exit(1)
+        
+        asm_path = Path(args.input)
+        if not asm_path.exists():
+            print(f"Error: ASM file not found: {asm_path}", file=sys.stderr)
+            sys.exit(1)
+        
+        try:
+            analyze_asm_size_distribution(asm_path)
+            return
+        except Exception as e:
+            print(f"Error during ASM size distribution analysis: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+            sys.exit(1)
+    
+    # Handle size distribution analysis mode (early exit)
+    if args.analyze_size_dist:
+        if not args.input:
+            print("Error: --analyze-size-distribution requires input CSV file", file=sys.stderr)
+            sys.exit(1)
+        
+        csv_path = Path(args.input)
+        if not csv_path.exists():
+            print(f"Error: CSV file not found: {csv_path}", file=sys.stderr)
+            sys.exit(1)
+        
+        try:
+            analyze_size_distribution(csv_path)
+            return
+        except Exception as e:
+            print(f"Error during size distribution analysis: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+            sys.exit(1)
     
     # Handle CSV export mode (early exit, doesn't need input file)
     if args.export_csv:

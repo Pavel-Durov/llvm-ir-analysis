@@ -51,8 +51,8 @@ class ASMParser(BaseParser):
                 # For now, we trust the comment-based ID but could log this
                 pass
 
-        # Exclude tracing calls from instruction count
-        return Block(block=label, instructions=len(instr_lines) - yk_trace_bb_calls,
+        # Include tracing calls in instruction count
+        return Block(block=label, instructions=len(instr_lines),
                    instruction_lines=instr_lines,
                    text="\n".join(current_block_lines), yk_trace_bb_calls=yk_trace_bb_calls,
                    start_line=start_line)
@@ -206,8 +206,8 @@ class ASMParser(BaseParser):
         # Count __yk_trace_basicblock calls
         yk_trace_bb_calls = sum(1 for ln in instr_lines if YK_TRACE_BASICBLOCK_FUNC in ln)
         text = "\n".join(block_lines)
-        # Exclude tracing calls from instruction count
-        return Block(block=label, instructions=len(instr_lines) - yk_trace_bb_calls, 
+        # Include tracing calls in instruction count
+        return Block(block=label, instructions=len(instr_lines), 
                     instruction_lines=instr_lines, text=text, yk_trace_bb_calls=yk_trace_bb_calls)
 
     def apply_func_type_filter(self, filename: str, func_type: str,

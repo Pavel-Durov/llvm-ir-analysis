@@ -27,7 +27,7 @@ SingleBlock = MIRTestCase(
         CMP32ri killed renamable $ebx, 0, implicit-def $eflags
         renamable $r14 = CMOV64rr killed renamable $r14(tied-def 0), killed renamable $rax, 4, implicit killed $eflags
     """,
-    count=6,  # 7 instructions - 1 trace call = 6
+    count=7,  # 7 instructions INCLUDING trace call
 )
 
 MultipleBlocks = MIRTestCase(
@@ -117,7 +117,7 @@ bb.7 (%ir-block.32):
   %51:gr32 = SUB32rr %3:gr32(tied-def 0), %34:gr32, implicit-def $eflags
   %4:gr32 = CMOV32rr %34:gr32(tied-def 0), %3:gr32, 15, implicit $eflags
     """,
-    count=6,  # 7 instructions - 1 trace call = 6
+    count=7,  # 7 instructions INCLUDING trace call
 )
 
 
@@ -163,9 +163,9 @@ def test_mir_block_counts_instructions(test_case: MIRTestCase):
     blk = parser._parse_basic_block(test_case.mir.splitlines())
     assert blk.instructions == test_case.count
     # instruction_lines contains ALL lines including pseudo-ops
-    # total_instructions = all instructions (including pseudo-ops, excluding trace calls)
-    # len(instruction_lines) should equal total_instructions + trace calls
-    assert len(blk.instruction_lines) == blk.total_instructions + blk.yk_trace_bb_calls
+    # total_instructions = all instructions (including pseudo-ops AND trace calls)
+    # len(instruction_lines) should equal total_instructions (trace calls are included)
+    assert len(blk.instruction_lines) == blk.total_instructions
 
 
 def test_mir_yk_trace_basicblock_no_calls():
@@ -194,8 +194,8 @@ def test_mir_yk_trace_basicblock_single_call():
 
     parser = MIRParser()
     blk = parser._parse_basic_block(mir_lines.splitlines())
-    # Instructions exclude the tracing call: 6 total - 1 trace call = 5
-    assert blk.instructions == 5
+    # Instructions INCLUDE the tracing call: 6 total instructions
+    assert blk.instructions == 6
     assert blk.yk_trace_bb_calls == 1
 
 
@@ -213,8 +213,8 @@ def test_mir_yk_trace_basicblock_multiple_calls():
 
     parser = MIRParser()
     blk = parser._parse_basic_block(mir_lines.splitlines())
-    # Instructions exclude the tracing calls: 7 total - 2 trace calls = 5
-    assert blk.instructions == 5
+    # Instructions INCLUDE the tracing calls: 7 total instructions
+    assert blk.instructions == 7
     assert blk.yk_trace_bb_calls == 2
 
 

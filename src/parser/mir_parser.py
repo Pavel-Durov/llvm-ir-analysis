@@ -132,16 +132,17 @@ class MIRParser(BaseParser):
         yk_trace_bb_calls = sum(1 for ln in all_instructions if YK_TRACE_BASICBLOCK_FUNC in ln)
         
         # Return block with:
-        # - instructions: real instruction count (excluding trace calls and pseudo-ops)
+        # - instructions: real instruction count (INCLUDING trace calls, excluding pseudo-ops)
         # - instruction_lines: ALL instructions including pseudo-ops
-        # - total_instructions: count of all instructions (including pseudo-ops, excluding trace calls)
+        # - total_instructions: count of all instructions (including pseudo-ops AND trace calls)
+        # - yk_trace_bb_calls: separate count of trace calls for statistics
         return Block(
             block=label,
-            instructions=len(collected) - yk_trace_bb_calls,  # Real instructions only
+            instructions=len(collected),  # Real instructions INCLUDING trace calls
             instruction_lines=all_instructions,  # ALL instructions for display
             text=text,
             yk_trace_bb_calls=yk_trace_bb_calls,
-            total_instructions=len(all_instructions) - yk_trace_bb_calls  # Total including pseudo-ops
+            total_instructions=len(all_instructions)  # Total including pseudo-ops AND trace calls
         )
 
     def _extract_blocks(self, filename: str, skip_patterns: List[str] | None) -> List[RawBlock]:
