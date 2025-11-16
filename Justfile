@@ -137,6 +137,16 @@ analyze_asm_size_file ASM:
 	@echo "→ Analysing block size distribution from {{ASM}}..."
 	uv run python ./src/main.py --analyze-asm-size-distribution {{ASM}}
 
+# Analyze block size distribution from MIR file
+analyze_mir_size:
+	@echo "→ Analysing block size distribution from MIR..."
+	uv run python ./src/main.py --analyze-mir-size-distribution data/yklua.ir.llc.mir
+
+# Analyze block size distribution from specific MIR file
+analyze_mir_size_file MIR:
+	@echo "→ Analysing block size distribution from {{MIR}}..."
+	uv run python ./src/main.py --analyze-mir-size-distribution {{MIR}}
+
 # ============================================================================
 # Database Setup (PostgreSQL)
 # ============================================================================

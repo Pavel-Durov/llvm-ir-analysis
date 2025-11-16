@@ -13,6 +13,7 @@ from size_analysis import (
     categorize_by_size,
     create_distribution,
     analyze_csv_blocks,
+    create_adjusted_analysis,
 )
 
 
@@ -429,4 +430,170 @@ class TestIntegration:
             assert analysis.untraced_dist.tiny > 0
         finally:
             csv_file.unlink()
+
+
+class TestCreateAdjustedAnalysis:
+    """Tests for create_adjusted_analysis function."""
+    
+    def test_create_adjusted_analysis_basic(self):
+        """Test basic adjustment of traced blocks."""
+        # Create original analysis
+        traced_dist = SizeDistribution(tiny=0, small=10, medium=20, large=30, xlarge=10)
+        untraced_dist = SizeDistribution(tiny=100, small=50, medium=30, large=15, xlarge=5)
+        
+        original = BlockSizeAnalysis(
+            total_blocks=270,
+            traced_count=70,
+            untraced_count=200,
+            traced_dist=traced_dist,
+            untraced_dist=untraced_dist,
+            traced_avg=15.0,
+            untraced_avg=5.0,
+        )
+        
+        # Create traced blocks data
+        traced_blocks_data = [
+            {'num_instructions': 4},   # Will become 1 (tiny)
+            {'num_instructions': 5},   # Will become 2 (tiny)
+            {'num_instructions': 6},   # Will become 3 (tiny)
+            {'num_instructions': 10},  # Will become 7 (medium)
+            {'num_instructions': 15},  # Will become 12 (large)
+        ]
+        
+        # Create adjusted analysis
+        adjusted = create_adjusted_analysis(original, traced_blocks_data, overhead=3)
+        
+        # Check that untraced data is unchanged
+        assert adjusted.untraced_count == original.untraced_count
+        assert adjusted.untraced_avg == original.untraced_avg
+        assert adjusted.untraced_dist.tiny == original.untraced_dist.tiny
+        
+        # Check that traced count is preserved from original
+        assert adjusted.traced_count == original.traced_count
+        
+        # Check that traced average is reduced by overhead
+        # Note: The adjusted avg is calculated from traced_blocks_data, not original.traced_count
+        expected_avg = sum(max(1, b['num_instructions'] - 3) for b in traced_blocks_data) / len(traced_blocks_data)
+        assert adjusted.traced_avg == pytest.approx(expected_avg)
+    
+    def test_create_adjusted_analysis_distribution_shift(self):
+        """Test that blocks shift to smaller categories after adjustment."""
+        # Original: no tiny traced blocks
+        traced_dist = SizeDistribution(tiny=0, small=10, medium=20, large=10, xlarge=0)
+        untraced_dist = SizeDistribution(tiny=50, small=30, medium=20, large=0, xlarge=0)
+        
+        original = BlockSizeAnalysis(
+            total_blocks=140,
+            traced_count=40,
+            untraced_count=100,
+            traced_dist=traced_dist,
+            untraced_dist=untraced_dist,
+            traced_avg=10.0,
+            untraced_avg=4.0,
+        )
+        
+        # Create traced blocks that will shift categories
+        traced_blocks_data = []
+        # 10 blocks of 4-6 inst (small) -> will become 1-3 inst (tiny)
+        for _ in range(10):
+            traced_blocks_data.append({'num_instructions': 5})
+        # 20 blocks of 7-10 inst (medium) -> will become 4-7 inst (small/medium)
+        for _ in range(20):
+            traced_blocks_data.append({'num_instructions': 8})
+        # 10 blocks of 11-20 inst (large) -> will become 8-17 inst (medium/large)
+        for _ in range(10):
+            traced_blocks_data.append({'num_instructions': 15})
+        
+        adjusted = create_adjusted_analysis(original, traced_blocks_data, overhead=3)
+        
+        # After removing 3 instructions, some blocks should be in tiny category
+        assert adjusted.traced_dist.tiny > 0
+        # Average should be reduced
+        assert adjusted.traced_avg < original.traced_avg
+        # Difference should also be reduced
+        assert adjusted.difference < original.difference
+    
+    def test_create_adjusted_analysis_minimum_one_instruction(self):
+        """Test that adjusted blocks have minimum 1 instruction."""
+        traced_dist = SizeDistribution(tiny=5, small=0, medium=0, large=0, xlarge=0)
+        untraced_dist = SizeDistribution(tiny=10, small=0, medium=0, large=0, xlarge=0)
+        
+        original = BlockSizeAnalysis(
+            total_blocks=15,
+            traced_count=5,
+            untraced_count=10,
+            traced_dist=traced_dist,
+            untraced_dist=untraced_dist,
+            traced_avg=2.0,
+            untraced_avg=2.0,
+        )
+        
+        # Create blocks with very few instructions
+        traced_blocks_data = [
+            {'num_instructions': 1},  # Will try to become -2, but capped at 1
+            {'num_instructions': 2},  # Will try to become -1, but capped at 1
+            {'num_instructions': 3},  # Will become 0, but capped at 1
+            {'num_instructions': 4},  # Will become 1
+            {'num_instructions': 5},  # Will become 2
+        ]
+        
+        adjusted = create_adjusted_analysis(original, traced_blocks_data, overhead=3)
+        
+        # All adjusted blocks should have at least 1 instruction
+        # Expected: [1, 1, 1, 1, 2] -> avg = 1.2
+        assert adjusted.traced_avg == pytest.approx(1.2)
+        
+        # All 5 blocks should still be in tiny category (1-3 inst)
+        assert adjusted.traced_dist.tiny == 5
+    
+    def test_create_adjusted_analysis_empty_traced_blocks(self):
+        """Test handling of empty traced blocks list."""
+        traced_dist = SizeDistribution()
+        untraced_dist = SizeDistribution(tiny=10, small=5, medium=3, large=2, xlarge=0)
+        
+        original = BlockSizeAnalysis(
+            total_blocks=20,
+            traced_count=0,
+            untraced_count=20,
+            traced_dist=traced_dist,
+            untraced_dist=untraced_dist,
+            traced_avg=0.0,
+            untraced_avg=5.0,
+        )
+        
+        adjusted = create_adjusted_analysis(original, [], overhead=3)
+        
+        # Should return empty traced distribution
+        assert adjusted.traced_count == 0
+        assert adjusted.traced_avg == 0.0
+        assert adjusted.traced_dist.total() == 0
+    
+    def test_create_adjusted_analysis_custom_overhead(self):
+        """Test with different overhead values."""
+        traced_dist = SizeDistribution(tiny=0, small=0, medium=10, large=0, xlarge=0)
+        untraced_dist = SizeDistribution(tiny=20, small=0, medium=0, large=0, xlarge=0)
+        
+        original = BlockSizeAnalysis(
+            total_blocks=30,
+            traced_count=10,
+            untraced_count=20,
+            traced_dist=traced_dist,
+            untraced_dist=untraced_dist,
+            traced_avg=10.0,
+            untraced_avg=2.0,
+        )
+        
+        traced_blocks_data = [{'num_instructions': 10}] * 10
+        
+        # Test with overhead=5
+        adjusted_5 = create_adjusted_analysis(original, traced_blocks_data, overhead=5)
+        assert adjusted_5.traced_avg == pytest.approx(5.0)
+        
+        # Test with overhead=7
+        adjusted_7 = create_adjusted_analysis(original, traced_blocks_data, overhead=7)
+        assert adjusted_7.traced_avg == pytest.approx(3.0)
+        
+        # Test with overhead=10 (should clamp to minimum 1)
+        adjusted_10 = create_adjusted_analysis(original, traced_blocks_data, overhead=10)
+        assert adjusted_10.traced_avg == pytest.approx(1.0)
 

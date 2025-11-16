@@ -3,8 +3,9 @@ import sys
 from pathlib import Path
 from parser import IRParser, MIRParser, ASMParser, list_ir_functions, Function
 from export_blocks_csv import export_to_csv
-from size_analysis import analyze_csv_blocks, analyze_asm_blocks, analyze_mir_blocks
+from size_analysis import analyze_csv_blocks, analyze_asm_blocks, analyze_mir_blocks, BlockSizeAnalysis
 from utils import safe_name, read_allowed_functions
+from report import print_size_analysis, print_adjusted_analysis
 
 def analyze_size_distribution(csv_file: Path) -> None:
     """Analyze and print block size distribution from CSV file."""
@@ -71,80 +72,11 @@ def analyze_size_distribution(csv_file: Path) -> None:
     print(f"• Selection bias: Only {analysis.traced_percentage:.1f}% of blocks are traced")
     print()
 
-def _print_size_analysis(analysis: 'BlockSizeAnalysis', traced_funcs: dict[str, int], 
-                         title: str, file_path: Path, num_functions: int) -> None:
-    """Helper function to print size distribution analysis results."""
-    print("="*80)
-    print(title)
-    print("="*80)
-    print()
-    
-    print(f"File: {file_path}")
-    print(f"Total functions: {num_functions:,}")
-    print(f"Total blocks: {analysis.total_blocks:,}")
-    print(f"  - Traced blocks: {analysis.traced_count:,} ({analysis.traced_percentage:.1f}%)")
-    print(f"  - Untraced blocks: {analysis.untraced_count:,} ({analysis.untraced_percentage:.1f}%)")
-    print()
-    
-    print("="*80)
-    print("SIZE DISTRIBUTION")
-    print("="*80)
-    print()
-    print(f"{'Size (inst)':<15} {'Traced':<15} {'Traced %':<12} {'Untraced':<15} {'Untraced %':<12}")
-    print("-"*80)
-    
-    for size_label, t_count in analysis.traced_dist.items():
-        # Find corresponding untraced count
-        u_count = dict(analysis.untraced_dist.items())[size_label]
-        t_pct = analysis.traced_dist.get_percentage(t_count)
-        u_pct = analysis.untraced_dist.get_percentage(u_count)
-        
-        print(f"{size_label:<15} {t_count:<15,} {t_pct:<11.1f}% {u_count:<15,} {u_pct:<11.1f}%")
-    
-    print("-"*80)
-    print(f"{'Total':<15} {analysis.traced_count:<15,} {'100.0%':<12} {analysis.untraced_count:<15,} {'100.0%':<12}")
-    print()
-    
-    print("="*80)
-    print("AVERAGES")
-    print("="*80)
-    print()
-    print(f"Traced blocks:   {analysis.traced_avg:.2f} instructions/block")
-    print(f"Untraced blocks: {analysis.untraced_avg:.2f} instructions/block")
-    print(f"Difference:      {analysis.difference:.2f} instructions")
-    if analysis.untraced_avg > 0:
-        print(f"Ratio:           {analysis.ratio:.2f}×")
-    print()
-    
-    print("="*80)
-    print("KEY INSIGHTS")
-    print("="*80)
-    print()
-    
-    tiny_traced_pct = analysis.traced_dist.get_percentage(analysis.traced_dist.tiny)
-    tiny_untraced_pct = analysis.untraced_dist.get_percentage(analysis.untraced_dist.tiny)
-    
-    print(f"• {tiny_traced_pct:.1f}% of traced blocks are tiny (1-3 inst)")
-    print(f"• {tiny_untraced_pct:.1f}% of untraced blocks are tiny (1-3 inst)")
-    print(f"• Untraced population: {analysis.untraced_dist.tiny:,} tiny blocks")
-    print(f"• Selection pattern: Only {analysis.traced_percentage:.1f}% of blocks have tracing")
-    print()
-    
-    # Show sample functions with traced blocks
-    if traced_funcs:
-        print("="*80)
-        print("SAMPLE FUNCTIONS WITH TRACING (top 10)")
-        print("="*80)
-        print()
-        for i, (func, count) in enumerate(sorted(traced_funcs.items(), key=lambda x: x[1], reverse=True)[:10], 1):
-            print(f"{i:2d}. {func}: {count} traced blocks")
-        print()
-
 def analyze_asm_size_distribution(asm_file: Path) -> None:
     """Analyze and print block size distribution from ASM file."""
     
     # Perform analysis
-    analysis, traced_funcs = analyze_asm_blocks(asm_file)
+    analysis, traced_funcs, traced_blocks_data = analyze_asm_blocks(asm_file)
     
     # Count unique functions (we need to reparse to get this)
     from parser import ASMParser
@@ -152,14 +84,17 @@ def analyze_asm_size_distribution(asm_file: Path) -> None:
     parser.parse(str(asm_file), skip_prefixes=[])
     num_functions = len(parser.get_functions())
     
-    _print_size_analysis(analysis, traced_funcs, "ASM BLOCK SIZE DISTRIBUTION ANALYSIS", 
-                        asm_file, num_functions)
+    print_size_analysis(analysis, traced_funcs, "ASM BLOCK SIZE DISTRIBUTION ANALYSIS", 
+                       asm_file, num_functions)
+    
+    # Print adjusted analysis (with tracing overhead removed)
+    print_adjusted_analysis(analysis, traced_blocks_data, overhead=3)
 
 def analyze_mir_size_distribution(mir_file: Path) -> None:
     """Analyze and print block size distribution from MIR file."""
     
     # Perform analysis
-    analysis, traced_funcs = analyze_mir_blocks(mir_file)
+    analysis, traced_funcs, traced_blocks_data = analyze_mir_blocks(mir_file)
     
     # Count unique functions (we need to reparse to get this)
     from parser import MIRParser
@@ -167,8 +102,11 @@ def analyze_mir_size_distribution(mir_file: Path) -> None:
     parser.parse(str(mir_file), skip_patterns=[], skip_prefixes=[])
     num_functions = len(parser.get_functions())
     
-    _print_size_analysis(analysis, traced_funcs, "MIR BLOCK SIZE DISTRIBUTION ANALYSIS", 
-                        mir_file, num_functions)
+    print_size_analysis(analysis, traced_funcs, "MIR BLOCK SIZE DISTRIBUTION ANALYSIS", 
+                       mir_file, num_functions)
+    
+    # Print adjusted analysis (with tracing overhead removed)
+    print_adjusted_analysis(analysis, traced_blocks_data, overhead=3)
 
 ASM_INSTRUCTIONS_FILE = "instructions.s"
 IR_INSTRUCTIONS_FILE = "instructions.ll"
@@ -317,12 +255,39 @@ def main():
         default=False,
         help='Analyze block size distribution from ASM file (detects __yk_trace_basicblock calls).'
     )
+    parser.add_argument(
+        '--analyze-mir-size-distribution',
+        dest='analyze_mir_size_dist',
+        action='store_true',
+        default=False,
+        help='Analyze block size distribution from MIR file (detects __yk_trace_basicblock calls).'
+    )
 
     args = parser.parse_args()
 
     # Validate input argument based on mode
-    if not args.export_csv and not args.analyze_size_dist and not args.analyze_asm_size_dist and not args.input:
-        parser.error("the following arguments are required: input (unless using --export-csv, --analyze-size-distribution, or --analyze-asm-size-distribution)")
+    if not args.export_csv and not args.analyze_size_dist and not args.analyze_asm_size_dist and not args.analyze_mir_size_dist and not args.input:
+        parser.error("the following arguments are required: input (unless using --export-csv, --analyze-size-distribution, --analyze-asm-size-distribution, or --analyze-mir-size-distribution)")
+    
+    # Handle MIR size distribution analysis mode (early exit)
+    if args.analyze_mir_size_dist:
+        if not args.input:
+            print("Error: --analyze-mir-size-distribution requires input MIR file", file=sys.stderr)
+            sys.exit(1)
+        
+        mir_path = Path(args.input)
+        if not mir_path.exists():
+            print(f"Error: MIR file not found: {mir_path}", file=sys.stderr)
+            sys.exit(1)
+        
+        try:
+            analyze_mir_size_distribution(mir_path)
+            return
+        except Exception as e:
+            print(f"Error during MIR size distribution analysis: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+            sys.exit(1)
     
     # Handle ASM size distribution analysis mode (early exit)
     if args.analyze_asm_size_dist:

@@ -14,6 +14,9 @@ uv run python ./src/main.py --analyze-size-distribution db/ir_analysis_basicbloc
 # Analyse block size distribution (ASM)
 uv run python ./src/main.py --analyze-asm-size-distribution data/yklua.llc.asm
 
+# Analyse block size distribution (MIR)
+uv run python ./src/main.py --analyze-mir-size-distribution data/yklua.ir.llc.mir
+
 # Export MIR/ASM comparison to CSV
 uv run python ./src/main.py --export-csv \
   --mir-file data/yklua.mir --asm-file data/yklua.asm --csv-output output.csv
@@ -232,6 +235,8 @@ uv run python ./src/main.py --analyze-size-distribution db/ir_analysis_basicbloc
 - Average instruction counts
 - Key insights about selection bias
 
+**Note:** The CSV analysis does not include adjusted size distribution since the CSV format does not preserve the raw traced blocks data needed for overhead calculation.
+
 ### Analyse ASM Block Data
 
 Analyse the distribution of block sizes directly from ASM files (detects `__yk_trace_basicblock` calls):
@@ -245,8 +250,26 @@ uv run python ./src/main.py --analyze-asm-size-distribution data/yklua.llc.asm
 - Total functions and blocks
 - Size distribution (traced vs untraced)
 - Average instruction counts
+- **Adjusted size distribution** (with 3-instruction tracing overhead subtracted)
 - Sample functions with tracing calls
-- Key insights about tracing patterns
+- Key insights about tracing patterns and impact of overhead
+
+### Analyse MIR Block Data
+
+Analyse the distribution of block sizes directly from MIR files (detects `__yk_trace_basicblock` calls):
+
+```bash
+# Analyze block size distribution from MIR
+uv run python ./src/main.py --analyze-mir-size-distribution data/yklua.ir.llc.mir
+```
+
+**Output includes:**
+- Total functions and blocks
+- Size distribution (traced vs untraced)
+- Average instruction counts (excluding pseudo-ops like STACKMAP, CFI, etc.)
+- **Adjusted size distribution** (with 3-instruction tracing overhead subtracted)
+- Sample functions with tracing calls
+- Key insights about tracing patterns and impact of overhead
 
 **Example Output:**
 ```
@@ -268,6 +291,30 @@ Size (inst)     Traced          Traced %     Untraced        Untraced %
 11-20           495             30.8       % 2,455           25.2       %
 21+             190             11.8       % 1,200           12.3       %
 ```
+
+#### Understanding the Adjusted Size Distribution
+
+When analysing MIR or ASM files, the tool automatically includes an **adjusted size distribution** that accounts for the tracing overhead. Each traced block contains a call to `__yk_trace_basicblock`, which adds approximately **3 instructions** to the block:
+
+1. **Setup register for function ID**
+2. **Setup register for block ID**  
+3. **Call instruction to `__yk_trace_basicblock`**
+
+The adjusted analysis subtracts these 3 instructions from each traced block to show what the size distribution would look like **without** the instrumentation overhead. This helps answer the question: *Are traced blocks genuinely larger, or do they only appear larger because of the tracing call?*
+
+**Key insights from adjusted analysis:**
+- Shows how many traced blocks would shift to smaller size categories without overhead
+- Calculates the "true" difference between traced and untraced blocks
+- Quantifies the percentage of observed difference that is due to instrumentation vs. genuine size differences
+
+**Example:**
+```
+Original difference:  9.83 instructions
+Adjusted difference:  6.83 instructions
+Reduction:           3.00 instructions (30.5%)
+```
+
+This tells us that 30.5% of the observed difference is purely from tracing overhead, whilst 69.5% represents genuine size differences in the blocks selected for tracing.
 
 ## Testing
 

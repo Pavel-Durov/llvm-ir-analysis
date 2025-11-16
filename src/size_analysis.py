@@ -180,7 +180,7 @@ def analyze_csv_blocks(csv_file: Path) -> BlockSizeAnalysis:
     )
 
 
-def analyze_asm_blocks(asm_file: Path) -> tuple[BlockSizeAnalysis, dict[str, int]]:
+def analyze_asm_blocks(asm_file: Path) -> tuple[BlockSizeAnalysis, dict[str, int], list[dict]]:
     """
     Analyse block size distribution from ASM file.
 
@@ -188,7 +188,7 @@ def analyze_asm_blocks(asm_file: Path) -> tuple[BlockSizeAnalysis, dict[str, int
         asm_file: Path to ASM file
 
     Returns:
-        Tuple of (BlockSizeAnalysis, dict of function_name -> traced_block_count)
+        Tuple of (BlockSizeAnalysis, dict of function_name -> traced_block_count, list of traced block data)
     """
     # Parse ASM file
     parser = ASMParser()
@@ -242,10 +242,10 @@ def analyze_asm_blocks(asm_file: Path) -> tuple[BlockSizeAnalysis, dict[str, int
         untraced_avg=untraced_avg,
     )
 
-    return analysis, traced_funcs
+    return analysis, traced_funcs, traced_blocks
 
 
-def analyze_mir_blocks(mir_file: Path) -> tuple[BlockSizeAnalysis, dict[str, int]]:
+def analyze_mir_blocks(mir_file: Path) -> tuple[BlockSizeAnalysis, dict[str, int], list[dict]]:
     """
     Analyse block size distribution from MIR file.
     
@@ -253,7 +253,7 @@ def analyze_mir_blocks(mir_file: Path) -> tuple[BlockSizeAnalysis, dict[str, int
         mir_file: Path to MIR file
     
     Returns:
-        Tuple of (BlockSizeAnalysis, dict of function_name -> traced_block_count)
+        Tuple of (BlockSizeAnalysis, dict of function_name -> traced_block_count, list of traced block data)
     """
     # Parse MIR file
     parser = MIRParser()
@@ -307,5 +307,44 @@ def analyze_mir_blocks(mir_file: Path) -> tuple[BlockSizeAnalysis, dict[str, int
         untraced_avg=untraced_avg,
     )
     
-    return analysis, traced_funcs
+    return analysis, traced_funcs, traced_blocks
+
+
+def create_adjusted_analysis(original: BlockSizeAnalysis, traced_blocks_data: list[dict], 
+                             overhead: int = 3) -> BlockSizeAnalysis:
+    """
+    Create adjusted analysis by subtracting tracing overhead from traced blocks.
+    
+    Args:
+        original: Original BlockSizeAnalysis
+        traced_blocks_data: List of traced block dictionaries with 'num_instructions'
+        overhead: Number of instructions to subtract (default: 3)
+    
+    Returns:
+        New BlockSizeAnalysis with adjusted traced block sizes
+    """
+    # Adjust traced block sizes
+    adjusted_blocks = []
+    for block in traced_blocks_data:
+        adjusted_size = max(1, block['num_instructions'] - overhead)  # Minimum 1 instruction
+        adjusted_blocks.append({
+            **block,
+            'num_instructions': adjusted_size
+        })
+    
+    # Recalculate distribution and average for adjusted traced blocks
+    adjusted_traced_dist = create_distribution(adjusted_blocks)
+    adjusted_traced_avg = (sum(b['num_instructions'] for b in adjusted_blocks) / len(adjusted_blocks)
+                          if adjusted_blocks else 0.0)
+    
+    # Return new analysis with adjusted traced data, keeping untraced data the same
+    return BlockSizeAnalysis(
+        total_blocks=original.total_blocks,
+        traced_count=original.traced_count,
+        untraced_count=original.untraced_count,
+        traced_dist=adjusted_traced_dist,
+        untraced_dist=original.untraced_dist,  # Unchanged
+        traced_avg=adjusted_traced_avg,
+        untraced_avg=original.untraced_avg,  # Unchanged
+    )
 
