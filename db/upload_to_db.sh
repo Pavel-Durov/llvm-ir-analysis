@@ -6,7 +6,6 @@ set -e
 
 CONN_STR="${1:-}"
 INPUT_CSV="${2:-basicblocks.csv}"
-CLEAN_CSV="basicblocks_clean.csv"
 
 if [ -z "$CONN_STR" ]; then
     echo "Usage: $0 <postgres_connection_string> [input_csv]"
@@ -22,17 +21,20 @@ if [ ! -f "$INPUT_CSV" ]; then
     exit 1
 fi
 
-# Step 1: Clean and deduplicate the CSV
-echo "→ Cleaning and deduplicating CSV..."
-python3 cleanup_csv.py "$INPUT_CSV" "$CLEAN_CSV"
+# Validate CSV header
+EXPECTED_HEADER="function_name,basicblock_id,has_tracing_call,number_of_instructions,instructions"
+ACTUAL_HEADER=$(head -n 1 "$INPUT_CSV")
 
-if [ ! -f "$CLEAN_CSV" ]; then
-    echo "Error: Failed to create cleaned CSV!"
+if [ "$ACTUAL_HEADER" != "$EXPECTED_HEADER" ]; then
+    echo "Error: CSV header does not match expected format!"
+    echo ""
+    echo "Expected: $EXPECTED_HEADER"
+    echo "Actual:   $ACTUAL_HEADER"
+    echo ""
     exit 1
 fi
 
-# Step 2: Get full path for \copy command
-FULL_PATH="$(cd "$(dirname "$CLEAN_CSV")" && pwd)/$(basename "$CLEAN_CSV")"
+FULL_PATH="$(cd "$(dirname "$INPUT_CSV")" && pwd)/$(basename "$INPUT_CSV")"
 
 echo ""
 echo "→ Uploading to database..."
@@ -41,8 +43,3 @@ TRUNCATE basicblocks RESTART IDENTITY;
 \copy basicblocks (function_name, basicblock_id, has_tracing_call, number_of_instructions, instructions) FROM '${FULL_PATH}' DELIMITER ',' CSV HEADER
 SELECT COUNT(*) AS total_rows FROM basicblocks;
 SQL
-
-echo ""
-echo "✓ Upload complete!"
-echo "  - Cleaned CSV: $CLEAN_CSV"
-echo ""

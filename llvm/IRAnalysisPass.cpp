@@ -1,6 +1,8 @@
 #include "llvm/CodeGen/IRAnalysisPass.h"
 #include "llvm/CodeGen/MachineFunction.h"
 #include "llvm/CodeGen/MachineFunctionPass.h"
+#include "llvm/CodeGen/TargetInstrInfo.h"
+#include "llvm/CodeGen/TargetSubtargetInfo.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IntrinsicInst.h"
 #include "llvm/IR/Module.h"
@@ -100,12 +102,43 @@ static bool shouldCountInstruction(const MachineInstr &MI) {
   if (!SKIP_DEBUG_PSEUDO_INSTRUCTIONS) {
     return true;
   }
-  
+
   // Skip debug, pseudo, meta, position, probe, and frame setup/destroy instructions
   return !MI.isDebugInstr() && !MI.isPseudo() && !MI.isMetaInstruction() &&
          !MI.isPosition() && !MI.isPseudoProbe() &&
          !MI.getFlag(MachineInstr::FrameSetup) &&
          !MI.getFlag(MachineInstr::FrameDestroy);
+}
+
+static void collectInstructionType(const MachineInstr &MI, std::set<std::string> &uniqueInstructionTypes, 
+                                   std::set<std::string> &filteredOutInstructions, const TargetInstrInfo *TII) {
+  if (shouldCountInstruction(MI)) {
+    // Get instruction name/opcode using TargetInstrInfo
+    std::string instrName = TII->getName(MI.getOpcode()).str();
+    uniqueInstructionTypes.insert(instrName);
+  } else {
+    // Collect debug/pseudo instructions that are filtered out
+    std::string instrName = TII->getName(MI.getOpcode()).str();
+
+    // Get full instruction text
+    std::string instrStr;
+    raw_string_ostream rso(instrStr);
+    MI.print(rso);
+    rso.flush();
+
+    // Remove newlines and clean up the string
+    instrStr.erase(std::remove(instrStr.begin(), instrStr.end(), '\n'), instrStr.end());
+    instrStr.erase(std::remove(instrStr.begin(), instrStr.end(), '\r'), instrStr.end());
+    
+    // Truncate instruction string to first 20 characters
+    if (instrStr.length() > 20) {
+      instrStr = instrStr.substr(0, 20) + "...";
+    }
+    
+    // Create entry with type and truncated instruction
+    std::string entry = instrName + ": " + instrStr;
+    filteredOutInstructions.insert(entry);
+  }
 }
 
 // Helper function to check if a MIR basic block contains tracing calls
@@ -195,6 +228,10 @@ private:
   std::vector<BasicBlockInfo> basicBlockInfoList;
   // Track if CSV header has been written
   bool csvHeaderWritten;
+  // Set to store unique instruction types and names that pass filtering criteria
+  std::set<std::string> uniqueInstructionTypes;
+  // Set to store debug/pseudo instructions that are filtered out
+  std::set<std::string> filteredOutInstructions;
 };
 
 } // namespace llvm
@@ -268,6 +305,9 @@ bool IRAnalysisPass::runOnMachineFunction(MachineFunction &MF) {
   size_t numMIRNonTracingBBs = 0;
   size_t numMIRNonTracingInsts = 0;
 
+  // Get TargetInstrInfo for instruction name lookup
+  const TargetInstrInfo *TII = MF.getSubtarget().getInstrInfo();
+
   for (const MachineBasicBlock &MBB : MF) {
     bool hasTracing = containsTracingCall(MBB);
 
@@ -283,6 +323,9 @@ bool IRAnalysisPass::runOnMachineFunction(MachineFunction &MF) {
 
       size_t blockInsts = 0;
       for (const MachineInstr &MI : MBB) {
+        // Always collect instruction types (both counted and filtered)
+        collectInstructionType(MI, uniqueInstructionTypes, filteredOutInstructions, TII);
+        
         // Use helper function to determine if instruction should be counted
         if (shouldCountInstruction(MI)) {
           blockInsts++;
@@ -297,7 +340,7 @@ bool IRAnalysisPass::runOnMachineFunction(MachineFunction &MF) {
           // Remove newlines and clean up the string
           instrStr.erase(std::remove(instrStr.begin(), instrStr.end(), '\n'), instrStr.end());
           instrStr.erase(std::remove(instrStr.begin(), instrStr.end(), '\r'), instrStr.end());
-          
+
           bbInfo.instructions.push_back(instrStr);
         }
       }
@@ -311,6 +354,11 @@ bool IRAnalysisPass::runOnMachineFunction(MachineFunction &MF) {
     // Always track separate counts for statistics display
     size_t blockInsts = 0;
     for (const MachineInstr &MI : MBB) {
+      // Collect unique instruction types (if not already collected above)
+      if (!shouldIncludeBlock(hasTracing)) {
+        collectInstructionType(MI, uniqueInstructionTypes, filteredOutInstructions, TII);
+      }
+      
       if (shouldCountInstruction(MI)) {
         blockInsts++;
       }
@@ -553,7 +601,7 @@ IRAnalysisPass::~IRAnalysisPass() {
                << funcStat.numIRInstructions << " instructions\n";
         errs() << "  IR Tracing: " << funcStat.numIRTracingBlocks << " blocks, " 
                << funcStat.numIRTracingInstructions << " tracing block instructions\n";
-        errs() << "  IR Non-Tracing: " << funcStat.numIRNonTracingBlocks << " blocks, " 
+        errs() << "  IR Non-Tracing: " << funcStat.numIRNonTracingBlocks << " blocks, "
                << funcStat.numIRNonTracingInstructions << " non-tracing block instructions\n";
         errs() << "  MIR Total: " << funcStat.numMIRBasicBlocks << " blocks, " 
                << funcStat.numMIRInstructions << " instructions\n";
@@ -575,6 +623,26 @@ IRAnalysisPass::~IRAnalysisPass() {
       errs() << "  " << funcName << "\n";
     }
     errs() << "==============================\n";
+  }
+
+  // Print unique instruction types that passed filtering criteria
+  if (!uniqueInstructionTypes.empty()) {
+    errs() << "\n=== Unique MIR Instruction Types (Counted) ===\n";
+    errs() << "Total unique instruction types: " << uniqueInstructionTypes.size() << "\n";
+    for (const auto &instrType : uniqueInstructionTypes) {
+      errs() << "  " << instrType << "\n";
+    }
+    errs() << "==============================================\n";
+  }
+
+  // Print debug/pseudo instructions that were filtered out
+  if (!filteredOutInstructions.empty()) {
+    errs() << "\n=== Debug/Pseudo Instructions (Filtered Out) ===\n";
+    errs() << "Total unique filtered instructions: " << filteredOutInstructions.size() << "\n";
+    for (const auto &instrEntry : filteredOutInstructions) {
+      errs() << "  " << instrEntry << "\n";
+    }
+    errs() << "================================================\n";
   }
 
   // CSV file was written incrementally during pass execution

@@ -102,6 +102,12 @@ class MIRParser(BaseParser):
             #   !MI.isDebugInstr() && !MI.isPseudo() && !MI.isMetaInstruction() &&
             #   !MI.isPosition() && !MI.isPseudoProbe() &&
             #   !MI.getFlag(MachineInstr::FrameSetup) && !MI.getFlag(MachineInstr::FrameDestroy)
+
+            # Extract first token (instruction opcode)
+            first_token = s.split()[0] if s.split() else ""
+            # Remove trailing ':' if present (for instruction definitions)
+            first_token_clean = first_token.rstrip(':')
+
             if (s.startswith("successors:") or s.startswith("predecessors:") or
                 s.startswith("liveins:") or s.startswith("Frame Objects") or
                 s.startswith("Function Live Ins") or s.startswith("fi#") or
@@ -110,12 +116,20 @@ class MIRParser(BaseParser):
                 # Debug instructions (!MI.isDebugInstr())
                 s.startswith("DBG_VALUE") or s.startswith("DBG_LABEL") or
                 s.startswith("DBG_PHI") or s.startswith("DBG_INSTR_REF") or
-                ("DBG_VALUE" in s.split()[0] if s.split() else False) or
+                # Debug variants (instructions with _DB suffix)
+                first_token_clean.endswith("_DB") or
+                 ("DBG_VALUE" in s.split()[0] if s.split() else False) or
                 # Pseudo-instructions and meta instructions (!MI.isPseudo(), !MI.isMetaInstruction())
                 s.startswith("IMPLICIT_DEF") or s.startswith("KILL") or
+                s.startswith("COPY") or  # Register copy pseudo-instruction
                 s.startswith("LIFETIME_START") or s.startswith("LIFETIME_END") or
                 s.startswith("STACKMAP") or s.startswith("PATCHPOINT") or
                 s.startswith("STATEPOINT") or
+                # Inline assembly markers
+                s.startswith("INLINEASM") or
+                # Zero-setting pseudo-instructions
+                s.startswith("MOV32r0") or s.startswith("V_SET0") or
+                s.startswith("FsFLD0SD") or
                 # Position markers (!MI.isPosition())
                 s.startswith("EH_LABEL") or s.startswith("GC_LABEL") or
                 s.startswith("ANNOTATION_LABEL") or

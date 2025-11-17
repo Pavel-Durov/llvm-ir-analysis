@@ -2,7 +2,7 @@ import argparse
 import sys
 from pathlib import Path
 from parser import IRParser, MIRParser, ASMParser, list_ir_functions, Function
-from export_blocks_csv import export_to_csv
+from export_blocks_csv import export_to_csv, export_asm_to_database_csv, export_mir_to_database_csv
 from size_analysis import analyze_csv_blocks, analyze_asm_blocks, analyze_mir_blocks, BlockSizeAnalysis
 from utils import safe_name, read_allowed_functions
 from report import print_size_analysis, print_adjusted_analysis
@@ -262,12 +262,82 @@ def main():
         default=False,
         help='Analyze block size distribution from MIR file (detects __yk_trace_basicblock calls).'
     )
+    parser.add_argument(
+        '--export-asm-csv',
+        dest='export_asm_csv',
+        action='store_true',
+        default=False,
+        help='Export ASM blocks to CSV format for database upload (format: function_name,basicblock_id,has_tracing_call,number_of_instructions,instructions).'
+    )
+    parser.add_argument(
+        '--export-mir-csv',
+        dest='export_mir_csv',
+        action='store_true',
+        default=False,
+        help='Export MIR blocks to CSV format for database upload (format: function_name,basicblock_id,has_tracing_call,number_of_instructions,instructions).'
+    )
+    parser.add_argument(
+        '--export-output',
+        dest='export_output',
+        help='Output CSV file path for --export-asm-csv or --export-mir-csv.'
+    )
+    parser.add_argument(
+        '--export-function',
+        dest='export_function',
+        help='Optional function name filter for CSV export (export only this function).'
+    )
 
     args = parser.parse_args()
 
     # Validate input argument based on mode
-    if not args.export_csv and not args.analyze_size_dist and not args.analyze_asm_size_dist and not args.analyze_mir_size_dist and not args.input:
-        parser.error("the following arguments are required: input (unless using --export-csv, --analyze-size-distribution, --analyze-asm-size-distribution, or --analyze-mir-size-distribution)")
+    if not args.export_csv and not args.analyze_size_dist and not args.analyze_asm_size_dist and not args.analyze_mir_size_dist and not args.export_asm_csv and not args.export_mir_csv and not args.input:
+        parser.error("the following arguments are required: input (unless using --export-csv, --analyze-size-distribution, --analyze-asm-size-distribution, --analyze-mir-size-distribution, --export-asm-csv, or --export-mir-csv)")
+    
+    # Handle MIR CSV export mode (early exit)
+    if args.export_mir_csv:
+        if not args.input:
+            print("Error: --export-mir-csv requires input MIR file", file=sys.stderr)
+            sys.exit(1)
+        if not args.export_output:
+            print("Error: --export-mir-csv requires --export-output to be specified", file=sys.stderr)
+            sys.exit(1)
+        
+        mir_path = Path(args.input)
+        if not mir_path.exists():
+            print(f"Error: MIR file not found: {mir_path}", file=sys.stderr)
+            sys.exit(1)
+        
+        try:
+            export_mir_to_database_csv(mir_path, Path(args.export_output), args.export_function)
+            return
+        except Exception as e:
+            print(f"Error during MIR CSV export: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+            sys.exit(1)
+    
+    # Handle ASM CSV export mode (early exit)
+    if args.export_asm_csv:
+        if not args.input:
+            print("Error: --export-asm-csv requires input ASM file", file=sys.stderr)
+            sys.exit(1)
+        if not args.export_output:
+            print("Error: --export-asm-csv requires --export-output to be specified", file=sys.stderr)
+            sys.exit(1)
+        
+        asm_path = Path(args.input)
+        if not asm_path.exists():
+            print(f"Error: ASM file not found: {asm_path}", file=sys.stderr)
+            sys.exit(1)
+        
+        try:
+            export_asm_to_database_csv(asm_path, Path(args.export_output), args.export_function)
+            return
+        except Exception as e:
+            print(f"Error during ASM CSV export: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc()
+            sys.exit(1)
     
     # Handle MIR size distribution analysis mode (early exit)
     if args.analyze_mir_size_dist:

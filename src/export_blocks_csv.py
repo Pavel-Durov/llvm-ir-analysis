@@ -15,6 +15,13 @@ from parser import MIRParser, ASMParser
 from parser.model import Block, Function
 
 
+__all__ = [
+    'export_to_csv',
+    'export_asm_to_database_csv',
+    'export_mir_to_database_csv',
+]
+
+
 def extract_trace_bb_id_from_mir_block(block: Block) -> int | None:
     """Extract the basic block ID from __yk_trace_basicblock call in MIR block.
     
@@ -86,6 +93,110 @@ def build_block_index(functions: List[Function], extract_fn) -> Dict[tuple[str, 
                     index[key].append(block)
     
     return index
+
+
+def export_asm_to_database_csv(asm_file: Path, output_csv: Path, function_filter: str | None = None) -> None:
+    """Export ASM blocks to CSV format compatible with database upload.
+    
+    Output format: function_name,basicblock_id,has_tracing_call,number_of_instructions,instructions
+    
+    Only exports actual ASM instructions and blocks from the parsed ASM file.
+    
+    Args:
+        asm_file: Path to ASM file
+        output_csv: Path to output CSV file
+        function_filter: Optional function name to filter (export only this function)
+    """
+    parser = ASMParser()
+    parser.parse(str(asm_file), skip_prefixes=[])
+    
+    with open(output_csv, 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        # Write header
+        writer.writerow(['function_name', 'basicblock_id', 'has_tracing_call', 'number_of_instructions', 'instructions'])
+        
+        functions = parser.get_functions()
+        
+        # Filter to specific function if requested
+        if function_filter:
+            if function_filter in functions:
+                functions = {function_filter: functions[function_filter]}
+            else:
+                print(f"Warning: Function '{function_filter}' not found in ASM file", file=sys.stderr)
+                return
+        
+        total_blocks = 0
+        for func_name, func in sorted(functions.items()):
+            for block in func.blocks_detail:
+                # Only export blocks with actual instructions
+                if block.instructions == 0:
+                    continue
+                
+                # Detect if block has tracing call
+                has_tracing = any('__yk_trace_basicblock' in line for line in block.instruction_lines)
+                
+                # Join ASM instructions with semicolon separator
+                instructions_str = '; '.join(block.instruction_lines)
+                
+                # Write row with ASM data
+                writer.writerow([
+                    func_name,
+                    block.block or 'unknown',
+                    'true' if has_tracing else 'false',
+                    block.instructions,  # Real instruction count from ASM parser
+                    instructions_str
+                ])
+                total_blocks += 1
+    
+    print(f"Exported {total_blocks} ASM blocks to {output_csv}")
+
+
+def export_mir_to_database_csv(mir_file: Path, output_csv: Path, function_filter: str | None = None) -> None:
+    """Export MIR blocks to CSV format compatible with database upload.
+    
+    Output format: function_name,basicblock_id,has_tracing_call,number_of_instructions,instructions
+    
+    Args:
+        mir_file: Path to MIR file
+        output_csv: Path to output CSV file
+        function_filter: Optional function name to filter (export only this function)
+    """
+    parser = MIRParser()
+    parser.parse(str(mir_file), skip_patterns=[], skip_prefixes=[])
+    
+    with open(output_csv, 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        # Write header
+        writer.writerow(['function_name', 'basicblock_id', 'has_tracing_call', 'number_of_instructions', 'instructions'])
+        
+        functions = parser.get_functions()
+        
+        # Filter to specific function if requested
+        if function_filter:
+            if function_filter in functions:
+                functions = {function_filter: functions[function_filter]}
+            else:
+                print(f"Warning: Function '{function_filter}' not found in MIR file", file=sys.stderr)
+                return
+        
+        for func_name, func in sorted(functions.items()):
+            for block in func.blocks_detail:
+                # Check if block has tracing call
+                has_tracing = block.yk_trace_bb_calls > 0
+                
+                # Join instructions with semicolon separator
+                instructions_str = '; '.join(block.instruction_lines)
+                
+                # Write row
+                writer.writerow([
+                    func_name,
+                    block.block or 'unknown',
+                    'true' if has_tracing else 'false',
+                    block.instructions,
+                    instructions_str
+                ])
+    
+    print(f"Exported {sum(len(f.blocks_detail) for f in functions.values())} blocks to {output_csv}")
 
 
 def export_to_csv(mir_file: str, asm_file: str, output_file: str, filter_function: str | None = None):

@@ -7,3 +7,5 @@ data/yklua.ir filter=lfs diff=lfs merge=lfs -text
 data/yklua.ir.llc.asm filter=lfs diff=lfs merge=lfs -text
 data/yklua.ir.llc.mir filter=lfs diff=lfs merge=lfs -text
 data/yklua.ir.llvm-objdump.asm filter=lfs diff=lfs merge=lfs -text
+.envrc
+db/data filter=lfs diff=lfs merge=lfs -text
