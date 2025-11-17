@@ -121,25 +121,12 @@ ORDER BY id
 LIMIT 5;
 SQL
 
-echo ""
-echo "==================================================================="
-echo "✓ SETUP AND UPLOAD COMPLETE!"
-echo "==================================================================="
-echo ""
-echo "Table '$TABLE_NAME' is ready with $(psql "${CONN_STR}" -t -c "SELECT COUNT(*) FROM ${TABLE_NAME};" | tr -d ' ') rows"
-echo ""
-echo "Next steps:"
-echo "  • Query directly: psql \"\$DB_CONN_STR\" -c \"SELECT COUNT(*) FROM ${TABLE_NAME};\""
-echo "  • Run custom queries on table: ${TABLE_NAME}"
-echo ""
-echo "Note: To use analysis scripts, modify them to use '${TABLE_NAME}' instead of 'basicblocks'"
-echo ""
 
 
 echo ""
 echo "→ Uploading to database..."
 psql "${CONN_STR}" << SQL
 TRUNCATE ${TABLE_NAME} RESTART IDENTITY;
-\copy basicblocks (function_name, basicblock_id, has_tracing_call, number_of_instructions, instructions) FROM '${FULL_PATH}' DELIMITER ',' CSV HEADER
-SELECT COUNT(*) AS total_rows FROM basicblocks;
+\copy ${TABLE_NAME} (function_name, basicblock_id, has_tracing_call, number_of_instructions, instructions) FROM '${FULL_PATH}' DELIMITER ',' CSV HEADER
+SELECT COUNT(*) AS total_rows FROM ${TABLE_NAME};
 SQL

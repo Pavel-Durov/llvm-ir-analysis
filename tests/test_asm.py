@@ -739,3 +739,177 @@ typeerror:                              # @typeerror
         
     finally:
         Path(temp_path).unlink(missing_ok=True)
+
+
+def test_asm_no_duplicate_basic_blocks():
+    """Test that ASM parser doesn't create duplicate basic blocks with same function_name and basicblock_id.
+    
+    This test reproduces the exact scenario that caused the database constraint violation:
+    duplicate key value violates unique constraint "basicblocks_asm_unique_function_block"
+    DETAIL: Key (function_name, basicblock_id)=(callbinTM, bb.7) already exists.
+    
+    The issue was that the parser was creating two blocks both labeled 'bb.7' when they should
+    have been labeled 'bb.6' and 'bb.7' based on their trace call parameters.
+    """
+    asm_content = """
+	.globl	callbinTM                       # -- Begin function callbinTM
+	.p2align	4, 0x90
+	.type	callbinTM,@function
+callbinTM:                                  # @callbinTM
+	.cfi_startproc
+# %bb.0:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	pushq	%r15
+	pushq	%r14
+	pushq	%r13
+	pushq	%r12
+	pushq	%rbx
+	subq	$104, %rsp
+	movl	$516, %edi                      # imm = 0x204
+	xorl	%esi, %esi
+	callq	__yk_trace_basicblock@PLT
+	# ... some instructions ...
+	movq	%rax, %rbx
+	testq	%rbx, %rbx
+	je	.LBB464_8
+# This is where the duplicate issue occurred - two blocks both getting labeled bb.7
+	movl	$516, %edi                      # imm = 0x204
+	movl	$6, %esi                        # BB ID 6 - should create bb.6
+	callq	__yk_trace_basicblock@PLT
+	movq	-88(%rbp), %r12                 # 8-byte Reload
+	movq	-104(%rbp), %rbx                # 8-byte Reload
+	jmp	.LBB464_9
+	movl	$516, %edi                      # imm = 0x204
+	movl	$7, %esi                        # BB ID 7 - should create bb.7
+	callq	__yk_trace_basicblock@PLT
+	movq	%r12, %rbx
+	addq	$80, %rbx
+	movl	$516, %edi                      # imm = 0x204
+	movl	$8, %esi                        # BB ID 8 - should create bb.8
+	callq	__yk_trace_basicblock@PLT
+	movb	8(%rbx), %al
+	andb	$15, %al
+	cmpb	$0, %al
+	sete	%al
+	testb	$1, %al
+	jne	.LBB464_10
+	jmp	.LBB464_19
+.Lfunc_end:
+	.size	callbinTM, .Lfunc_end-callbinTM
+	.cfi_endproc
+	# -- End function
+"""
+
+    temp_path = '/tmp/test_asm_no_duplicates.s'
+    try:
+        with open(temp_path, 'w') as f:
+            f.write(asm_content)
+
+        parser = ASMParser()
+        functions = parser.parse(temp_path)
+
+        assert len(functions) == 1
+        func = functions['callbinTM']
+        assert func, "Function callbinTM not found"
+
+        # The parser should create separate blocks for each trace call
+        # Expected blocks:
+        # - bb.0: Initial block with first trace call (BB ID 0)
+        # - bb.6: Block with trace call BB ID 6
+        # - bb.7: Block with trace call BB ID 7  
+        # - bb.8: Block with trace call BB ID 8
+        assert func.blocks == 4
+
+        # Collect all block labels to check for duplicates
+        block_labels = [block.block for block in func.blocks_detail]
+        
+        # Verify no duplicate labels
+        assert len(block_labels) == len(set(block_labels)), f"Duplicate block labels found: {block_labels}"
+        
+        # Verify expected labels are present
+        expected_labels = {'bb.0', 'bb.6', 'bb.7', 'bb.8'}
+        actual_labels = set(block_labels)
+        assert actual_labels == expected_labels, f"Expected {expected_labels}, got {actual_labels}"
+
+        # Verify that each block with trace calls has the correct BB ID
+        for block in func.blocks_detail:
+            if block.yk_trace_bb_calls > 0:
+                trace_bb_id = ASMParser._extract_trace_bb_id(block.instruction_lines)
+                expected_id = int(block.block.split('.')[1])  # Extract number from 'bb.N'
+                assert trace_bb_id == expected_id, f"Block {block.block} has trace BB ID {trace_bb_id}, expected {expected_id}"
+
+        # Verify function index is extracted correctly
+        assert func.function_index == 516
+
+    finally:
+        Path(temp_path).unlink(missing_ok=True)
+
+
+def test_asm_trace_call_block_splitting_preserves_bb_ids():
+    """Test that trace call block splitting uses correct BB IDs from trace parameters.
+    
+    This test ensures that when the parser splits blocks based on trace calls,
+    it uses the actual BB ID from the trace call parameters rather than a counter.
+    """
+    asm_content = """
+	.globl	test_func                       # -- Begin function test_func
+	.p2align	4, 0x90
+	.type	test_func,@function
+test_func:                                  # @test_func
+	.cfi_startproc
+# %bb.0:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	# First trace call - BB ID 0
+	movl	$100, %edi
+	xorl	%esi, %esi                      # BB ID 0 (xorl %esi, %esi means 0)
+	callq	__yk_trace_basicblock@PLT
+	movq	%rdi, %rax
+	# Second trace call - BB ID 5 (skipping 1-4)
+	movl	$100, %edi
+	movl	$5, %esi                        # BB ID 5
+	callq	__yk_trace_basicblock@PLT
+	movq	%rax, %rbx
+	# Third trace call - BB ID 10 (skipping 6-9)
+	movl	$100, %edi
+	movl	$10, %esi                       # BB ID 10
+	callq	__yk_trace_basicblock@PLT
+	popq	%rbp
+	retq
+.Lfunc_end:
+	.size	test_func, .Lfunc_end-test_func
+	.cfi_endproc
+	# -- End function
+"""
+
+    temp_path = '/tmp/test_asm_bb_id_preservation.s'
+    try:
+        with open(temp_path, 'w') as f:
+            f.write(asm_content)
+
+        parser = ASMParser()
+        functions = parser.parse(temp_path)
+
+        assert len(functions) == 1
+        func = functions['test_func']
+        assert func, "Function test_func not found"
+
+        # Should have 3 blocks: bb.0, bb.5, bb.10
+        assert func.blocks == 3
+
+        # Collect block labels and verify they match trace call BB IDs
+        block_labels = [block.block for block in func.blocks_detail]
+        expected_labels = ['bb.0', 'bb.5', 'bb.10']
+        
+        assert block_labels == expected_labels, f"Expected {expected_labels}, got {block_labels}"
+
+        # Verify each block has correct trace BB ID
+        expected_trace_ids = [0, 5, 10]
+        for i, block in enumerate(func.blocks_detail):
+            assert block.yk_trace_bb_calls == 1, f"Block {i} should have 1 trace call"
+            trace_bb_id = ASMParser._extract_trace_bb_id(block.instruction_lines)
+            assert trace_bb_id == expected_trace_ids[i], f"Block {i} has trace BB ID {trace_bb_id}, expected {expected_trace_ids[i]}"
+
+    finally:
+        Path(temp_path).unlink(missing_ok=True)
