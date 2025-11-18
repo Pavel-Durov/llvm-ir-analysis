@@ -13,7 +13,7 @@ WITH stats AS (
   FROM basicblocks
   
   UNION ALL
-  
+
   SELECT
     'Blocks with tracing calls' AS category,
     ROUND(AVG(number_of_instructions)::numeric, 2) AS avg_instr_per_bb,

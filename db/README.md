@@ -57,6 +57,232 @@ The following indices are created for optimal query performance:
 
 ## Scripts
 
+### `validate_data.py`
+
+**Comprehensive data validation for uploaded basicblocks**
+
+```bash
+python3 validate_data.py "$DB_CONN_STR"
+```
+
+This script performs extensive validation checks on the database:
+
+**1. Basic Statistics**
+- Total row count
+- Unique function count
+- Original vs optimised function breakdown
+
+**2. Data Integrity Checks**
+- NULL value detection in critical fields
+- Empty string detection
+- Data type validation
+
+**3. Tracing Call Validation**
+- Verifies `__yk_opt_` functions have **no tracing calls** (critical!)
+- Checks tracing call distribution in original functions
+- Reports any violations
+
+**4. Function Matching**
+- Identifies original ↔ optimised function pairs
+- Detects orphaned optimised functions (no original)
+- Shows matching statistics
+
+**5. Instruction Count Statistics**
+- Min/max/mean/median instruction counts
+- Comparison between original and optimised functions
+- Average reduction percentages
+
+**6. Matching Block Statistics**
+- Statistics for blocks present in both original and optimised
+- Average instruction reduction per block
+- Top functions by block count
+
+**7. Validation Summary**
+- Overall pass/fail status
+- List of detected issues
+- Data quality score
+
+**Key Validation Rules:**
+- ✓ `__yk_opt_*` functions must have `has_tracing_call = false`
+- ✓ No NULL values in critical fields
+- ✓ Function pairs should match (original ↔ optimised)
+- ✓ Instruction counts should be positive
+
+**Example Output:**
+```
+================================================================================
+  Validation Summary
+================================================================================
+
+✓ ALL VALIDATION CHECKS PASSED
+
+The database contains valid data with:
+  • 2,847 matched function pairs (original ↔ optimised)
+  • No critical data integrity issues
+  • Correct tracing call distribution
+```
+
+### Combined View (MIR + ASM)
+
+#### `basicblocks_combined` — Unified view of MIR and ASM data
+
+**Combine basicblocks (MIR) and basicblocks_asm (ASM) data**
+
+This view joins MIR and ASM data on `function_name` and `basicblock_id`, excluding `__yk_opt_*` functions.
+
+```bash
+# Create the view
+./manage_combined_view.sh "$DB_CONN_STR" create
+
+# Or manually
+psql "$DB_CONN_STR" -f create_combined_view.sql
+
+# Run analysis queries
+./manage_combined_view.sh "$DB_CONN_STR" query
+
+# Refresh materialized view (after data changes)
+./manage_combined_view.sh "$DB_CONN_STR" refresh
+
+# Quick statistics
+./manage_combined_view.sh "$DB_CONN_STR" stats
+
+# Drop the view
+./manage_combined_view.sh "$DB_CONN_STR" drop
+```
+
+**View columns:**
+- `function_name` — Function name
+- `basicblock_id` — Block identifier (e.g., "BB#23")
+- `mir_instructions_count` — Number of MIR instructions
+- `mir_instructions` — Full MIR instruction text
+- `mir_id` — Row ID from basicblocks table (NULL if no MIR data)
+- `asm_instruction_count` — Number of ASM instructions
+- `asm_instructions` — Full ASM instruction text
+- `asm_id` — Row ID from basicblocks_asm table (NULL if no ASM data)
+
+**Key features:**
+- FULL OUTER JOIN ensures all blocks appear (even if only in MIR or ASM)
+- Excludes `__yk_opt_*` functions automatically
+- Check `mir_id IS NOT NULL` and `asm_id IS NOT NULL` to filter matched blocks
+
+**Example queries:**
+```sql
+-- Blocks with both MIR and ASM data
+SELECT *
+FROM basicblocks_combined
+WHERE mir_id IS NOT NULL AND asm_id IS NOT NULL;
+
+-- Largest instruction differences
+SELECT
+    function_name,
+    basicblock_id,
+    mir_instructions_count,
+    asm_instruction_count,
+    (mir_instructions_count - asm_instruction_count) AS diff
+FROM basicblocks_combined
+WHERE mir_id IS NOT NULL AND asm_id IS NOT NULL
+ORDER BY ABS(mir_instructions_count - asm_instruction_count) DESC
+LIMIT 20;
+
+-- Function-level statistics
+SELECT
+    function_name,
+    COUNT(*) as num_blocks,
+    SUM(mir_instructions_count) as total_mir,
+    SUM(asm_instruction_count) as total_asm,
+    SUM(mir_instructions_count - asm_instruction_count) as total_reduction
+FROM basicblocks_combined
+WHERE mir_id IS NOT NULL AND asm_id IS NOT NULL
+GROUP BY function_name
+ORDER BY total_reduction DESC;
+```
+
+**Query tips:**
+- Use `mir_id IS NOT NULL AND asm_id IS NOT NULL` to filter matched blocks
+- Use `mir_id IS NOT NULL AND asm_id IS NULL` for MIR-only blocks
+- Use `asm_id IS NOT NULL AND mir_id IS NULL` for ASM-only blocks
+
+### Database Migrations
+
+#### `migrate_add_block_num` — Add numeric block ID column
+
+**Add `basicblock_id_num` column with parsed block numbers**
+
+This migration adds a new `INTEGER` column that extracts the numeric portion from `basicblock_id` strings.
+
+```bash
+# Option 1: Migrate all tables at once (basicblocks + basicblocks_asm)
+./migrate_all_tables.sh "$DB_CONN_STR"
+
+# Option 2: Migrate specific tables
+./migrate_basicblocks.sh "$DB_CONN_STR"
+./migrate_basicblocks_asm.sh "$DB_CONN_STR"
+
+# Option 3: Generic version for any table
+python3 migrate_add_block_num_generic.py "$DB_CONN_STR" basicblocks_asm
+
+# Option 4: Legacy - basicblocks only (Python with detailed output)
+python3 migrate_add_block_num.py "$DB_CONN_STR"
+
+# Option 5: Legacy - basicblocks only (Pure SQL)
+psql "$DB_CONN_STR" -f migrate_add_block_num.sql
+```
+
+**What it does:**
+- Adds `basicblock_id_num INTEGER` column
+- Parses block IDs: `"BB#23"` → `23`, `"block_45"` → `45`
+- Creates index on the new column
+- Validates the migration
+
+**Parsing patterns:**
+- `BB#<num>` or `bb#<num>` → extracts `<num>`
+- `block_<num>` or `block#<num>` → extracts `<num>`
+- Any string with digits → extracts first number
+
+**Options:**
+```bash
+# Dry run (rollback after showing results)
+python3 migrate_add_block_num.py "$DB_CONN_STR" --dry-run
+
+# Force re-run (drop and recreate column)
+python3 migrate_add_block_num.py "$DB_CONN_STR" --force
+
+# Rollback migration
+psql "$DB_CONN_STR" -f rollback_add_block_num.sql
+# or
+./run_migration.sh "$DB_CONN_STR" --rollback
+```
+
+**Example output:**
+```
+================================================================================
+  Migration Summary
+================================================================================
+
+✓ SUCCESS: All rows have parsed block numbers
+
+  Total rows:           37,859
+  Rows with number:     37,859
+  Rows without number:  0
+  Number range:         0 - 1,234
+  Coverage:             100.00%
+```
+
+**After migration, the schema becomes:**
+```sql
+CREATE TABLE basicblocks (
+    ...
+    basicblock_id TEXT NOT NULL,
+    basicblock_id_num INTEGER,  -- NEW!
+    ...
+);
+```
+
+**Use cases:**
+- Numeric sorting of blocks: `ORDER BY basicblock_id_num`
+- Range queries: `WHERE basicblock_id_num BETWEEN 10 AND 50`
+- Aggregations: `AVG(number_of_instructions) ... GROUP BY basicblock_id_num`
+
 ### `setup_and_upload.sh`
 
 **Complete setup in one command**
@@ -179,13 +405,24 @@ uv run python src/main.py data/yklua.llc.asm \
 cd db
 ./setup_and_upload.sh "$DB_CONN_STR" asm_blocks.csv
 
-# 3. Run analyses
+# 3. Validate uploaded data
+python3 validate_data.py "$DB_CONN_STR"
+
+# 4. Run analyses (if validation passed)
 ./run_analysis.sh "$DB_CONN_STR" summary
 ./run_analysis.sh "$DB_CONN_STR" distribution
 ./run_analysis.sh "$DB_CONN_STR" mvir
 
-# 4. Generate all analyses and save to file
+# 5. Generate all analyses and save to file
 ./run_analysis.sh "$DB_CONN_STR" all > analysis_results.txt 2>&1
+```
+
+### Quick Validation Workflow
+
+```bash
+# Upload data and validate in one go
+./setup_and_upload.sh "$DB_CONN_STR" asm_blocks.csv && \
+  python3 validate_data.py "$DB_CONN_STR"
 ```
 
 ## CSV Format
