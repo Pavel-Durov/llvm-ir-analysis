@@ -29,27 +29,18 @@ class ASMParser(BaseParser):
         if current_function is None or current_block_lines is None:
             return None
 
-        label = (current_block_label or f"bb_{current_function.blocks}")
+        # Prioritize trace call BB ID over comment-based label
+        trace_bb_id = ASMParser._extract_trace_bb_id(current_block_lines)
+        if trace_bb_id is not None:
+            label = f"bb.{trace_bb_id}"
+        elif current_block_label:
+            label = current_block_label
+        else:
+            label = f"bb_{current_function.blocks}"
+
         instr_lines = [ln for ln in current_block_lines if self._is_instruction_line(ln)]
         # Count __yk_trace_basicblock calls in this block
         yk_trace_bb_calls = sum(1 for ln in instr_lines if YK_TRACE_BASICBLOCK_FUNC in ln)
-
-        # Optional: Extract BB ID from trace call parameters for validation
-        # The BB ID from the trace call should match the comment-based ID
-        trace_bb_id = ASMParser._extract_trace_bb_id(current_block_lines)
-        if trace_bb_id is not None and current_block_label:
-            # Extract numeric ID from label (e.g., "bb.0" -> 0)
-            comment_bb_id = None
-            if current_block_label.startswith("bb."):
-                try:
-                    comment_bb_id = int(current_block_label.split(".")[1])
-                except (IndexError, ValueError):
-                    pass
-            # Validate that comment ID matches trace call parameter ID
-            if comment_bb_id is not None and comment_bb_id != trace_bb_id:
-                # IDs don't match - this could indicate an issue
-                # For now, we trust the comment-based ID but could log this
-                pass
 
         # Include tracing calls in instruction count
         return Block(block=label, instructions=len(instr_lines),
@@ -125,7 +116,8 @@ class ASMParser(BaseParser):
                             current_function.total_instructions += blk.instructions
                             current_function.blocks_detail.append(blk)
                         inside_basic_block = True
-                        current_block_label = f"bb.{m_bb.group(1)}"
+                        # Don't set the label yet - we'll determine it from trace calls if present
+                        current_block_label = None
                         current_block_lines = []
                         current_block_start_line = line_number
                     else:
@@ -158,10 +150,19 @@ class ASMParser(BaseParser):
                                 current_function.total_instructions += blk.instructions
                                 current_function.blocks_detail.append(blk)
 
-                            # Determine the new block label based on current block count
-                            current_block_label = f"bb.{current_function.blocks}"
-                            current_block_lines = []
+                            # Start a new block - we'll determine the BB ID when we see the complete trace call
+                            current_block_lines = [line]
                             current_block_start_line = line_number
+                            # We'll set the label later when we find the complete trace call sequence
+                            current_block_label = None
+                            continue
+
+                    # If we're in a block without a label and see a trace call sequence, extract the BB ID
+                    if current_block_label is None and current_block_lines is not None:
+                        # Check if we have a complete trace call sequence in current_block_lines
+                        trace_bb_id = ASMParser._extract_trace_bb_id(current_block_lines + [line])
+                        if trace_bb_id is not None:
+                            current_block_label = f"bb.{trace_bb_id}"
 
                     # Check if this is a trace call - if so, mark that we've seen one
                     if YK_TRACE_BASICBLOCK_FUNC in line and 'callq' in line:

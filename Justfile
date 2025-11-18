@@ -148,6 +148,36 @@ analyze_mir_size_file MIR:
 	uv run python ./src/main.py --analyze-mir-size-distribution {{MIR}}
 
 # ============================================================================
+# CSV Generation
+# ============================================================================
+
+# Generate ASM blocks CSV with fixed parser (eliminates duplicates)
+generate_asm_csv:
+	@echo "→ Generating ASM blocks CSV with fixed parser..."
+	@echo "  Backing up existing CSV..."
+	@if [ -f db/data/asm_blocks.csv ]; then cp db/data/asm_blocks.csv db/data/asm_blocks.csv.backup; fi
+	@echo "  Parsing ASM file and generating CSV..."
+	uv run python src/main.py data/yklua.llc.asm --export-asm-csv --export-output db/data/asm_blocks.csv
+	@echo "  Verifying no duplicates..."
+	@DUPLICATES=$$(cut -d',' -f1,2 db/data/asm_blocks.csv | sort | uniq -d | wc -l); \
+	if [ $$DUPLICATES -eq 0 ]; then \
+		echo "✓ CSV generated successfully with no duplicates"; \
+	else \
+		echo "⚠ Warning: $$DUPLICATES duplicate function_name,basicblock_id combinations found"; \
+	fi
+
+# Generate MIR blocks CSV
+generate_mir_csv:
+	@echo "→ Generating MIR blocks CSV..."
+	@if [ -f db/data/mir_blocks.csv ]; then cp db/data/mir_blocks.csv db/data/mir_blocks.csv.backup; fi
+	uv run python src/main.py data/yklua.ir.llc.mir --export-mir-csv --export-output db/data/mir_blocks.csv
+	@echo "✓ MIR CSV generated successfully"
+
+# Generate both ASM and MIR CSVs
+generate_all_csvs: generate_asm_csv generate_mir_csv
+	@echo "✓ All CSV files generated successfully"
+
+# ============================================================================
 # Database Setup (PostgreSQL)
 # ============================================================================
 
