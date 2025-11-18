@@ -134,6 +134,185 @@ def test_asm_filters_directives():
     assert blk.instructions == 2  # pushq and movq
 
 
+def test_asm_directive_filtering_comprehensive():
+    """Test that all common ASM directives are properly filtered out.
+    
+    Assembler directives control assembler behavior, not CPU execution, and include
+    commands like .section, .data, .text, .align, .global, .cfi_*, .type, .size, etc.
+    These should not be counted as actual CPU instructions.
+    """
+    asm = """# %bb.0:
+	.text
+	.file	"example.c"
+	.globl	test_function
+	.p2align	4, 0x90
+	.type	test_function,@function
+	.cfi_startproc
+	.cfi_def_cfa %rsp, 8
+	.cfi_offset %rbp, -16
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_def_cfa_register %rbp
+	movq	%rsp, %rbp
+	.section	.rodata
+	.align	8
+	movl	$42, %eax  # comment that should not be parsed
+	.size	test_function, .-test_function
+	.cfi_endproc
+	retq
+	.end
+    """
+    parser = ASMParser()
+    blk = parser._parse_basic_block(asm.split("\n"))
+    
+    # Should only count actual CPU instructions: pushq, movq, movl, retq = 4
+    assert blk.instructions == 4
+    
+    # Verify that the instruction lines contain only actual instructions
+    actual_instructions = [line.strip() for line in blk.instruction_lines 
+                          if parser._is_instruction_line(line)]
+    expected_instructions = [
+        'pushq	%rbp',
+        'movq	%rsp, %rbp', 
+        'movl	$42, %eax',
+        'retq'
+    ]
+    
+    # Clean up whitespace for comparison
+    actual_clean = [instr.strip() for instr in actual_instructions]
+    expected_clean = [instr.strip() for instr in expected_instructions]
+    
+    assert len(actual_clean) == len(expected_clean)
+    for actual, expected in zip(actual_clean, expected_clean):
+        assert actual == expected
+
+
+def test_asm_is_instruction_line_method():
+    """Test the _is_instruction_line method directly to ensure proper directive filtering."""
+    parser = ASMParser()
+    
+    # Test actual CPU instructions (should return True)
+    cpu_instructions = [
+        "pushq	%rbp",
+        "movq	%rsp, %rbp", 
+        "movl	$42, %eax",
+        "callq	malloc",
+        "retq",
+        "jmp	.LBB0_1",
+        "testq	%rax, %rax",
+        "	addq	$16, %rsp",  # With leading whitespace
+    ]
+    
+    for instr in cpu_instructions:
+        assert parser._is_instruction_line(instr), f"Should be CPU instruction: {instr}"
+    
+    # Test assembler directives (should return False)
+    assembler_directives = [
+        ".text",
+        ".data", 
+        ".section .rodata",
+        ".globl main",
+        ".type main,@function",
+        ".size main, .-main",
+        ".align 8",
+        ".p2align 4, 0x90",
+        ".cfi_startproc",
+        ".cfi_endproc", 
+        ".cfi_def_cfa %rsp, 8",
+        ".cfi_offset %rbp, -16",
+        ".cfi_def_cfa_offset 16",
+        ".cfi_def_cfa_register %rbp",
+        ".file \"example.c\"",
+        ".end",
+        "	.local variable",  # With leading whitespace
+    ]
+    
+    for directive in assembler_directives:
+        assert not parser._is_instruction_line(directive), f"Should be filtered directive: {directive}"
+    
+    # Test comments and labels (should return False)
+    non_instructions = [
+        "# This is a comment",
+        "# %bb.0:",
+        ".LBB0_1:",
+        "main:",
+        "test_function:",
+        "",  # Empty line
+        "   ",  # Whitespace only
+    ]
+    
+    for non_instr in non_instructions:
+        assert not parser._is_instruction_line(non_instr), f"Should be filtered non-instruction: {non_instr}"
+
+
+def test_asm_strip_inline_comments():
+    """Test that inline comments are properly stripped from assembly instructions.
+    
+    Inline comments should be removed, leaving only the actual instruction.
+    For example:
+        movl	$554, %edi                      # imm = 0x22A
+    should become:
+        movl	$554, %edi
+    """
+    test_cases = [
+        # (input, expected_output)
+        ("movl	$554, %edi                      # imm = 0x22A", "movl	$554, %edi"),
+        ("pushq	%rbp                    # Save base pointer", "pushq	%rbp"),
+        ("callq	__yk_trace_basicblock@PLT # Trace call", "callq	__yk_trace_basicblock@PLT"),
+        ("movq	%rsp, %rbp", "movq	%rsp, %rbp"),  # No comment
+        ("retq                            # Return", "retq"),
+        ("	addq	$16, %rsp  # Adjust stack", "	addq	$16, %rsp"),
+        ("xorl	%esi, %esi                      # Zero %esi", "xorl	%esi, %esi"),
+        ("jmp	.LBB500_383                    # Jump to block", "jmp	.LBB500_383"),
+    ]
+    
+    parser = ASMParser()
+    for input_line, expected in test_cases:
+        result = parser._strip_inline_comment(input_line)
+        assert result == expected, f"Failed for input: {input_line}\nExpected: {expected}\nGot: {result}"
+
+
+def test_asm_parse_block_with_inline_comments():
+    """Test that basic block parsing correctly strips inline comments from instructions."""
+    asm = """# %bb.0:
+	pushq	%rbp                    # Save base pointer
+	.cfi_def_cfa_offset 16
+	movq	%rsp, %rbp              # Set up frame pointer
+	movl	$554, %edi                      # imm = 0x22A
+	xorl	%esi, %esi                      # Zero %esi
+	callq	__yk_trace_basicblock@PLT # Trace call
+	retq                            # Return
+    """
+    
+    parser = ASMParser()
+    blk = parser._parse_basic_block(asm.split("\n"))
+    
+    # Should have 5 instructions (pushq, movq, movl, xorl, callq, retq = 6 minus 0 = 6... wait, let me recount)
+    # pushq, movq, movl, xorl, callq, retq = 6 instructions
+    assert blk.instructions == 6
+    
+    # Verify that instruction lines have no inline comments
+    for line in blk.instruction_lines:
+        # None of the instruction lines should contain '#'
+        assert '#' not in line, f"Instruction line should not contain '#': {line}"
+    
+    # Verify specific cleaned instructions
+    expected_clean_instructions = [
+        "pushq	%rbp",
+        "movq	%rsp, %rbp",
+        "movl	$554, %edi",
+        "xorl	%esi, %esi",
+        "callq	__yk_trace_basicblock@PLT",
+        "retq"
+    ]
+    
+    # Clean up whitespace for comparison
+    actual_clean = [line.strip() for line in blk.instruction_lines]
+    expected_clean = [line.strip() for line in expected_clean_instructions]
+    
+    assert actual_clean == expected_clean, f"Expected: {expected_clean}\nGot: {actual_clean}"
+
+
 def test_asm_filters_comments_and_labels():
     asm = """# %bb.0:
 	# This is a comment

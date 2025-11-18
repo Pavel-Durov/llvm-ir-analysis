@@ -343,7 +343,7 @@ def force_migrate(conn_str, table_name):
         print(f"→ Dropping 'basicblock_id_num' column from '{table_name}'...")
         cursor.execute(f"""
             ALTER TABLE {table_name}
-            DROP COLUMN IF EXISTS basicblock_id_num;
+            DROP COLUMN IF EXISTS basicblock_id_num CASCADE;
         """)
         
         # Drop index if exists

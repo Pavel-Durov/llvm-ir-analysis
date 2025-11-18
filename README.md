@@ -345,5 +345,11 @@ lc -stop-after=machine-cp  ./yklua.ir.ll -o ./yklua.ir.llc.mir
 lc ./yklua.ir.ll -o ./yklua.ir.llc.asm
 ```
 
+## ETL (MIR to ASM)
 
-\copy basicblocks (function_name, basicblock_id, has_tracing_call, number_of_instructions, instructions) FROM 'ir_analysis_from_sqlite.csv' DELIMITER ',' CSV HEADER
+```shell
+uv run python src/main.py data/yklua.llc.asm --export-asm-csv --export-output db/data/asm_blocks.csv
+bash db/upload_asm_blocks.sh $DB_CONN_STR ./db/data/asm_blocks.csv 
+uv run python ./db/migrations/migrate_add_block_num_generic.py "$DB_CONN_STR" basicblocks_asm --force
+```
+

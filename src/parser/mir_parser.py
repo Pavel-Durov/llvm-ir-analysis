@@ -150,6 +150,11 @@ class MIRParser(BaseParser):
         # - instruction_lines: ALL instructions including pseudo-ops
         # - total_instructions: count of all instructions (including pseudo-ops AND trace calls)
         # - yk_trace_bb_calls: separate count of trace calls for statistics
+        # Prioritise trace call BB ID over MIR label
+        trace_bb_id = MIRParser._extract_trace_bb_id(all_instructions)
+        if trace_bb_id is not None:
+            label = f"BB#{trace_bb_id}"
+
         return Block(
             block=label,
             instructions=len(collected),  # Real instructions INCLUDING trace calls
@@ -260,4 +265,31 @@ class MIRParser(BaseParser):
         report.yk_trace_stats = self._compute_yk_trace_stats()
 
         return report
+
+    @staticmethod
+    def _extract_trace_bb_id(lines: List[str]) -> int | None:
+        """Extract basic block ID from __yk_trace_basicblock call parameters in MIR.
+
+        Looks for the pattern:
+            $edi = MOV32ri <function_id>     # First parameter
+            $esi = MOV32ri <bb_id>           # Second parameter (or XOR32rr for bb 0)
+            CALL64pcrel32 ... @__yk_trace_basicblock
+
+        Returns:
+            The basic block ID (second parameter), or None if not found
+        """
+        for i in range(len(lines) - 2):
+            # Check if this is a trace call
+            if YK_TRACE_BASICBLOCK_FUNC in lines[i + 2]:
+                # Look back for the second parameter (bb_id)
+                if i + 1 < len(lines):
+                    line = lines[i + 1].strip()
+                    # Pattern: $esi = MOV32ri <bb_id>
+                    match = re.match(r'.*\$esi\s*=\s*MOV32ri\s+(\d+)', line)
+                    if match:
+                        return int(match.group(1))
+                    # Pattern: $esi = XOR32rr (means bb_id = 0)
+                    if '$esi' in line and 'XOR32rr' in line:
+                        return 0
+        return None
 

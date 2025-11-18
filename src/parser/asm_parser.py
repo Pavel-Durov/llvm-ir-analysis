@@ -12,7 +12,12 @@ if TYPE_CHECKING:
 
 
 class ASMParser(BaseParser):
-    """Parser for LLVM-style assembly (.s/.asm) files."""
+    """Parser for LLVM-style assembly (.s/.asm) files.
+    
+    Parses assembly files and extracts basic block information, filtering out
+    assembler directives (lines starting with '.') which control assembler
+    behavior rather than representing actual CPU instructions.
+    """
 
     def __init__(self, allowed_functions: set[str] | None = None):
         """Initialize ASM parser.
@@ -39,12 +44,14 @@ class ASMParser(BaseParser):
             label = f"bb_{current_function.blocks}"
 
         instr_lines = [ln for ln in current_block_lines if self._is_instruction_line(ln)]
+        # Strip inline comments from instruction lines
+        instr_lines_clean = [ASMParser._strip_inline_comment(ln) for ln in instr_lines]
         # Count __yk_trace_basicblock calls in this block
-        yk_trace_bb_calls = sum(1 for ln in instr_lines if YK_TRACE_BASICBLOCK_FUNC in ln)
+        yk_trace_bb_calls = sum(1 for ln in instr_lines_clean if YK_TRACE_BASICBLOCK_FUNC in ln)
 
         # Include tracing calls in instruction count
-        return Block(block=label, instructions=len(instr_lines),
-                   instruction_lines=instr_lines,
+        return Block(block=label, instructions=len(instr_lines_clean),
+                   instruction_lines=instr_lines_clean,
                    text="\n".join(current_block_lines), yk_trace_bb_calls=yk_trace_bb_calls,
                    start_line=start_line)
 
@@ -204,12 +211,14 @@ class ASMParser(BaseParser):
                 label = first_line.rstrip(":")
         
         instr_lines = [ln for ln in block_lines if self._is_instruction_line(ln)]
+        # Strip inline comments from instruction lines
+        instr_lines_clean = [ASMParser._strip_inline_comment(ln) for ln in instr_lines]
         # Count __yk_trace_basicblock calls
-        yk_trace_bb_calls = sum(1 for ln in instr_lines if YK_TRACE_BASICBLOCK_FUNC in ln)
+        yk_trace_bb_calls = sum(1 for ln in instr_lines_clean if YK_TRACE_BASICBLOCK_FUNC in ln)
         text = "\n".join(block_lines)
         # Include tracing calls in instruction count
-        return Block(block=label, instructions=len(instr_lines), 
-                    instruction_lines=instr_lines, text=text, yk_trace_bb_calls=yk_trace_bb_calls)
+        return Block(block=label, instructions=len(instr_lines_clean), 
+                    instruction_lines=instr_lines_clean, text=text, yk_trace_bb_calls=yk_trace_bb_calls)
 
     def apply_func_type_filter(self, filename: str, func_type: str,
                                skip_patterns: List[str] | None = None,
@@ -290,15 +299,52 @@ class ASMParser(BaseParser):
         return None
 
     @staticmethod
+    def _strip_inline_comment(line: str) -> str:
+        """Strip inline comments from assembly instruction lines.
+        
+        Removes comments that appear after instructions, e.g.:
+            movl	$554, %edi                      # imm = 0x22A
+        becomes:
+            movl	$554, %edi
+        
+        Args:
+            line: Assembly instruction line that may contain an inline comment
+            
+        Returns:
+            The instruction line with inline comment removed and trailing whitespace stripped.
+        """
+        # Find the comment marker '#' and remove everything from there onwards
+        comment_pos = line.find('#')
+        if comment_pos != -1:
+            line = line[:comment_pos]
+        # Strip trailing whitespace
+        return line.rstrip()
+
+    @staticmethod
     def _is_instruction_line(line: str) -> bool:
-        """Check if line is an actual assembly instruction."""
+        """Check if line is an actual assembly instruction.
+        
+        Filters out:
+        - Empty lines
+        - Comments (starting with #)
+        - Assembler directives (starting with .) - these control assembler behavior,
+          not CPU execution, and include commands like .section, .data, .text, 
+          .align, .global, .cfi_*, .type, .size, etc.
+        - Labels (ending with :)
+        
+        Returns:
+            True if the line represents an actual CPU instruction, False otherwise.
+        """
         s = line.strip()
         if not s:
             return False
+        # Skip comments
         if s.startswith("#"):
             return False
+        # Skip assembler directives - these control assembler behavior, not CPU execution
         if s.startswith("."):
             return False
+        # Skip labels
         if s.endswith(":"):
             return False
         return True
