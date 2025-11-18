@@ -248,6 +248,11 @@ db_logs:
 	@echo "→ PostgreSQL container logs:"
 	@docker logs ir_analysis_postgres --tail 50 --follow
 
+gen_plots:
+	just gen_bb_plot ./db/data/mir_analysis_basicblocks.csv ./block_analysis.png 
+
+gen_bb_plot CSV OUTPUT_IMAGE:
+	uv run python plot_blocks.py {{CSV}} -o {{OUTPUT_IMAGE}}
 # ============================================================================
 # Complete Workflow Automation
 # ============================================================================
