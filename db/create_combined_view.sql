@@ -1,4 +1,4 @@
--- Create a view combining MIR (basicblocks) and ASM (basicblocks_asm) data
+-- Create a view combining MIR (basicblocks_mir) and ASM (basicblocks_asm) data
 -- Joined on function_name and basicblock_id
 -- Excludes functions starting with __yk_opt
 
@@ -23,7 +23,7 @@ SELECT
     asm.id AS asm_idm,
     ABS(mir.number_of_instructions - asm.number_of_instructions) AS instruction_diff
 
-FROM basicblocks as mir
+FROM basicblocks_mir as mir
 JOIN basicblocks_asm asm
     ON mir.function_name = asm.function_name
     AND mir.basicblock_id_num = asm.basicblock_id_num

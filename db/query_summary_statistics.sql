@@ -1,4 +1,4 @@
--- Summary Statistics for Basic Blocks
+-- Summary Statistics for MIR Basic Blocks
 -- Calculates overall metrics for all blocks, traced blocks, and untraced blocks
 --
 -- Usage:
@@ -10,7 +10,7 @@ WITH stats AS (
     ROUND(AVG(number_of_instructions)::numeric, 2) AS avg_instr_per_bb,
     COUNT(*) AS total_bbs,
     SUM(number_of_instructions) AS total_instr
-  FROM basicblocks
+  FROM basicblocks_mir
   
   UNION ALL
 
@@ -19,7 +19,7 @@ WITH stats AS (
     ROUND(AVG(number_of_instructions)::numeric, 2) AS avg_instr_per_bb,
     COUNT(*) AS total_bbs,
     SUM(number_of_instructions) AS total_instr
-  FROM basicblocks
+  FROM basicblocks_mir
   WHERE has_tracing_call = true
   
   UNION ALL
@@ -29,7 +29,7 @@ WITH stats AS (
     ROUND(AVG(number_of_instructions)::numeric, 2) AS avg_instr_per_bb,
     COUNT(*) AS total_bbs,
     SUM(number_of_instructions) AS total_instr
-  FROM basicblocks
+  FROM basicblocks_mir
   WHERE has_tracing_call = false
 )
 SELECT 

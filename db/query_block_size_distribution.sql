@@ -1,4 +1,4 @@
--- Block Size Distribution Analysis
+-- Block Size Distribution Analysis for MIR Basic Blocks
 -- Categorises basic blocks by instruction count and tracing status
 --
 -- Usage:
@@ -18,7 +18,7 @@ WITH size_categories AS (
       WHEN number_of_instructions >= 21 THEN '21+'
       ELSE 'unknown'
     END AS size_category
-  FROM basicblocks
+  FROM basicblocks_mir
 ),
 traced_blocks AS (
   SELECT 
@@ -86,13 +86,13 @@ ORDER BY
 -- Totals and averages
 SELECT 
   'TOTALS' AS "Metric",
-  (SELECT COUNT(*) FROM basicblocks WHERE has_tracing_call = true) AS "Traced Total",
-  (SELECT COUNT(*) FROM basicblocks WHERE has_tracing_call = true) AS "Traced Net Total",
-  (SELECT COUNT(*) FROM basicblocks WHERE has_tracing_call = false) AS "Untraced Total";
+  (SELECT COUNT(*) FROM basicblocks_mir WHERE has_tracing_call = true) AS "Traced Total",
+  (SELECT COUNT(*) FROM basicblocks_mir WHERE has_tracing_call = true) AS "Traced Net Total",
+  (SELECT COUNT(*) FROM basicblocks_mir WHERE has_tracing_call = false) AS "Untraced Total";
 
 SELECT 
   'AVERAGE' AS "Metric",
-  ROUND((SELECT AVG(number_of_instructions) FROM basicblocks WHERE has_tracing_call = true)::numeric, 2) || ' instructions' AS "Traced Avg",
-  ROUND((SELECT AVG(number_of_instructions - 3) FROM basicblocks WHERE has_tracing_call = true)::numeric, 2) || ' instructions' AS "Traced Net Avg",
-  ROUND((SELECT AVG(number_of_instructions) FROM basicblocks WHERE has_tracing_call = false)::numeric, 2) || ' instructions' AS "Untraced Avg";
+  ROUND((SELECT AVG(number_of_instructions) FROM basicblocks_mir WHERE has_tracing_call = true)::numeric, 2) || ' instructions' AS "Traced Avg",
+  ROUND((SELECT AVG(number_of_instructions - 3) FROM basicblocks_mir WHERE has_tracing_call = true)::numeric, 2) || ' instructions' AS "Traced Net Avg",
+  ROUND((SELECT AVG(number_of_instructions) FROM basicblocks_mir WHERE has_tracing_call = false)::numeric, 2) || ' instructions' AS "Untraced Avg";
 

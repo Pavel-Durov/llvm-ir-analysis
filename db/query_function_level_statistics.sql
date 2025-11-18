@@ -1,4 +1,4 @@
--- Function-Level Statistics
+-- Function-Level Statistics for MIR Basic Blocks
 -- Analyses instruction and basic-block counts per function, identifying hot functions
 -- and tracing instrumentation density
 --
@@ -13,7 +13,7 @@ SELECT
   ROUND(100.0 * SUM(CASE WHEN has_tracing_call THEN 1 ELSE 0 END) / COUNT(*), 2) AS "Tracing %",
   SUM(number_of_instructions) AS "Total Instructions",
   ROUND(AVG(number_of_instructions)::numeric, 2) AS "Avg Instr/BB"
-FROM basicblocks
+FROM basicblocks_mir
 GROUP BY function_name
 HAVING COUNT(*) > 1
 ORDER BY COUNT(*) DESC
@@ -26,7 +26,7 @@ SELECT
   SUM(CASE WHEN has_tracing_call THEN 1 ELSE 0 END) AS "Traced BBs",
   ROUND(100.0 * SUM(CASE WHEN has_tracing_call THEN 1 ELSE 0 END) / COUNT(*), 2) AS "Tracing %",
   SUM(number_of_instructions) AS "Total Instructions"
-FROM basicblocks
+FROM basicblocks_mir
 GROUP BY function_name
 HAVING SUM(CASE WHEN has_tracing_call THEN 1 ELSE 0 END) > 0
 ORDER BY "Tracing %" DESC
@@ -39,7 +39,7 @@ SELECT
   SUM(number_of_instructions) AS "Total Instructions",
   ROUND(AVG(number_of_instructions)::numeric, 2) AS "Avg Instr/BB",
   SUM(CASE WHEN has_tracing_call THEN 1 ELSE 0 END) AS "Traced BBs"
-FROM basicblocks
+FROM basicblocks_mir
 GROUP BY function_name
 ORDER BY SUM(number_of_instructions) DESC
 LIMIT 20;
@@ -52,7 +52,7 @@ SELECT
   MIN(number_of_instructions) AS "Min Instr",
   MAX(number_of_instructions) AS "Max Instr",
   SUM(CASE WHEN has_tracing_call THEN 1 ELSE 0 END) AS "Traced BBs"
-FROM basicblocks
+FROM basicblocks_mir
 GROUP BY function_name
 HAVING COUNT(*) >= 5
 ORDER BY AVG(number_of_instructions) DESC

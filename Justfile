@@ -259,6 +259,11 @@ run_all: match_all_blocks setup_db db_stats
 	@echo "  - IR/MIR/ASM blocks matched: reports/matched_blocks.csv"
 	@echo "  - Database created: db/ir_analysis.db"
 
+
+run_asm_etl:
+	uv run python src/main.py data/yklua.llc.asm --export-asm-csv --export-output db/data/asm_blocks.csv
+	bash db/upload_asm_blocks.sh $DB_CONN_STR ./db/data/asm_blocks.csv 
+	uv run python ./db/migrations/migrate_add_block_num_generic.py "$DB_CONN_STR" basicblocks_asm --force
 # ============================================================================
 # Development & Maintenance
 # ============================================================================
