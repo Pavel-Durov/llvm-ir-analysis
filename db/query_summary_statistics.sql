@@ -9,8 +9,6 @@ WITH stats AS (
     'All blocks' AS category,
     ROUND(AVG(number_of_instructions)::numeric, 2) AS mean_instr_per_bb,
     ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY number_of_instructions)::numeric, 2) AS median_instr_per_bb,
-    ROUND(AVG(CASE WHEN has_tracing_call THEN number_of_instructions - 3 ELSE number_of_instructions END)::numeric, 2) AS mean_net_instr_per_bb,
-    ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY CASE WHEN has_tracing_call THEN number_of_instructions - 3 ELSE number_of_instructions END)::numeric, 2) AS median_net_instr_per_bb,
     COUNT(*) AS total_bbs,
     SUM(number_of_instructions) AS total_instr
   FROM basicblocks_mir
@@ -21,10 +19,19 @@ WITH stats AS (
     'Blocks with tracing calls' AS category,
     ROUND(AVG(number_of_instructions)::numeric, 2) AS mean_instr_per_bb,
     ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY number_of_instructions)::numeric, 2) AS median_instr_per_bb,
-    ROUND(AVG(number_of_instructions - 3)::numeric, 2) AS mean_net_instr_per_bb,
-    ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY number_of_instructions - 3)::numeric, 2) AS median_net_instr_per_bb,
     COUNT(*) AS total_bbs,
     SUM(number_of_instructions) AS total_instr
+  FROM basicblocks_mir
+  WHERE has_tracing_call = true
+  
+  UNION ALL
+
+  SELECT
+    'Blocks with tracing calls (net)' AS category,
+    ROUND(AVG(number_of_instructions - 3)::numeric, 2) AS mean_instr_per_bb,
+    ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY number_of_instructions - 3)::numeric, 2) AS median_instr_per_bb,
+    COUNT(*) AS total_bbs,
+    SUM(number_of_instructions - 3) AS total_instr
   FROM basicblocks_mir
   WHERE has_tracing_call = true
   
@@ -34,8 +41,6 @@ WITH stats AS (
     'Blocks without tracing calls' AS category,
     ROUND(AVG(number_of_instructions)::numeric, 2) AS mean_instr_per_bb,
     ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY number_of_instructions)::numeric, 2) AS median_instr_per_bb,
-    ROUND(AVG(number_of_instructions)::numeric, 2) AS mean_net_instr_per_bb,
-    ROUND(PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY number_of_instructions)::numeric, 2) AS median_net_instr_per_bb,
     COUNT(*) AS total_bbs,
     SUM(number_of_instructions) AS total_instr
   FROM basicblocks_mir
@@ -45,8 +50,6 @@ SELECT
   category AS "Category",
   mean_instr_per_bb AS "Mean Instr/BB",
   median_instr_per_bb AS "Median Instr/BB",
-  mean_net_instr_per_bb AS "Mean Net Instr/BB",
-  median_net_instr_per_bb AS "Median Net Instr/BB",
   TO_CHAR(total_bbs, 'FM999,999,999') AS "Total BBs",
   TO_CHAR(total_instr, 'FM999,999,999') AS "Total Instr"
 FROM stats
@@ -54,6 +57,7 @@ ORDER BY
   CASE category
     WHEN 'All blocks' THEN 1
     WHEN 'Blocks with tracing calls' THEN 2
-    WHEN 'Blocks without tracing calls' THEN 3
+    WHEN 'Blocks with tracing calls (net)' THEN 3
+    WHEN 'Blocks without tracing calls' THEN 4
   END;
 
