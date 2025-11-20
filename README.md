@@ -316,6 +316,27 @@ Reduction:           3.00 instructions (30.5%)
 
 This tells us that 30.5% of the observed difference is purely from tracing overhead, whilst 69.5% represents genuine size differences in the blocks selected for tracing.
 
+## Function Tracing Status Analysis
+
+The `analyze_function_tracing.py` script analyses which functions have tracing calls and categorises them into optimised clones, outlined functions, and traced functions.
+
+```shell
+# Analyse function tracing status from CSV
+python3 analyze_function_tracing.py function_tracing_status.csv
+```
+
+### Understanding the Results
+
+**Why so few traced functions?**
+- **Selective instrumentation**: Only ~5% of functions are hot enough to warrant tracing
+- **Performance trade-off**: Tracing adds overhead, so only important code paths are instrumented
+- **Dual versions**: Each traced function has an optimised `__yk_opt_` clone without instrumentation
+
+**Key observations:**
+- **Opt functions** (no tracing): MORE blocks (95.5%) that are SMALLER (mean ~3-4 instructions)
+- **Unopt functions** (with tracing): FEWER blocks (4.5%) that are BIGGER (mean ~9-10 instructions)
+
+
 ## Testing
 
 Run the test suite:

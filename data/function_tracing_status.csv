@@ -1,0 +1,870 @@
+function_name,has_tracing_calls,reason_for_no_tracing
+__yk_opt_GCTM,false,Optimised clone (__yk_opt_*)
+__yk_opt_PrintCode,false,Optimised clone (__yk_opt_*)
+__yk_opt_PrintConstant,false,Optimised clone (__yk_opt_*)
+__yk_opt_PrintDebug,false,Optimised clone (__yk_opt_*)
+__yk_opt_PrintFunction,false,Optimised clone (__yk_opt_*)
+__yk_opt_addk,false,Optimised clone (__yk_opt_*)
+__yk_opt_addnum2buff,false,Optimised clone (__yk_opt_*)
+__yk_opt_addstr2buff,false,Optimised clone (__yk_opt_*)
+__yk_opt_adjustlocalvars,false,Optimised clone (__yk_opt_*)
+__yk_opt_allocupvalue,false,Optimised clone (__yk_opt_*)
+__yk_opt_atomic,false,Optimised clone (__yk_opt_*)
+__yk_opt_atomic2gen,false,Optimised clone (__yk_opt_*)
+__yk_opt_aux_rawset,false,Optimised clone (__yk_opt_*)
+__yk_opt_auxsetstr,false,Optimised clone (__yk_opt_*)
+__yk_opt_body,false,Optimised clone (__yk_opt_*)
+__yk_opt_callbinTM,false,Optimised clone (__yk_opt_*)
+__yk_opt_check_match,false,Optimised clone (__yk_opt_*)
+__yk_opt_check_next2,false,Optimised clone (__yk_opt_*)
+__yk_opt_clearbyvalues,false,Optimised clone (__yk_opt_*)
+__yk_opt_close_func,false,Optimised clone (__yk_opt_*)
+__yk_opt_close_state,false,Optimised clone (__yk_opt_*)
+__yk_opt_codebinexpval,false,Optimised clone (__yk_opt_*)
+__yk_opt_constfolding,false,Optimised clone (__yk_opt_*)
+__yk_opt_constructor,false,Optimised clone (__yk_opt_*)
+__yk_opt_correctgraylist,false,Optimised clone (__yk_opt_*)
+__yk_opt_correctstack,false,Optimised clone (__yk_opt_*)
+__yk_opt_createlabel,false,Optimised clone (__yk_opt_*)
+__yk_opt_discharge2reg,false,Optimised clone (__yk_opt_*)
+__yk_opt_dumpFunction,false,Optimised clone (__yk_opt_*)
+__yk_opt_entergen,false,Optimised clone (__yk_opt_*)
+__yk_opt_error,false,Optimised clone (__yk_opt_*)
+__yk_opt_error_expected,false,Optimised clone (__yk_opt_*)
+__yk_opt_errorlimit,false,Optimised clone (__yk_opt_*)
+__yk_opt_exp2reg,false,Optimised clone (__yk_opt_*)
+__yk_opt_explist,false,Optimised clone (__yk_opt_*)
+__yk_opt_findfield,false,Optimised clone (__yk_opt_*)
+__yk_opt_finishbinexpval,false,Optimised clone (__yk_opt_*)
+__yk_opt_finishgencycle,false,Optimised clone (__yk_opt_*)
+__yk_opt_forbody,false,Optimised clone (__yk_opt_*)
+__yk_opt_freehash,false,Optimised clone (__yk_opt_*)
+__yk_opt_freeobj,false,Optimised clone (__yk_opt_*)
+__yk_opt_funcargs,false,Optimised clone (__yk_opt_*)
+__yk_opt_funcnamefromcall,false,Optimised clone (__yk_opt_*)
+__yk_opt_genlink,false,Optimised clone (__yk_opt_*)
+__yk_opt_genstep,false,Optimised clone (__yk_opt_*)
+__yk_opt_getgeneric,false,Optimised clone (__yk_opt_*)
+__yk_opt_gethexa,false,Optimised clone (__yk_opt_*)
+__yk_opt_getobjname,false,Optimised clone (__yk_opt_*)
+__yk_opt_inclinenumber,false,Optimised clone (__yk_opt_*)
+__yk_opt_incstep,false,Optimised clone (__yk_opt_*)
+__yk_opt_intarith,false,Optimised clone (__yk_opt_*)
+__yk_opt_internshrstr,false,Optimised clone (__yk_opt_*)
+__yk_opt_interror,false,Optimised clone (__yk_opt_*)
+__yk_opt_jumponcond,false,Optimised clone (__yk_opt_*)
+__yk_opt_jumpscopeerror,false,Optimised clone (__yk_opt_*)
+__yk_opt_leaveblock,false,Optimised clone (__yk_opt_*)
+__yk_opt_lexerror,false,Optimised clone (__yk_opt_*)
+__yk_opt_llex,false,Optimised clone (__yk_opt_*)
+__yk_opt_loadFunction,false,Optimised clone (__yk_opt_*)
+__yk_opt_loadStringN,false,Optimised clone (__yk_opt_*)
+__yk_opt_load_inst,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaC_barrier_,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaC_barrierback_,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaC_changemode,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaC_checkfinalizer,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaC_fix,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaC_freeallobjects,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaC_fullgc,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaC_newobj,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaC_newobjdt,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaC_runtilstate,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaC_step,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_call,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_callnoyield,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_closeprotected,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_growstack,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_hook,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_hookcall,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_inctop,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_pcall,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_poscall,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_precall,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_pretailcall,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_protectedparser,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_rawrunprotected,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_reallocstack,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_seterrorobj,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_shrinkstack,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_throw,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaD_tryfuncTM,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaE_checkcstack,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaE_extendCI,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaE_freeCI,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaE_freethread,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaE_incCstack,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaE_resetthread,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaE_setdebt,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaE_shrinkCI,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaE_warnerror,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaE_warning,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaF_close,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaF_closeupval,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaF_findupval,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaF_freeproto,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaF_getlocalname,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaF_initupvals,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaF_newCclosure,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaF_newLclosure,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaF_newproto,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaF_newtbcupval,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaF_unlinkupval,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_addinfo,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_callerror,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_concaterror,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_errormsg,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_findlocal,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_forerror,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_getfuncline,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_opinterror,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_ordererror,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_runerror,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_tointerror,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_traceexec,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_typeerror,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaG_ykdebug_str,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_finishset,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_free,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_get,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_getint,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_getn,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_getshortstr,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_getstr,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_new,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_newkey,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_next,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_realasize,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_resize,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_resizearray,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_set,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaH_setint,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_checkstack,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_code,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_codeABCk,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_codeABx,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_codeAsBx,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_codek,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_concat,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_dischargevars,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_exp2K,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_exp2RK,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_exp2anyreg,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_exp2anyregup,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_exp2const,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_exp2nextreg,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_exp2val,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_finish,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_fixline,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_getlabel,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_goiffalse,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_goiftrue,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_indexed,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_infix,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_int,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_isKint,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_jump,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_nil,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_patchlist,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_patchtohere,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_posfix,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_prefix,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_reserveregs,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_ret,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_self,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_semerror,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_setlist,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_setoneret,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_setreturns,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_settablesize,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaK_storevar,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_addgsub,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_addlstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_addstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_addvalue,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_argerror,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_buffinit,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_buffinitsize,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_callmeta,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_checkany,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_checkinteger,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_checklstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_checknumber,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_checkoption,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_checkstack,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_checktype,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_checkudata,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_checkversion_,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_error,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_execresult,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_fileresult,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_getmetafield,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_getsubtable,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_gsub,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_len,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_loadbufferx,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_loadfilex,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_loadstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_newmetatable,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_newstate,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_optinteger,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_optlstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_optnumber,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_prepbuffsize,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_pushresult,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_pushresultsize,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_ref,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_requiref,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_setfuncs,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_setmetatable,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_testudata,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_tolstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_traceback,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_typeerror,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_unref,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaL_where,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaM_free_,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaM_growaux_,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaM_malloc_,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaM_realloc_,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaM_saferealloc_,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaM_shrinkvector_,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaM_toobig,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaO_arith,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaO_ceillog2,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaO_chunkid,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaO_hexavalue,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaO_pushfstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaO_pushvfstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaO_rawarith,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaO_str2num,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaO_tostring,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaO_utf8esc,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaS_clearcache,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaS_createlngstrobj,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaS_eqlngstr,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaS_hash,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaS_hashlongstr,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaS_init,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaS_new,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaS_newlstr,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaS_newudata,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaS_remove,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaS_resize,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_adjustvarargs,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_callTM,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_callTMres,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_callorderTM,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_callorderiTM,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_gettm,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_gettmbyobj,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_getvarargs,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_init,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_objtypename,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_trybinTM,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_trybinassocTM,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_trybiniTM,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaT_tryconcatTM,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaU_dump,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaU_undump,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_concat,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_equalobj,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_finishOp,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_finishget,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_finishset,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_flttointeger,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_idiv,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_lessequal,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_lessthan,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_mod,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_modf,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_objlen,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_shiftl,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_tointeger,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_tointegerns,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaV_tonumber_,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaX_init,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaX_lookahead,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaX_newstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaX_next,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaX_setinput,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaX_syntaxerror,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaX_token2str,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaY_nvarstack,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaY_parser,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaZ_fill,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaZ_init,false,Optimised clone (__yk_opt_*)
+__yk_opt_luaZ_read,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_absindex,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_arith,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_atpanic,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_callk,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_checkstack,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_close,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_closeslot,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_closethread,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_compare,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_concat,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_copy,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_createtable,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_dump,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_error,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_gc,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_getallocf,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_getfield,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_getglobal,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_gethook,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_gethookcount,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_gethookmask,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_geti,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_getinfo,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_getiuservalue,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_getlocal,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_getmetatable,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_getstack,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_gettable,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_gettop,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_getupvalue,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_iscfunction,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_isinteger,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_isnumber,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_isstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_isuserdata,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_isyieldable,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_len,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_load,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_newthread,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_newuserdatauv,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_next,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_pcallk,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_pushboolean,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_pushcclosure,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_pushfstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_pushinteger,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_pushlightuserdata,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_pushlstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_pushnil,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_pushnumber,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_pushstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_pushthread,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_pushvalue,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_pushvfstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_rawequal,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_rawget,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_rawgeti,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_rawgetp,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_rawlen,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_rawset,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_rawseti,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_rawsetp,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_resetthread,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_resume,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_rotate,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_setallocf,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_setcstacklimit,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_setfield,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_setglobal,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_sethook,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_seti,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_setiuservalue,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_setlocal,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_setmetatable,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_settable,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_settop,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_setupvalue,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_setwarnf,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_status,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_stringtonumber,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_toboolean,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_tocfunction,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_toclose,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_tointegerx,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_tolstring,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_tonumberx,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_topointer,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_tothread,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_touserdata,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_type,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_typename,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_upvalueid,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_upvaluejoin,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_version,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_warning,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_xmove,false,Optimised clone (__yk_opt_*)
+__yk_opt_lua_yieldk,false,Optimised clone (__yk_opt_*)
+__yk_opt_main,false,Optimised clone (__yk_opt_*)
+__yk_opt_mainpositionTV,false,Optimised clone (__yk_opt_*)
+__yk_opt_markmt,false,Optimised clone (__yk_opt_*)
+__yk_opt_patchlistaux,false,Optimised clone (__yk_opt_*)
+__yk_opt_precallC,false,Optimised clone (__yk_opt_*)
+__yk_opt_prepbuffsize,false,Optimised clone (__yk_opt_*)
+__yk_opt_propagatemark,false,Optimised clone (__yk_opt_*)
+__yk_opt_pushglobalfuncname,false,Optimised clone (__yk_opt_*)
+__yk_opt_read_long_string,false,Optimised clone (__yk_opt_*)
+__yk_opt_read_numeral,false,Optimised clone (__yk_opt_*)
+__yk_opt_read_string,false,Optimised clone (__yk_opt_*)
+__yk_opt_readdecesc,false,Optimised clone (__yk_opt_*)
+__yk_opt_readutf8esc,false,Optimised clone (__yk_opt_*)
+__yk_opt_reallymarkobject,false,Optimised clone (__yk_opt_*)
+__yk_opt_recfield,false,Optimised clone (__yk_opt_*)
+__yk_opt_registerlocalvar,false,Optimised clone (__yk_opt_*)
+__yk_opt_rehash,false,Optimised clone (__yk_opt_*)
+__yk_opt_restartcollection,false,Optimised clone (__yk_opt_*)
+__yk_opt_restassign,false,Optimised clone (__yk_opt_*)
+__yk_opt_rethook,false,Optimised clone (__yk_opt_*)
+__yk_opt_runafewfinalizers,false,Optimised clone (__yk_opt_*)
+__yk_opt_save,false,Optimised clone (__yk_opt_*)
+__yk_opt_savelineinfo,false,Optimised clone (__yk_opt_*)
+__yk_opt_setnodevector_full,false,Optimised clone (__yk_opt_*)
+__yk_opt_singlestep,false,Optimised clone (__yk_opt_*)
+__yk_opt_singlevar,false,Optimised clone (__yk_opt_*)
+__yk_opt_singlevaraux,false,Optimised clone (__yk_opt_*)
+__yk_opt_skip_sep,false,Optimised clone (__yk_opt_*)
+__yk_opt_skipcomment,false,Optimised clone (__yk_opt_*)
+__yk_opt_statement,false,Optimised clone (__yk_opt_*)
+__yk_opt_stepgenfull,false,Optimised clone (__yk_opt_*)
+__yk_opt_subexpr,false,Optimised clone (__yk_opt_*)
+__yk_opt_suffixedexp,false,Optimised clone (__yk_opt_*)
+__yk_opt_sweeptolive,false,Optimised clone (__yk_opt_*)
+__yk_opt_tablerehash,false,Optimised clone (__yk_opt_*)
+__yk_opt_test_then_block,false,Optimised clone (__yk_opt_*)
+__yk_opt_traverseephemeron,false,Optimised clone (__yk_opt_*)
+__yk_opt_traverseproto,false,Optimised clone (__yk_opt_*)
+__yk_opt_traversestrongtable,false,Optimised clone (__yk_opt_*)
+__yk_opt_traversetable,false,Optimised clone (__yk_opt_*)
+__yk_opt_traversethread,false,Optimised clone (__yk_opt_*)
+__yk_opt_traverseweakvalue,false,Optimised clone (__yk_opt_*)
+__yk_opt_tryagain,false,Optimised clone (__yk_opt_*)
+__yk_opt_typeerror,false,Optimised clone (__yk_opt_*)
+__yk_opt_undefgoto,false,Optimised clone (__yk_opt_*)
+__yk_opt_utf8esc,false,Optimised clone (__yk_opt_*)
+__yk_opt_varinfo,false,Optimised clone (__yk_opt_*)
+__yk_opt_ykifyCode,false,Optimised clone (__yk_opt_*)
+__yk_opt_youngcollection,false,Optimised clone (__yk_opt_*)
+addk,false,Outlined function without control point
+allocupvalue,false,Outlined function without control point
+aux_rawset,false,Outlined function without control point
+auxgetinfo,false,Outlined function without control point
+auxsetstr,false,Outlined function without control point
+binsearch,false,Outlined function without control point
+boxgc,false,Outlined function without control point
+changedline,false,Outlined function without control point
+close_func,false,Outlined function without control point
+closepaux,false,Outlined function without control point
+codebinexpval,false,Outlined function without control point
+collectvalidlines,false,Outlined function without control point
+constfolding,false,Outlined function without control point
+discharge2reg,false,Outlined function without control point
+doargs,false,Outlined function without control point
+dothecall,false,Outlined function without control point
+dumpConstants,false,Outlined function without control point
+dumpDebug,false,Outlined function without control point
+dumpProtos,false,Outlined function without control point
+dumpSize,false,Outlined function without control point
+dumpUpvalues,false,Outlined function without control point
+error,false,Outlined function without control point
+error_expected,false,Outlined function without control point
+exp2reg,false,Outlined function without control point
+f_call,false,Outlined function without control point
+f_luaopen,false,Outlined function without control point
+f_parser,false,Outlined function without control point
+findfield,false,Outlined function without control point
+findsetreg,false,Outlined function without control point
+finishbinexpval,false,Outlined function without control point
+getF,false,Outlined function without control point
+getS,false,Outlined function without control point
+getgeneric,false,Outlined function without control point
+getupvalname,false,Outlined function without control point
+hash_search,false,Outlined function without control point
+instack,false,Outlined function without control point
+intarith,false,Outlined function without control point
+internshrstr,false,Outlined function without control point
+interror,false,Outlined function without control point
+jumponcond,false,Outlined function without control point
+l_alloc,false,Outlined function without control point
+l_str2dloc,false,Outlined function without control point
+l_str2int,false,Outlined function without control point
+l_strcmp,false,Outlined function without control point
+leaveblock,false,Outlined function without control point
+lexerror,false,Outlined function without control point
+llex,false,Outlined function without control point
+loadConstants,false,Outlined function without control point
+loadDebug,false,Outlined function without control point
+loadProtos,false,Outlined function without control point
+loadUnsigned,false,Outlined function without control point
+loadUpvalues,false,Outlined function without control point
+load_inst,false,Outlined function without control point
+luaC_barrier_,false,Outlined function without control point
+luaC_barrierback_,false,Outlined function without control point
+luaC_changemode,false,Outlined function without control point
+luaC_checkfinalizer,false,Outlined function without control point
+luaC_fix,false,Outlined function without control point
+luaC_freeallobjects,false,Outlined function without control point
+luaC_fullgc,false,Outlined function without control point
+luaC_newobj,false,Outlined function without control point
+luaC_newobjdt,false,Outlined function without control point
+luaC_runtilstate,false,Outlined function without control point
+luaC_step,false,Outlined function without control point
+luaD_closeprotected,false,Outlined function without control point
+luaD_inctop,false,Outlined function without control point
+luaD_pcall,false,Outlined function without control point
+luaD_protectedparser,false,Outlined function without control point
+luaD_rawrunprotected,false,Outlined function without control point
+luaD_reallocstack,false,Outlined function without control point
+luaD_seterrorobj,false,Outlined function without control point
+luaD_shrinkstack,false,Outlined function without control point
+luaD_tryfuncTM,false,Outlined function without control point
+luaE_extendCI,false,Outlined function without control point
+luaE_freeCI,false,Outlined function without control point
+luaE_freethread,false,Outlined function without control point
+luaE_incCstack,false,Outlined function without control point
+luaE_setdebt,false,Outlined function without control point
+luaE_shrinkCI,false,Outlined function without control point
+luaE_warnerror,false,Outlined function without control point
+luaE_warning,false,Outlined function without control point
+luaF_closeupval,false,Outlined function without control point
+luaF_findupval,false,Outlined function without control point
+luaF_freeproto,false,Outlined function without control point
+luaF_getlocalname,false,Outlined function without control point
+luaF_initupvals,false,Outlined function without control point
+luaF_newCclosure,false,Outlined function without control point
+luaF_newLclosure,false,Outlined function without control point
+luaF_newproto,false,Outlined function without control point
+luaF_newtbcupval,false,Outlined function without control point
+luaF_unlinkupval,false,Outlined function without control point
+luaG_addinfo,false,Outlined function without control point
+luaG_callerror,false,Outlined function without control point
+luaG_concaterror,false,Outlined function without control point
+luaG_findlocal,false,Outlined function without control point
+luaG_getfuncline,false,Outlined function without control point
+luaG_ykdebug_str,false,Outlined function without control point
+luaH_finishset,false,Outlined function without control point
+luaH_free,false,Outlined function without control point
+luaH_getint,false,Outlined function without control point
+luaH_getshortstr,false,Outlined function without control point
+luaH_getstr,false,Outlined function without control point
+luaH_new,false,Outlined function without control point
+luaH_newkey,false,Outlined function without control point
+luaH_next,false,Outlined function without control point
+luaH_realasize,false,Outlined function without control point
+luaH_resize,false,Outlined function without control point
+luaH_resizearray,false,Outlined function without control point
+luaH_set,false,Outlined function without control point
+luaH_setint,false,Outlined function without control point
+luaK_checkstack,false,Outlined function without control point
+luaK_code,false,Outlined function without control point
+luaK_codeABCk,false,Outlined function without control point
+luaK_codeABx,false,Outlined function without control point
+luaK_codeAsBx,false,Outlined function without control point
+luaK_codek,false,Outlined function without control point
+luaK_concat,false,Outlined function without control point
+luaK_dischargevars,false,Outlined function without control point
+luaK_exp2K,false,Outlined function without control point
+luaK_exp2RK,false,Outlined function without control point
+luaK_exp2anyreg,false,Outlined function without control point
+luaK_exp2anyregup,false,Outlined function without control point
+luaK_exp2const,false,Outlined function without control point
+luaK_exp2nextreg,false,Outlined function without control point
+luaK_exp2val,false,Outlined function without control point
+luaK_finish,false,Outlined function without control point
+luaK_fixline,false,Outlined function without control point
+luaK_getlabel,false,Outlined function without control point
+luaK_goiffalse,false,Outlined function without control point
+luaK_goiftrue,false,Outlined function without control point
+luaK_indexed,false,Outlined function without control point
+luaK_infix,false,Outlined function without control point
+luaK_int,false,Outlined function without control point
+luaK_isKint,false,Outlined function without control point
+luaK_jump,false,Outlined function without control point
+luaK_nil,false,Outlined function without control point
+luaK_patchlist,false,Outlined function without control point
+luaK_patchtohere,false,Outlined function without control point
+luaK_posfix,false,Outlined function without control point
+luaK_prefix,false,Outlined function without control point
+luaK_reserveregs,false,Outlined function without control point
+luaK_ret,false,Outlined function without control point
+luaK_self,false,Outlined function without control point
+luaK_semerror,false,Outlined function without control point
+luaK_setlist,false,Outlined function without control point
+luaK_setoneret,false,Outlined function without control point
+luaK_setreturns,false,Outlined function without control point
+luaK_settablesize,false,Outlined function without control point
+luaK_storevar,false,Outlined function without control point
+luaL_addgsub,false,Outlined function without control point
+luaL_addlstring,false,Outlined function without control point
+luaL_addstring,false,Outlined function without control point
+luaL_addvalue,false,Outlined function without control point
+luaL_argerror,false,Outlined function without control point
+luaL_buffinit,false,Outlined function without control point
+luaL_buffinitsize,false,Outlined function without control point
+luaL_callmeta,false,Outlined function without control point
+luaL_checkany,false,Outlined function without control point
+luaL_checkinteger,false,Outlined function without control point
+luaL_checklstring,false,Outlined function without control point
+luaL_checknumber,false,Outlined function without control point
+luaL_checkoption,false,Outlined function without control point
+luaL_checkstack,false,Outlined function without control point
+luaL_checktype,false,Outlined function without control point
+luaL_checkudata,false,Outlined function without control point
+luaL_checkversion_,false,Outlined function without control point
+luaL_error,false,Outlined function without control point
+luaL_execresult,false,Outlined function without control point
+luaL_fileresult,false,Outlined function without control point
+luaL_getmetafield,false,Outlined function without control point
+luaL_getsubtable,false,Outlined function without control point
+luaL_gsub,false,Outlined function without control point
+luaL_len,false,Outlined function without control point
+luaL_loadbufferx,false,Outlined function without control point
+luaL_loadfilex,false,Outlined function without control point
+luaL_loadstring,false,Outlined function without control point
+luaL_newmetatable,false,Outlined function without control point
+luaL_newstate,false,Outlined function without control point
+luaL_optinteger,false,Outlined function without control point
+luaL_optlstring,false,Outlined function without control point
+luaL_optnumber,false,Outlined function without control point
+luaL_prepbuffsize,false,Outlined function without control point
+luaL_pushresult,false,Outlined function without control point
+luaL_pushresultsize,false,Outlined function without control point
+luaL_ref,false,Outlined function without control point
+luaL_requiref,false,Outlined function without control point
+luaL_setfuncs,false,Outlined function without control point
+luaL_setmetatable,false,Outlined function without control point
+luaL_testudata,false,Outlined function without control point
+luaL_tolstring,false,Outlined function without control point
+luaL_traceback,false,Outlined function without control point
+luaL_typeerror,false,Outlined function without control point
+luaL_unref,false,Outlined function without control point
+luaL_where,false,Outlined function without control point
+luaM_free_,false,Outlined function without control point
+luaM_growaux_,false,Outlined function without control point
+luaM_malloc_,false,Outlined function without control point
+luaM_realloc_,false,Outlined function without control point
+luaM_saferealloc_,false,Outlined function without control point
+luaM_shrinkvector_,false,Outlined function without control point
+luaM_toobig,false,Outlined function without control point
+luaO_arith,false,Outlined function without control point
+luaO_ceillog2,false,Outlined function without control point
+luaO_chunkid,false,Outlined function without control point
+luaO_hexavalue,false,Outlined function without control point
+luaO_pushvfstring,false,Outlined function without control point
+luaO_rawarith,false,Outlined function without control point
+luaO_tostring,false,Outlined function without control point
+luaO_utf8esc,false,Outlined function without control point
+luaS_clearcache,false,Outlined function without control point
+luaS_createlngstrobj,false,Outlined function without control point
+luaS_eqlngstr,false,Outlined function without control point
+luaS_hash,false,Outlined function without control point
+luaS_hashlongstr,false,Outlined function without control point
+luaS_init,false,Outlined function without control point
+luaS_new,false,Outlined function without control point
+luaS_newlstr,false,Outlined function without control point
+luaS_newudata,false,Outlined function without control point
+luaS_remove,false,Outlined function without control point
+luaS_resize,false,Outlined function without control point
+luaT_adjustvarargs,false,Outlined function without control point
+luaT_callTM,false,Outlined function without control point
+luaT_callorderiTM,false,Outlined function without control point
+luaT_gettm,false,Outlined function without control point
+luaT_gettmbyobj,false,Outlined function without control point
+luaT_getvarargs,false,Outlined function without control point
+luaT_init,false,Outlined function without control point
+luaT_trybinTM,false,Outlined function without control point
+luaT_trybiniTM,false,Outlined function without control point
+luaT_tryconcatTM,false,Outlined function without control point
+luaU_dump,false,Outlined function without control point
+luaU_undump,false,Outlined function without control point
+luaV_concat,false,Outlined function without control point
+luaV_finishOp,false,Outlined function without control point
+luaV_finishset,false,Outlined function without control point
+luaV_flttointeger,false,Outlined function without control point
+luaV_idiv,false,Outlined function without control point
+luaV_lessequal,false,Outlined function without control point
+luaV_lessthan,false,Outlined function without control point
+luaV_mod,false,Outlined function without control point
+luaV_modf,false,Outlined function without control point
+luaV_shiftl,false,Outlined function without control point
+luaV_tointeger,false,Outlined function without control point
+luaV_tonumber_,false,Outlined function without control point
+luaX_init,false,Outlined function without control point
+luaX_lookahead,false,Outlined function without control point
+luaX_newstring,false,Outlined function without control point
+luaX_next,false,Outlined function without control point
+luaX_setinput,false,Outlined function without control point
+luaX_syntaxerror,false,Outlined function without control point
+luaX_token2str,false,Outlined function without control point
+luaY_nvarstack,false,Outlined function without control point
+luaY_parser,false,Outlined function without control point
+luaZ_fill,false,Outlined function without control point
+luaZ_init,false,Outlined function without control point
+luaZ_read,false,Outlined function without control point
+lua_absindex,false,Outlined function without control point
+lua_arith,false,Outlined function without control point
+lua_atpanic,false,Outlined function without control point
+lua_callk,false,Outlined function without control point
+lua_checkstack,false,Outlined function without control point
+lua_close,false,Outlined function without control point
+lua_closeslot,false,Outlined function without control point
+lua_closethread,false,Outlined function without control point
+lua_compare,false,Outlined function without control point
+lua_concat,false,Outlined function without control point
+lua_copy,false,Outlined function without control point
+lua_createtable,false,Outlined function without control point
+lua_dump,false,Outlined function without control point
+lua_error,false,Outlined function without control point
+lua_gc,false,Outlined function without control point
+lua_getallocf,false,Outlined function without control point
+lua_getfield,false,Outlined function without control point
+lua_getglobal,false,Outlined function without control point
+lua_gethook,false,Outlined function without control point
+lua_gethookcount,false,Outlined function without control point
+lua_gethookmask,false,Outlined function without control point
+lua_geti,false,Outlined function without control point
+lua_getinfo,false,Outlined function without control point
+lua_getiuservalue,false,Outlined function without control point
+lua_getlocal,false,Outlined function without control point
+lua_getmetatable,false,Outlined function without control point
+lua_getstack,false,Outlined function without control point
+lua_gettable,false,Outlined function without control point
+lua_gettop,false,Outlined function without control point
+lua_getupvalue,false,Outlined function without control point
+lua_iscfunction,false,Outlined function without control point
+lua_isinteger,false,Outlined function without control point
+lua_isnumber,false,Outlined function without control point
+lua_isstring,false,Outlined function without control point
+lua_isuserdata,false,Outlined function without control point
+lua_isyieldable,false,Outlined function without control point
+lua_len,false,Outlined function without control point
+lua_load,false,Outlined function without control point
+lua_newstate,false,Outlined function without control point
+lua_newstate.specialized.1,false,Outlined function without control point
+lua_newthread,false,Outlined function without control point
+lua_newuserdatauv,false,Outlined function without control point
+lua_next,false,Outlined function without control point
+lua_pcallk,false,Outlined function without control point
+lua_pushboolean,false,Outlined function without control point
+lua_pushcclosure,false,Outlined function without control point
+lua_pushfstring,false,Outlined function without control point
+lua_pushinteger,false,Outlined function without control point
+lua_pushlightuserdata,false,Outlined function without control point
+lua_pushlstring,false,Outlined function without control point
+lua_pushnil,false,Outlined function without control point
+lua_pushnumber,false,Outlined function without control point
+lua_pushstring,false,Outlined function without control point
+lua_pushthread,false,Outlined function without control point
+lua_pushvalue,false,Outlined function without control point
+lua_pushvfstring,false,Outlined function without control point
+lua_rawequal,false,Outlined function without control point
+lua_rawget,false,Outlined function without control point
+lua_rawgeti,false,Outlined function without control point
+lua_rawgetp,false,Outlined function without control point
+lua_rawlen,false,Outlined function without control point
+lua_rawset,false,Outlined function without control point
+lua_rawseti,false,Outlined function without control point
+lua_rawsetp,false,Outlined function without control point
+lua_resetthread,false,Outlined function without control point
+lua_resume,false,Outlined function without control point
+lua_rotate,false,Outlined function without control point
+lua_setallocf,false,Outlined function without control point
+lua_setcstacklimit,false,Outlined function without control point
+lua_setfield,false,Outlined function without control point
+lua_setglobal,false,Outlined function without control point
+lua_sethook,false,Outlined function without control point
+lua_seti,false,Outlined function without control point
+lua_setiuservalue,false,Outlined function without control point
+lua_setlocal,false,Outlined function without control point
+lua_setmetatable,false,Outlined function without control point
+lua_settable,false,Outlined function without control point
+lua_settop,false,Outlined function without control point
+lua_setupvalue,false,Outlined function without control point
+lua_setwarnf,false,Outlined function without control point
+lua_status,false,Outlined function without control point
+lua_stringtonumber,false,Outlined function without control point
+lua_toboolean,false,Outlined function without control point
+lua_tocfunction,false,Outlined function without control point
+lua_toclose,false,Outlined function without control point
+lua_tointegerx,false,Outlined function without control point
+lua_tolstring,false,Outlined function without control point
+lua_tonumberx,false,Outlined function without control point
+lua_topointer,false,Outlined function without control point
+lua_tothread,false,Outlined function without control point
+lua_touserdata,false,Outlined function without control point
+lua_type,false,Outlined function without control point
+lua_typename,false,Outlined function without control point
+lua_upvalueid,false,Outlined function without control point
+lua_upvaluejoin,false,Outlined function without control point
+lua_version,false,Outlined function without control point
+lua_warning,false,Outlined function without control point
+lua_xmove,false,Outlined function without control point
+lua_yieldk,false,Outlined function without control point
+main,false,Outlined function without control point
+movegotosout,false,Outlined function without control point
+moveresults_full,false,Outlined function without control point
+need_value,false,Outlined function without control point
+panic,false,Outlined function without control point
+patchlistaux,false,Outlined function without control point
+pmain,false,Outlined function without control point
+poptbclist,false,Outlined function without control point
+precover,false,Outlined function without control point
+prepbuffsize,false,Outlined function without control point
+pushclosure,false,Outlined function without control point
+reader,false,Outlined function without control point
+reglevel,false,Outlined function without control point
+removevalues,false,Outlined function without control point
+removevars,false,Outlined function without control point
+resume,false,Outlined function without control point
+reverse,false,Outlined function without control point
+savelineinfo,false,Outlined function without control point
+settraps,false,Outlined function without control point
+skipcomment,false,Outlined function without control point
+solvegotos,false,Outlined function without control point
+stack_init,false,Outlined function without control point
+stackinuse,false,Outlined function without control point
+statlist,false,Outlined function without control point
+tablerehash,false,Outlined function without control point
+tryagain,false,Outlined function without control point
+undefgoto,false,Outlined function without control point
+unroll,false,Outlined function without control point
+warnfcont,false,Outlined function without control point
+warnfoff,false,Outlined function without control point
+warnfon,false,Outlined function without control point
+writer,false,Outlined function without control point
+ykifyCode,false,Outlined function without control point
+callbinTM,true,
+getobjname,true,
+luaD_call,true,
+luaD_callnoyield,true,
+luaD_growstack,true,
+luaD_hook,true,
+luaD_hookcall,true,
+luaD_poscall,true,
+luaD_precall,true,
+luaD_pretailcall,true,
+luaD_throw,true,
+luaE_checkcstack,true,
+luaE_resetthread,true,
+luaF_close,true,
+luaG_errormsg,true,
+luaG_forerror,true,
+luaG_opinterror,true,
+luaG_ordererror,true,
+luaG_runerror,true,
+luaG_tointerror,true,
+luaG_traceexec,true,
+luaG_typeerror,true,
+luaH_get,true,
+luaH_getn,true,
+luaO_pushfstring,true,
+luaO_str2num,true,
+luaT_callTMres,true,
+luaT_callorderTM,true,
+luaT_objtypename,true,
+luaT_trybinassocTM,true,
+luaV_equalobj,true,
+luaV_execute,true,
+luaV_finishget,true,
+luaV_objlen,true,
+luaV_tointegerns,true,
+precallC,true,
+rethook,true,
+typeerror,true,
+varinfo,true,

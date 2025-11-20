@@ -9,6 +9,9 @@
 #include "llvm/InitializePasses.h"
 #include "llvm/PassRegistry.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/Transforms/Yk/ControlPoint.h"
+#include "llvm/Transforms/Yk/ModuleClone.h"
+#include "llvm/YkIR/YkIRWriter.h"
 #include <algorithm>
 #include <cstddef>
 #include <fstream>
@@ -25,6 +28,7 @@ namespace {
 const bool PrintMIR = false;
 const bool CountAddressTakenFunctions = true;
 const char *CSV_OUTPUT_PATH = "/home/pd/ir_analysis_basicblocks.csv";
+const char *CSV_FUNCTION_TRACING_PATH = "/home/pd/function_tracing_status.csv";
 const char *YK_TRACE_FUNCTION = "__yk_trace_basicblock";
 
 // Analysis mode configuration
@@ -45,6 +49,17 @@ const bool PRINT_ADDRESS_TAKEN_FUNCTIONS = false;
 
 // Control whether to skip debug, pseudo, and meta instructions in MIR counting
 const bool SKIP_DEBUG_PSEUDO_INSTRUCTIONS = true;
+
+// Control whether to print functions by non-tracing reason
+const bool PRINT_FUNCTIONS_BY_REASON = false;
+
+// Enum for reasons why a function is not traced
+enum class NonTracingReason {
+  OPTIMISED_CLONE,          // __yk_opt_ clone (has YK_SWT_OPT_MD metadata)
+  OUTLINED_NO_CONTROL_POINT, // Has YK_OUTLINE_FNATTR but no control point
+  OUTLINED_WITH_CONTROL_POINT, // Has YK_OUTLINE_FNATTR with control point (traced)
+  TRACED                     // Function is traced (not a non-tracing function)
+};
 
 struct FunctionStats {
   std::string functionName;
@@ -69,6 +84,38 @@ struct BasicBlockInfo {
   std::vector<std::string> instructions;
   bool hasTracingCall;
 };
+
+// Helper function to determine why a function is not traced (or if it is traced)
+// This follows the same logic as BasicBlockTracer.cpp
+static NonTracingReason getTracingStatus(const Function &F) {
+  // Check if it's an optimised clone (has YK_SWT_OPT_MD metadata)
+  if (F.getMetadata(YK_SWT_OPT_MD)) {
+    return NonTracingReason::OPTIMISED_CLONE;
+  }
+  
+  // Check if it's outlined without a control point
+  if (containsControlPoint(const_cast<Function&>(F))) {
+    return NonTracingReason::OUTLINED_WITH_CONTROL_POINT;
+  }else if (F.hasFnAttribute(YK_OUTLINE_FNATTR)) {
+    return NonTracingReason::OUTLINED_NO_CONTROL_POINT;
+  }
+  
+  // Otherwise, it's traced
+  return NonTracingReason::TRACED;
+}
+
+// Helper function to get a human-readable description of the non-tracing reason
+static const char* getReasonDescription(NonTracingReason reason) {
+  switch (reason) {
+    case NonTracingReason::OPTIMISED_CLONE:
+      return "Optimised clone (__yk_opt_*)";
+    case NonTracingReason::OUTLINED_NO_CONTROL_POINT:
+      return "Outlined function without control point";
+    case NonTracingReason::TRACED:
+      return "Traced";
+  }
+  return "Unknown";
+}
 
 // Helper function to check if an IR basic block contains tracing calls
 static bool containsTracingCall(const BasicBlock &BB) {
@@ -232,11 +279,14 @@ private:
   std::set<std::string> uniqueInstructionTypes;
   // Set to store debug/pseudo instructions that are filtered out
   std::set<std::string> filteredOutInstructions;
+  // Track functions by their tracing status
+  std::map<NonTracingReason, std::set<std::string>> functionsByTracingStatus;
+  size_t totalFunctions;
 };
 
 } // namespace llvm
 
-IRAnalysisPass::IRAnalysisPass() : MachineFunctionPass(ID), csvHeaderWritten(false) {
+IRAnalysisPass::IRAnalysisPass() : MachineFunctionPass(ID), csvHeaderWritten(false), totalFunctions(0) {
   initializeIRAnalysisPassPass(*PassRegistry::getPassRegistry());
 }
 
@@ -246,6 +296,11 @@ bool IRAnalysisPass::runOnMachineFunction(MachineFunction &MF) {
   std::string moduleName = M->getName().str();
   const Function &F = MF.getFunction();
   std::string functionName = MF.getName().str();
+
+  // Track total functions and their tracing status
+  totalFunctions++;
+  NonTracingReason tracingStatus = getTracingStatus(F);
+  functionsByTracingStatus[tracingStatus].insert(functionName);
 
   // Track address-taken functions
   if (CountAddressTakenFunctions && F.hasAddressTaken()) {
@@ -601,7 +656,7 @@ IRAnalysisPass::~IRAnalysisPass() {
                << funcStat.numIRInstructions << " instructions\n";
         errs() << "  IR Tracing: " << funcStat.numIRTracingBlocks << " blocks, " 
                << funcStat.numIRTracingInstructions << " tracing block instructions\n";
-        errs() << "  IR Non-Tracing: " << funcStat.numIRNonTracingBlocks << " blocks, "
+        errs() << "  IR Non-Tracing: " << funcStat.numIRNonTracingBlocks << " blocks, " 
                << funcStat.numIRNonTracingInstructions << " non-tracing block instructions\n";
         errs() << "  MIR Total: " << funcStat.numMIRBasicBlocks << " blocks, " 
                << funcStat.numMIRInstructions << " instructions\n";
@@ -624,6 +679,59 @@ IRAnalysisPass::~IRAnalysisPass() {
     }
     errs() << "==============================\n";
   }
+
+  // Write function tracing status to CSV file
+  std::ofstream csvFunctionFile(CSV_FUNCTION_TRACING_PATH);
+  if (csvFunctionFile.is_open()) {
+    // Write CSV header
+    csvFunctionFile << "function_name,has_tracing_calls,reason_for_no_tracing\n";
+
+    // Write all functions with their tracing status
+    for (const auto &entry : functionsByTracingStatus) {
+      NonTracingReason reason = entry.first;
+      const std::set<std::string> &functions = entry.second;
+
+      for (const auto &funcName : functions) {
+        std::string escapedFunctionName = escapeCSVField(funcName);
+        bool hasTracingCalls = (reason == NonTracingReason::TRACED);
+        std::string reasonStr = hasTracingCalls ? "" : getReasonDescription(reason);
+        std::string escapedReason = escapeCSVField(reasonStr);
+
+        csvFunctionFile << escapedFunctionName << ","
+                       << (hasTracingCalls ? "true" : "false") << ","
+                       << escapedReason << "\n";
+      }
+    }
+
+    csvFunctionFile.close();
+    errs() << "\nFunction tracing status written to: " << CSV_FUNCTION_TRACING_PATH << "\n";
+  } else {
+    errs() << "Error: Could not create function tracing CSV file: " << CSV_FUNCTION_TRACING_PATH << "\n";
+  }
+
+  // Print summary statistics
+  errs() << "\n=== Function Tracing Status Summary ===\n";
+  errs() << "Total functions processed: " << totalFunctions << "\n";
+
+  size_t tracedFunctions = functionsByTracingStatus[NonTracingReason::TRACED].size();
+  size_t optimisedClones = functionsByTracingStatus[NonTracingReason::OPTIMISED_CLONE].size();
+  size_t outlinedNoCP = functionsByTracingStatus[NonTracingReason::OUTLINED_NO_CONTROL_POINT].size();
+  size_t nonTracedTotal = optimisedClones + outlinedNoCP;
+
+  errs() << "Traced functions: " << tracedFunctions
+         << " (" << format("%.1f%%", (tracedFunctions * 100.0) / totalFunctions) << ")\n";
+  errs() << "Non-traced functions: " << nonTracedTotal
+         << " (" << format("%.1f%%", (nonTracedTotal * 100.0) / totalFunctions) << ")\n";
+  errs() << "  - Optimised clones (__yk_opt_*): " << optimisedClones
+         << " (" << format("%.1f%%", (optimisedClones * 100.0) / totalFunctions) << ")\n";
+  errs() << "  - Outlined without control point: " << outlinedNoCP
+         << " (" << format("%.1f%%", (outlinedNoCP * 100.0) / totalFunctions) << ")\n";
+
+  if (nonTracedTotal > 0 && tracedFunctions > 0) {
+    double ratio = static_cast<double>(nonTracedTotal) / tracedFunctions;
+    errs() << "Ratio (non-traced:traced): " << format("%.2f", ratio) << ":1\n";
+  }
+  errs() << "=======================================\n";
 
   // Print unique instruction types that passed filtering criteria
   if (!uniqueInstructionTypes.empty()) {
