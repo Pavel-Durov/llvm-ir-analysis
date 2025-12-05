@@ -249,10 +249,18 @@ db_logs:
 	@docker logs ir_analysis_postgres --tail 50 --follow
 
 gen_plots:
-	just gen_bb_plot ./db/data/mir_analysis_basicblocks.csv ./block_analysis.png 
+	just gen_bb_plot ./db/data/mir_analysis_basicblocks.csv ./block_analysis.png
+	just gen_bb_plot_fast ./db/data/mir_analysis_basicblocks.csv ./block_analysis_fast.png
+	just gen_bucket_plot ./db/data/mir_analysis_basicblocks.csv ./bucket_distribution.png
 
 gen_bb_plot CSV OUTPUT_IMAGE:
-	uv run python plot_blocks.py {{CSV}} -o {{OUTPUT_IMAGE}}
+	uv run python ./scripts/plot_blocks.py {{CSV}} -o {{OUTPUT_IMAGE}}
+
+gen_bb_plot_fast CSV OUTPUT_IMAGE:
+	uv run python ./scripts/plot_blocks_fast.py {{CSV}} -o {{OUTPUT_IMAGE}}
+
+gen_bucket_plot CSV OUTPUT_IMAGE:
+	uv run python ./scripts/plot_bucket_distribution.py {{CSV}} -o {{OUTPUT_IMAGE}}
 # ============================================================================
 # Complete Workflow Automation
 # ============================================================================

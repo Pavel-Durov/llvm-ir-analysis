@@ -62,6 +62,10 @@ def plot_blocks(csv_file: Path, output_file: Path = None):
     df_without_tracing = df_without_tracing.sort_values('number_of_instructions').reset_index(drop=True)
     df_without_tracing['block_number'] = df_without_tracing.index + 1
 
+    # Calculate net instructions (subtract tracing overhead)
+    if not df_with_tracing.empty:
+        df_with_tracing['net_instructions'] = df_with_tracing['number_of_instructions'] - 3
+    
     # Print summary statistics
     total_blocks = len(df)
     blocks_with_tracing = len(df_with_tracing)
@@ -75,6 +79,10 @@ def plot_blocks(csv_file: Path, output_file: Path = None):
     if not df_with_tracing.empty:
         print(f"    Mean: {df_with_tracing['number_of_instructions'].mean():.2f}")
         print(f"    Median: {df_with_tracing['number_of_instructions'].median():.2f}")
+    print(f"\n  Net instructions per block (with tracing, minus 3 overhead):")
+    if not df_with_tracing.empty:
+        print(f"    Mean: {df_with_tracing['net_instructions'].mean():.2f}")
+        print(f"    Median: {df_with_tracing['net_instructions'].median():.2f}")
     print(f"\n  Instructions per block (without tracing):")
     if not df_without_tracing.empty:
         print(f"    Mean: {df_without_tracing['number_of_instructions'].mean():.2f}")
@@ -144,7 +152,7 @@ def plot_blocks(csv_file: Path, output_file: Path = None):
     # Plot 2: Only blocks with tracing calls
     if not df_with_tracing.empty:
         plt.figure(figsize=(12, 8))
-        
+
         plt.scatter(
             df_with_tracing['block_number'],
             df_with_tracing['number_of_instructions'],
