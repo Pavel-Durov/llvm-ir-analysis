@@ -1,8 +1,6 @@
 #include "llvm/CodeGen/IRAnalysisPass.h"
 #include "llvm/CodeGen/MachineFunction.h"
 #include "llvm/CodeGen/MachineFunctionPass.h"
-#include "llvm/CodeGen/TargetInstrInfo.h"
-#include "llvm/CodeGen/TargetSubtargetInfo.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IntrinsicInst.h"
 #include "llvm/IR/Module.h"
@@ -67,22 +65,12 @@ struct FunctionStats {
   size_t numIRInstructions;
   size_t numMIRBasicBlocks;
   size_t numMIRInstructions;
-  // Separate stats for tracing vs non-tracing blocks
-  size_t numIRTracingBlocks;
-  size_t numIRTracingInstructions;
-  size_t numIRNonTracingBlocks;
-  size_t numIRNonTracingInstructions;
-  size_t numMIRTracingBlocks;
-  size_t numMIRTracingInstructions;
-  size_t numMIRNonTracingBlocks;
-  size_t numMIRNonTracingInstructions;
 };
 
 struct BasicBlockInfo {
   std::string functionName;
   std::string basicBlockId;
   std::vector<std::string> instructions;
-  bool hasTracingCall;
 };
 
 // Helper function to determine why a function is not traced (or if it is traced)
@@ -210,7 +198,7 @@ static bool containsTracingCall(const MachineBasicBlock &MBB) {
 static std::string escapeCSVField(const std::string &field) {
   bool needsQuotes = false;
   std::string result;
-  
+
   // Check if the field contains special characters
   if (field.find(',') != std::string::npos ||
       field.find('"') != std::string::npos ||
@@ -218,7 +206,7 @@ static std::string escapeCSVField(const std::string &field) {
       field.find('\r') != std::string::npos) {
     needsQuotes = true;
   }
-  
+
   if (needsQuotes) {
     result = "\"";
     for (char c : field) {
@@ -232,7 +220,7 @@ static std::string escapeCSVField(const std::string &field) {
   } else {
     result = field;
   }
-  
+
   return result;
 }
 
@@ -256,21 +244,18 @@ private:
     size_t numIRInstructions = 0;
     size_t numMIRBasicBlocks = 0;
     size_t numMIRInstructions = 0;
-    // Separate stats for tracing vs non-tracing blocks
-    size_t numIRTracingBlocks = 0;
-    size_t numIRTracingInstructions = 0;
-    size_t numIRNonTracingBlocks = 0;
-    size_t numIRNonTracingInstructions = 0;
-    size_t numMIRTracingBlocks = 0;
-    size_t numMIRTracingInstructions = 0;
-    size_t numMIRNonTracingBlocks = 0;
-    size_t numMIRNonTracingInstructions = 0;
   };
   std::map<std::string, ModuleStats> moduleStats;
   // Vector to store per-function statistics
   std::vector<FunctionStats> functionStats;
   // Track address-taken functions
   std::set<std::string> addressTakenFunctions;
+  // Track optimised functions (cloned with YK_SWT_OPT_MD metadata)
+  std::set<std::string> optFunctions;
+  // Track unoptimised functions (with OptimizeNone attribute)
+  std::set<std::string> unoptFunctions;
+  // Track outlined functions (with yk_outline attribute)
+  std::set<std::string> outlinedFunctions;
   // Vector to store basic block information with instructions
   std::vector<BasicBlockInfo> basicBlockInfoList;
   // Track if CSV header has been written
@@ -304,127 +289,68 @@ bool IRAnalysisPass::runOnMachineFunction(MachineFunction &MF) {
 
   // Track address-taken functions
   if (CountAddressTakenFunctions && F.hasAddressTaken()) {
+    // Track address-taken functions
     addressTakenFunctions.insert(functionName);
+  } else if (F.getMetadata(YK_SWT_OPT_MD)) {
+    // Track optimised functions (those with YK_SWT_OPT_MD metadata)
+    optFunctions.insert(functionName);
+  } else if (F.hasFnAttribute(YK_OUTLINE_FNATTR)) {
+    // Track outlined functions (those with yk_outline attribute)
+    outlinedFunctions.insert(functionName);
+  } else {
+    // Track unoptimised functions (those with OptimizeNone attribute)
+    unoptFunctions.insert(functionName);
   }
 
   // Count AOT IR basic blocks and instructions (excluding debug info)
-  // Count based on selected analysis mode
   size_t numIRBBs = 0;
   size_t numIRInsts = 0;
-  size_t numIRTracingBBs = 0;
-  size_t numIRTracingInsts = 0;
-  size_t numIRNonTracingBBs = 0;
-  size_t numIRNonTracingInsts = 0;
-
   for (const BasicBlock &BB : F) {
-    bool hasTracing = containsTracingCall(BB);
-
-    // Only process blocks that match our analysis mode
-    if (shouldIncludeBlock(hasTracing)) {
-      numIRBBs++;
-
-      size_t blockInsts = 0;
-      for (const Instruction &I : BB) {
-        // Exclude debug intrinsics from the count
-        if (!isa<DbgInfoIntrinsic>(&I)) {
-          blockInsts++;
-          numIRInsts++;
-        }
-      }
-    }
-
-    // Always track separate counts for statistics display
-    size_t blockInsts = 0;
+    numIRBBs++;
     for (const Instruction &I : BB) {
+      // Exclude debug intrinsics from the count
       if (!isa<DbgInfoIntrinsic>(&I)) {
-        blockInsts++;
+        numIRInsts++;
       }
-    }
-
-    if (hasTracing) {
-      numIRTracingBBs++;
-      numIRTracingInsts += blockInsts;
-    } else {
-      numIRNonTracingBBs++;
-      numIRNonTracingInsts += blockInsts;
     }
   }
 
   // Count MIR basic blocks and instructions (excluding debug info)
   // and collect detailed basic block information
-  // Count based on selected analysis mode
   size_t numMIRBBs = 0;
   size_t numMIRInsts = 0;
-  size_t numMIRTracingBBs = 0;
-  size_t numMIRTracingInsts = 0;
-  size_t numMIRNonTracingBBs = 0;
-  size_t numMIRNonTracingInsts = 0;
-
-  // Get TargetInstrInfo for instruction name lookup
-  const TargetInstrInfo *TII = MF.getSubtarget().getInstrInfo();
-
   for (const MachineBasicBlock &MBB : MF) {
-    bool hasTracing = containsTracingCall(MBB);
+    numMIRBBs++;
 
-    // Only process blocks that match our analysis mode
-    if (shouldIncludeBlock(hasTracing)) {
-      numMIRBBs++;
+    // Create basic block info
+    BasicBlockInfo bbInfo;
+    bbInfo.functionName = functionName;
+    bbInfo.basicBlockId = "BB#" + std::to_string(MBB.getNumber());
 
-      // Create basic block info
-      BasicBlockInfo bbInfo;
-      bbInfo.functionName = functionName;
-      bbInfo.basicBlockId = "BB#" + std::to_string(MBB.getNumber());
-      bbInfo.hasTracingCall = hasTracing;
-
-      size_t blockInsts = 0;
-      for (const MachineInstr &MI : MBB) {
-        // Always collect instruction types (both counted and filtered)
-        collectInstructionType(MI, uniqueInstructionTypes, filteredOutInstructions, TII);
-        
-        // Use helper function to determine if instruction should be counted
-        if (shouldCountInstruction(MI)) {
-          blockInsts++;
-          numMIRInsts++;
-          
-          // Convert instruction to string
-          std::string instrStr;
-          raw_string_ostream rso(instrStr);
-          MI.print(rso);
-          rso.flush();
-
-          // Remove newlines and clean up the string
-          instrStr.erase(std::remove(instrStr.begin(), instrStr.end(), '\n'), instrStr.end());
-          instrStr.erase(std::remove(instrStr.begin(), instrStr.end(), '\r'), instrStr.end());
-
-          bbInfo.instructions.push_back(instrStr);
-        }
-      }
-
-      // Add basic blocks that have instructions and match analysis mode
-      if (!bbInfo.instructions.empty()) {
-        basicBlockInfoList.push_back(bbInfo);
-      }
-    }
-
-    // Always track separate counts for statistics display
-    size_t blockInsts = 0;
     for (const MachineInstr &MI : MBB) {
-      // Collect unique instruction types (if not already collected above)
-      if (!shouldIncludeBlock(hasTracing)) {
-        collectInstructionType(MI, uniqueInstructionTypes, filteredOutInstructions, TII);
-      }
-      
-      if (shouldCountInstruction(MI)) {
-        blockInsts++;
+      // Exclude debug instructions from the count
+      if (!MI.isDebugInstr()) {
+        numMIRInsts++;
+
+        // Convert instruction to string
+        std::string instrStr;
+        raw_string_ostream rso(instrStr);
+        MI.print(rso);
+        rso.flush();
+
+        // Remove newlines and clean up the string
+        instrStr.erase(std::remove(instrStr.begin(), instrStr.end(), '\n'),
+                       instrStr.end());
+        instrStr.erase(std::remove(instrStr.begin(), instrStr.end(), '\r'),
+                       instrStr.end());
+
+        bbInfo.instructions.push_back(instrStr);
       }
     }
 
-    if (hasTracing) {
-      numMIRTracingBBs++;
-      numMIRTracingInsts += blockInsts;
-    } else {
-      numMIRNonTracingBBs++;
-      numMIRNonTracingInsts += blockInsts;
+    // Only add basic blocks that have instructions
+    if (!bbInfo.instructions.empty()) {
+      basicBlockInfoList.push_back(bbInfo);
     }
   }
 
@@ -435,14 +361,6 @@ bool IRAnalysisPass::runOnMachineFunction(MachineFunction &MF) {
   funcStats.numIRInstructions = numIRInsts;
   funcStats.numMIRBasicBlocks = numMIRBBs;
   funcStats.numMIRInstructions = numMIRInsts;
-  funcStats.numIRTracingBlocks = numIRTracingBBs;
-  funcStats.numIRTracingInstructions = numIRTracingInsts;
-  funcStats.numIRNonTracingBlocks = numIRNonTracingBBs;
-  funcStats.numIRNonTracingInstructions = numIRNonTracingInsts;
-  funcStats.numMIRTracingBlocks = numMIRTracingBBs;
-  funcStats.numMIRTracingInstructions = numMIRTracingInsts;
-  funcStats.numMIRNonTracingBlocks = numMIRNonTracingBBs;
-  funcStats.numMIRNonTracingInstructions = numMIRNonTracingInsts;
   functionStats.push_back(funcStats);
 
   // Aggregate module statistics
@@ -451,14 +369,6 @@ bool IRAnalysisPass::runOnMachineFunction(MachineFunction &MF) {
   stats.numIRInstructions += numIRInsts;
   stats.numMIRBasicBlocks += numMIRBBs;
   stats.numMIRInstructions += numMIRInsts;
-  stats.numIRTracingBlocks += numIRTracingBBs;
-  stats.numIRTracingInstructions += numIRTracingInsts;
-  stats.numIRNonTracingBlocks += numIRNonTracingBBs;
-  stats.numIRNonTracingInstructions += numIRNonTracingInsts;
-  stats.numMIRTracingBlocks += numMIRTracingBBs;
-  stats.numMIRTracingInstructions += numMIRTracingInsts;
-  stats.numMIRNonTracingBlocks += numMIRNonTracingBBs;
-  stats.numMIRNonTracingInstructions += numMIRNonTracingInsts;
 
   // Write basic block information to CSV file incrementally
   std::ofstream csvFile;
@@ -467,12 +377,13 @@ bool IRAnalysisPass::runOnMachineFunction(MachineFunction &MF) {
   std::ifstream checkFile(CSV_OUTPUT_PATH);
   bool fileExists = checkFile.good();
   checkFile.close();
-  
+
   if (!fileExists && !csvHeaderWritten) {
     // First time: create file and write header
     csvFile.open(CSV_OUTPUT_PATH, std::ios::out);
     if (csvFile.is_open()) {
-      csvFile << "function_name,basicblock_id,has_tracing_call,number_of_instructions,instructions\n";
+      csvFile << "function_name,basicblock_id,number_of_instructions,"
+                 "instructions\n";
       csvHeaderWritten = true;
       errs() << "Created CSV file: " << CSV_OUTPUT_PATH << "\n";
     } else {
@@ -483,156 +394,125 @@ bool IRAnalysisPass::runOnMachineFunction(MachineFunction &MF) {
     // Append mode - file exists or header already written
     csvFile.open(CSV_OUTPUT_PATH, std::ios::app);
     if (!csvFile.is_open()) {
-      errs() << "Error: Could not open CSV file for appending: " << CSV_OUTPUT_PATH << "\n";
+      errs() << "Error: Could not open CSV file for appending: "
+             << CSV_OUTPUT_PATH << "\n";
       return false;
     }
     csvHeaderWritten = true;
   }
 
   if (csvFile.is_open()) {
-    // Write basic block information for this function only
-    // Create a temporary list of blocks just for this function
-    std::vector<BasicBlockInfo> currentFunctionBlocks;
+    // Write basic block information for this function
     for (const auto &bbInfo : basicBlockInfoList) {
+      // Only write if it belongs to the current function
       if (bbInfo.functionName == functionName) {
-        currentFunctionBlocks.push_back(bbInfo);
-      }
-    }
-    
-    // Write the blocks for the current function
-    for (const auto &bbInfo : currentFunctionBlocks) {
-      std::string escapedFunctionName = escapeCSVField(bbInfo.functionName);
-      std::string escapedBasicBlockId = escapeCSVField(bbInfo.basicBlockId);
+        std::string escapedFunctionName = escapeCSVField(bbInfo.functionName);
+        std::string escapedBasicBlockId = escapeCSVField(bbInfo.basicBlockId);
 
-      // Join instructions with semicolon separator
-      std::string instructionsStr;
-      for (size_t i = 0; i < bbInfo.instructions.size(); ++i) {
-        if (i > 0) {
-          instructionsStr += "; ";
+        // Join instructions with semicolon separator
+        std::string instructionsStr;
+        for (size_t i = 0; i < bbInfo.instructions.size(); ++i) {
+          if (i > 0) {
+            instructionsStr += "; ";
+          }
+          instructionsStr += bbInfo.instructions[i];
         }
-        instructionsStr += bbInfo.instructions[i];
-      }
-      std::string escapedInstructions = escapeCSVField(instructionsStr);
+        std::string escapedInstructions = escapeCSVField(instructionsStr);
 
-      csvFile << escapedFunctionName << ","
-              << escapedBasicBlockId << ","
-              << (bbInfo.hasTracingCall ? "true" : "false") << ","
-              << bbInfo.instructions.size() << ","
-              << escapedInstructions << "\n";
+        csvFile << escapedFunctionName << "," << escapedBasicBlockId << ","
+                << bbInfo.instructions.size() << "," << escapedInstructions
+                << "\n";
+      }
     }
-    
-    // Clear the blocks for this function from the main list to avoid duplicates
-    basicBlockInfoList.erase(
-      std::remove_if(basicBlockInfoList.begin(), basicBlockInfoList.end(),
-        [&functionName](const BasicBlockInfo& bbInfo) {
-          return bbInfo.functionName == functionName;
-        }),
-      basicBlockInfoList.end());
-    
     csvFile.close();
   }
+
+  // Write function stats to CSV file
+  std::ofstream funcStatsCsvFile;
+
+  // Check if file exists to determine if we need to write header
+  std::ifstream checkFuncStatsFile(FUNC_STATS_CSV_PATH);
+  bool funcStatsFileExists = checkFuncStatsFile.good();
+  checkFuncStatsFile.close();
+
+  if (!funcStatsFileExists && !funcStatsCsvHeaderWritten) {
+    // First time: create file and write header
+    funcStatsCsvFile.open(FUNC_STATS_CSV_PATH, std::ios::out);
+    if (funcStatsCsvFile.is_open()) {
+      funcStatsCsvFile << "function_name,function_index,is_optimised,is_"
+                          "unoptimised,is_address_taken,is_outlined\n";
+      funcStatsCsvHeaderWritten = true;
+      errs() << "Created function stats CSV file: " << FUNC_STATS_CSV_PATH
+             << "\n";
+    } else {
+      errs() << "Error: Could not create function stats CSV file: "
+             << FUNC_STATS_CSV_PATH << "\n";
+      return false;
+    }
+  } else {
+    // Append mode - file exists or header already written
+    funcStatsCsvFile.open(FUNC_STATS_CSV_PATH, std::ios::app);
+    if (!funcStatsCsvFile.is_open()) {
+      errs() << "Error: Could not open function stats CSV file for appending: "
+             << FUNC_STATS_CSV_PATH << "\n";
+      return false;
+    }
+    funcStatsCsvHeaderWritten = true;
+  }
+
+  if (funcStatsCsvFile.is_open()) {
+    // Determine boolean flags for this function
+    bool isOptimised = optFunctions.count(functionName) > 0;
+    bool isUnoptimised = unoptFunctions.count(functionName) > 0;
+    bool isAddressTaken = addressTakenFunctions.count(functionName) > 0;
+    bool isOutlined = outlinedFunctions.count(functionName) > 0;
+
+    std::string escapedFunctionName = escapeCSVField(functionName);
+
+    funcStatsCsvFile << escapedFunctionName << "," << functionIndex << ","
+                     << (isOptimised ? "true" : "false") << ","
+                     << (isUnoptimised ? "true" : "false") << ","
+                     << (isAddressTaken ? "true" : "false") << ","
+                     << (isOutlined ? "true" : "false") << "\n";
+    funcStatsCsvFile.close();
+  }
+
+  // Increment function index for the next function
+  functionIndex++;
 
   return false;
 }
 
 IRAnalysisPass::~IRAnalysisPass() {
-  // Print header based on analysis mode
-  switch (ANALYSIS_MODE) {
-    case AnalysisMode::TRACING_BLOCKS_ONLY:
-      errs() << "=== IR Analysis Pass Statistics (Tracing Blocks Only) ===\n\n";
-      break;
-    case AnalysisMode::NON_TRACING_BLOCKS_ONLY:
-      errs() << "=== IR Analysis Pass Statistics (Non-Tracing Blocks Only) ===\n\n";
-      break;
-    case AnalysisMode::BOTH:
-      errs() << "=== IR Analysis Pass Statistics (Tracing vs Non-Tracing Blocks) ===\n\n";
-      break;
-  }
+  errs() << "=== IR Analysis Pass Statistics ===\n\n";
 
   for (const auto &entry : moduleStats) {
     const std::string &moduleName = entry.first;
     const ModuleStats &stats = entry.second;
 
-    // Calculate averages for all blocks
     double avgIRInstsPerBlock =
         stats.numIRBasicBlocks > 0
-            ? static_cast<double>(stats.numIRInstructions) / stats.numIRBasicBlocks
+            ? static_cast<double>(stats.numIRInstructions) /
+                  stats.numIRBasicBlocks
             : 0.0;
+
     double avgMIRInstsPerBlock =
         stats.numMIRBasicBlocks > 0
-            ? static_cast<double>(stats.numMIRInstructions) / stats.numMIRBasicBlocks
+            ? static_cast<double>(stats.numMIRInstructions) /
+                  stats.numMIRBasicBlocks
             : 0.0;
 
-    // Calculate averages for tracing blocks
-    double avgIRTracingInstsPerBlock =
-        stats.numIRTracingBlocks > 0
-            ? static_cast<double>(stats.numIRTracingInstructions) / stats.numIRTracingBlocks
-            : 0.0;
-    double avgMIRTracingInstsPerBlock =
-        stats.numMIRTracingBlocks > 0
-            ? static_cast<double>(stats.numMIRTracingInstructions) / stats.numMIRTracingBlocks
-            : 0.0;
-
-    // Calculate averages for non-tracing blocks
-    double avgIRNonTracingInstsPerBlock =
-        stats.numIRNonTracingBlocks > 0
-            ? static_cast<double>(stats.numIRNonTracingInstructions) / stats.numIRNonTracingBlocks
-            : 0.0;
-    double avgMIRNonTracingInstsPerBlock =
-        stats.numMIRNonTracingBlocks > 0
-            ? static_cast<double>(stats.numMIRNonTracingInstructions) / stats.numMIRNonTracingBlocks
-            : 0.0;
-
-    errs() << "Module: " << moduleName << "\n";
-    
-    // Print statistics based on analysis mode
-    if (ANALYSIS_MODE == AnalysisMode::TRACING_BLOCKS_ONLY) {
-      errs() << "  AOT IR Statistics (Tracing Blocks Only):\n"
-             << "    Tracing Blocks: " << stats.numIRBasicBlocks << "\n"
-             << "    Tracing Block Instructions: " << stats.numIRInstructions << "\n"
-             << "    Average Instructions per Tracing Block: " << format("%.2f", avgIRInstsPerBlock) << "\n"
-             << "  \n"
-             << "  MIR Statistics (Tracing Blocks Only):\n"
-             << "    Tracing Blocks: " << stats.numMIRBasicBlocks << "\n"
-             << "    Tracing Block Instructions: " << stats.numMIRInstructions << "\n"
-             << "    Average Instructions per Tracing Block: " << format("%.2f", avgMIRInstsPerBlock) << "\n\n";
-    } else if (ANALYSIS_MODE == AnalysisMode::NON_TRACING_BLOCKS_ONLY) {
-      errs() << "  AOT IR Statistics (Non-Tracing Blocks Only):\n"
-             << "    Non-Tracing Blocks: " << stats.numIRBasicBlocks << "\n"
-             << "    Non-Tracing Block Instructions: " << stats.numIRInstructions << "\n"
-             << "    Average Instructions per Non-Tracing Block: " << format("%.2f", avgIRInstsPerBlock) << "\n"
-             << "  \n"
-             << "  MIR Statistics (Non-Tracing Blocks Only):\n"
-             << "    Non-Tracing Blocks: " << stats.numMIRBasicBlocks << "\n"
-             << "    Non-Tracing Block Instructions: " << stats.numMIRInstructions << "\n"
-             << "    Average Instructions per Non-Tracing Block: " << format("%.2f", avgMIRInstsPerBlock) << "\n\n";
-    } else { // BOTH
-      errs() << "  AOT IR Statistics:\n"
-             << "    Total Basic Blocks: " << stats.numIRBasicBlocks << "\n"
-             << "    Total Instructions: " << stats.numIRInstructions << "\n"
-             << "    Average Instructions per Block: " << format("%.2f", avgIRInstsPerBlock) << "\n"
-             << "    \n"
-             << "    Tracing Blocks: " << stats.numIRTracingBlocks << "\n"
-             << "    Tracing Block Instructions: " << stats.numIRTracingInstructions << "\n"
-             << "    Average Instructions per Tracing Block: " << format("%.2f", avgIRTracingInstsPerBlock) << "\n"
-             << "    \n"
-             << "    Non-Tracing Blocks: " << stats.numIRNonTracingBlocks << "\n"
-             << "    Non-Tracing Block Instructions: " << stats.numIRNonTracingInstructions << "\n"
-             << "    Average Instructions per Non-Tracing Block: " << format("%.2f", avgIRNonTracingInstsPerBlock) << "\n"
-             << "  \n"
-             << "  MIR Statistics:\n"
-             << "    Total Basic Blocks: " << stats.numMIRBasicBlocks << "\n"
-             << "    Total Instructions: " << stats.numMIRInstructions << "\n"
-             << "    Average Instructions per Block: " << format("%.2f", avgMIRInstsPerBlock) << "\n"
-             << "    \n"
-             << "    Tracing Blocks: " << stats.numMIRTracingBlocks << "\n"
-             << "    Tracing Block Instructions: " << stats.numMIRTracingInstructions << "\n"
-             << "    Average Instructions per Tracing Block: " << format("%.2f", avgMIRTracingInstsPerBlock) << "\n"
-             << "    \n"
-             << "    Non-Tracing Blocks: " << stats.numMIRNonTracingBlocks << "\n"
-             << "    Non-Tracing Block Instructions: " << stats.numMIRNonTracingInstructions << "\n"
-             << "    Average Instructions per Non-Tracing Block: " << format("%.2f", avgMIRNonTracingInstsPerBlock) << "\n\n";
-    }
+    errs() << "Module: " << moduleName << "\n"
+           << "  AOT IR Statistics:\n"
+           << "    Total Basic Blocks: " << stats.numIRBasicBlocks << "\n"
+           << "    Total Instructions: " << stats.numIRInstructions << "\n"
+           << "    Average Instructions per Block: " << avgIRInstsPerBlock
+           << "\n"
+           << "  MIR Statistics:\n"
+           << "    Total Basic Blocks: " << stats.numMIRBasicBlocks << "\n"
+           << "    Total Instructions: " << stats.numMIRInstructions << "\n"
+           << "    Average Instructions per Block: " << avgMIRInstsPerBlock
+           << "\n\n";
   }
   errs() << "===========================\n";
 
@@ -755,25 +635,21 @@ IRAnalysisPass::~IRAnalysisPass() {
 
   // CSV file was written incrementally during pass execution
   if (csvHeaderWritten) {
-    switch (ANALYSIS_MODE) {
-      case AnalysisMode::TRACING_BLOCKS_ONLY:
-        errs() << "\nBasic block information (tracing blocks only) written to: " << CSV_OUTPUT_PATH << "\n";
-        break;
-      case AnalysisMode::NON_TRACING_BLOCKS_ONLY:
-        errs() << "\nBasic block information (non-tracing blocks only) written to: " << CSV_OUTPUT_PATH << "\n";
-        break;
-      case AnalysisMode::BOTH:
-        errs() << "\nBasic block information (tracing and non-tracing) written to: " << CSV_OUTPUT_PATH << "\n";
-        break;
-    }
-    errs() << "Total basic blocks processed: " << basicBlockInfoList.size() << "\n";
+    errs() << "\nBasic block information written to: " << CSV_OUTPUT_PATH
+           << "\n";
+    errs() << "Total basic blocks processed: " << basicBlockInfoList.size()
+           << "\n";
+  }
+
+  if (funcStatsCsvHeaderWritten) {
+    errs() << "Function statistics written to: " << FUNC_STATS_CSV_PATH << "\n";
   }
 }
 
 char IRAnalysisPass::ID = 0;
-INITIALIZE_PASS(IRAnalysisPass, "ir-analysis-pass", "IR Analysis Pass", false, false)
+INITIALIZE_PASS(IRAnalysisPass, "ir-analysis-pass", "IR Analysis Pass", false,
+                false)
 
 namespace llvm {
 MachineFunctionPass *createIRAnalysisPass() { return new IRAnalysisPass(); }
 } // namespace llvm
-

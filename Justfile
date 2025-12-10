@@ -261,6 +261,16 @@ gen_bb_plot_fast CSV OUTPUT_IMAGE:
 
 gen_bucket_plot CSV OUTPUT_IMAGE:
 	uv run python ./scripts/plot_bucket_distribution.py {{CSV}} -o {{OUTPUT_IMAGE}}
+	uv run python plot_blocks.py {{CSV}} -o {{OUTPUT_IMAGE}}
+
+# Generate function statistics bar chart
+gen_func_stats_plot CSV OUTPUT_IMAGE:
+	uv run python ./scripts/plot_function_stats.py {{CSV}} -o {{OUTPUT_IMAGE}}
+
+# Generate function statistics bar chart (with default paths)
+gen_func_plots:
+	just gen_func_stats_plot ./data/2025_12_10_ir_analysis_function_stats.csv ./function_analysis.png
+
 # ============================================================================
 # Complete Workflow Automation
 # ============================================================================
